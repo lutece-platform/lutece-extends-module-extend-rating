@@ -8,10 +8,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.paris.lutece.plugins</groupId>
-	<artifactId>module-socialhub-rating</artifactId>
+	<artifactId>module-extend-rating</artifactId>
 	<packaging>lutece-plugin</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>Lutece Social Hub Rating module</name>
+	<name>Lutece Extend Rating module</name>
 
 	<repositories>
 	  <repository>
@@ -34,27 +34,27 @@
  		<dependency>
 	    	<groupId>fr.paris.lutece</groupId>
 	    	<artifactId>lutece-core</artifactId>
-	    	<version>[3.1.6,5.0.0-SNAPSHOT)</version>
+	    	<version>[4.0.0-SNAPSHOT,5.0.0-SNAPSHOT)</version>
 	    	<type>lutece-core</type>
 	  	</dependency>
 	  	
 	  	<dependency>
 	    	<groupId>fr.paris.lutece.plugins</groupId>
-	    	<artifactId>plugin-socialhub</artifactId>
-	    	<version>[0.0.9,5.0.0-SNAPSHOT)</version>
+	    	<artifactId>plugin-extend</artifactId>
+	    	<version>[1.0.0-SNAPSHOT,5.0.0-SNAPSHOT)</version>
 	    	<type>lutece-plugin</type>
 	  	</dependency>
 	</dependencies>
 	
 	<properties>
-		<componentName>socialhub-rating</componentName>
-		<jiraProjectName>SHRATING</jiraProjectName>
+		<componentName>extend-rating</componentName>
+		<jiraProjectName>EXTENDRAT</jiraProjectName>
 		<jiraComponentId>10754</jiraComponentId>
 	</properties>
     
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/collaboration/module-socialhub-rating</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/collaboration/module-socialhub-rating</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/collaboration/module-socialhub-rating</url>
+        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-rating</connection>
+        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-rating</developerConnection>
+        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/extends/module-extend-rating</url>
     </scm>
 </project>

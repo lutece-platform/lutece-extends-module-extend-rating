@@ -1,0 +1,51 @@
+<div class="control-group" >
+	<label class="control-label" for="idMailingList">#i18n{module.extend.rating.rating_config.labelMailingList} : </label>
+	<div class="controls">
+		<@comboSorted name="idMailingList" default_value="${ratingConfig.idMailingList!}" items=listIdsMailingList />
+		<span class="help-block">#i18n{module.extend.rating.rating_config.labelMailingListComment}</span>
+	</div>
+</div>
+<div class="control-group" >
+	<label class="control-label" for="idVoteType">#i18n{module.extend.rating.rating_config.labelVoteType} : </label>
+	<div class="controls">
+		<@comboSorted name="idVoteType" default_value="${ratingConfig.idVoteType!}" items=listIdsVoteType />
+	</div>
+</div>
+<div class="control-group" >
+	<label class="control-label" for="uniqueVote">&nbsp;</label>
+	<div class="controls">
+		<input id="extend-rating-unique-vote" type="radio" name="uniqueVote" value="true" <#if ratingConfig.uniqueVote>checked="checked"</#if> />&nbsp;
+		#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})
+	</div>
+</div>
+<div class="control-group" >
+	<label class="control-label" for="">&nbsp;</label>
+	<div class="controls">
+		<input id="extend-rating-temporal-vote" type="radio" name="uniqueVote" value="false" <#if !ratingConfig.uniqueVote>checked="checked"</#if> />&nbsp;
+		#i18n{module.extend.rating.rating_config.labelTemporalVote} (#i18n{module.extend.rating.rating_config.labelTemporalVoteComment})
+	</div>
+</div>
+<div class="control-group" id="extend-rating-temporal-vote-options">
+	<label class="control-label" for="nbDaysToVote">#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote} * : </label>
+	<div class="controls">
+		<div class="input-append">
+			<input type="text" maxlength="3" size="3" name="nbDaysToVote" value="${ratingConfig.nbDaysToVote!}" /><span class="add-on">&nbsp;#i18n{module.extend.rating.rating_config.temporalVote.labelDay}</span>
+		</div>
+		<span class="help-block">#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}</span>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$( document ).ready( function (  ) {
+		/* Hide the options if unique vote is selected */
+		if ( $( '#extend-rating-unique-vote' ).attr( 'checked' ) != "undefined" && $( '#extend-rating-unique-vote' ).attr( 'checked' ) == "checked" ) {
+			$( '#extend-rating-temporal-vote-options' ).hide(  );
+		}
+		$( '#extend-rating-unique-vote' ).click( function (  ) { 
+			$( '#extend-rating-temporal-vote-options' ).hide(  );
+		} );
+		$( '#extend-rating-temporal-vote' ).click( function (  ) { 
+			$( '#extend-rating-temporal-vote-options' ).show(  );
+		} );
+	} );
+</script>

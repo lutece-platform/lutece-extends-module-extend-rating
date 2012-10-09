@@ -1,0 +1,15 @@
+<#if rating??>
+	<p>
+		<strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>
+		${rating.voteCount!}
+	</p>
+	<p>
+		<strong>#i18n{module.extend.rating.rating_info.labelScoreValue} :</strong>
+		${rating.scoreValue!}
+	</p>
+	<p>
+		<strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong>
+		${rating.averageScore!}
+	</p>
+	<br />
+</#if>

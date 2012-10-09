@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
 	<properties>
-		<title>Module Social Hub Rating</title>
+		<title>Module Extend Rating</title>
 	</properties>
 	<body>
-		<section name="Module Social Hub Rating">
+		<section name="Module Extend Rating">
 			<subsection name="Introduction">
 				<p>
 					This module is used to allow users to vote resources.
