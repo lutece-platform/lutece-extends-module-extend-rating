@@ -49,7 +49,7 @@
 	<properties>
 		<componentName>extend-rating</componentName>
 		<jiraProjectName>EXTENDRAT</jiraProjectName>
-		<jiraComponentId>10754</jiraComponentId>
+		<jiraComponentId>10854</jiraComponentId>
 	</properties>
     
     <scm>
