@@ -36,5 +36,8 @@
 	<!-- Components -->
 	<bean id="extend-rating.ratingResourceExtenderComponent" class="fr.paris.lutece.plugins.extend.modules.rating.web.component.RatingResourceExtenderComponent" 
 		p:resourceExtender-ref="extend-rating.ratingResourceExtender" />
-
+	
+	<!-- Actions -->
+	<bean id="extend-rating.ratingInstallerAction" class="fr.paris.lutece.plugins.extend.modules.rating.web.action.RatingInstallerPluginAction" />
+	
 </beans>
