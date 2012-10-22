@@ -34,18 +34,16 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service.extender;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
-import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 
-import org.apache.commons.lang.StringUtils;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -93,8 +91,18 @@ public class RatingResourceExtender extends AbstractResourceExtender
     public void doCreateResourceAddOn( ResourceExtenderDTO extender )
     {
         // Default values
-        IExtenderConfig config = new RatingExtenderConfig(  );
+        RatingExtenderConfig config = new RatingExtenderConfig( );
         config.setIdExtender( extender.getIdExtender(  ) );
+
+        RatingExtenderConfig defaultConfig = _configService.find( -1 );
+        if ( defaultConfig != null )
+        {
+            config.setIdMailingList( defaultConfig.getIdMailingList( ) );
+            config.setIdVoteType( defaultConfig.getIdVoteType( ) );
+            config.setNbDaysToVote( defaultConfig.getNbDaysToVote( ) );
+            config.setUniqueVote( defaultConfig.isUniqueVote( ) );
+        }
+
         _configService.create( config );
     }
 
