@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.extend.modules.rating.service.extender;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
+import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
@@ -58,6 +60,9 @@ public class RatingResourceExtender extends AbstractResourceExtender
     @Inject
     @Named( RatingConstants.BEAN_CONFIG_SERVICE )
     private IResourceExtenderConfigService _configService;
+    @Inject
+    @Named( RatingService.BEAN_SERVICE )
+    private IRatingService _ratingService;
 
     /**
      * {@inheritDoc}
@@ -113,5 +118,6 @@ public class RatingResourceExtender extends AbstractResourceExtender
     public void doDeleteResourceAddOn( ResourceExtenderDTO extender )
     {
         _configService.remove( extender.getIdExtender(  ) );
+        _ratingService.removeByResource( extender.getIdExtendableResource( ), extender.getExtendableResourceType( ) );
     }
 }

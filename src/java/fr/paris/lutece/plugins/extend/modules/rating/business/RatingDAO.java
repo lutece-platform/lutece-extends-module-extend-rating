@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
+import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -51,7 +52,8 @@ public class RatingDAO implements IRatingDAO
     private static final String SQL_QUERY_SELECT_BY_RESOURCE = SQL_QUERY_SELECT_ALL +
         " WHERE id_resource = ? AND resource_type = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating WHERE id_rating = ? ";
-    private static final String SQL_QUERY_DELETE_BY_ID_RESOURCE = " DELETE FROM extend_rating WHERE id_resource = ? AND resource_type = ? ";
+    private static final String SQL_QUERY_DELETE_BY_RESOURCE = " DELETE FROM extend_rating WHERE resource_type = ? ";
+    private static final String SQL_QUERY_FILTER_ID_RESOURCE = " AND id_resource = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating SET id_resource = ?, resource_type = ?, vote_count = ?, score_value = ? WHERE id_rating = ?  ";
 
     /**
@@ -147,9 +149,17 @@ public class RatingDAO implements IRatingDAO
     public void deleteByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin )
     {
         int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_RESOURCE, plugin );
-        daoUtil.setString( nIndex++, strIdExtendableResource );
-        daoUtil.setString( nIndex, strExtendableResourceType );
+        StringBuilder sbSql = new StringBuilder( SQL_QUERY_DELETE_BY_RESOURCE );
+        if ( !ResourceExtenderDTOFilter.WILDCARD_ID_RESOURCE.equals( strIdExtendableResource ) )
+        {
+            sbSql.append( SQL_QUERY_FILTER_ID_RESOURCE );
+        }
+        DAOUtil daoUtil = new DAOUtil( sbSql.toString( ), plugin );
+        daoUtil.setString( nIndex++, strExtendableResourceType );
+        if ( !ResourceExtenderDTOFilter.WILDCARD_ID_RESOURCE.equals( strIdExtendableResource ) )
+        {
+            daoUtil.setString( nIndex, strIdExtendableResource );
+        }
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
