@@ -4,7 +4,7 @@
     <name>extend-rating</name>
     <class>fr.paris.lutece.plugins.extend.modules.rating.service.RatingPlugin</class>
     <version>1.0.1</version>
-    <description>module.module.extend.rating.module.description</description>
+    <description>module.extend.rating.module.description</description>
     <provider>module.extend.rating.module.provider</provider>
     <documentation/>
     <installation/>
