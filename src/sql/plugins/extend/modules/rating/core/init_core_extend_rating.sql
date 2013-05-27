@@ -13,55 +13,8 @@ INSERT INTO core_user_right (id_right,id_user) VALUES ('EXTEND_VOTE_TYPES_MANAGE
 --
 -- Init core_template
 --
-INSERT INTO core_template VALUES ('extend_rating_vote_type_star', '
-<#assign averageScore = 0 />
-<#assign voteCount = 0 />
-<#if rating??>
-	<#assign averageScore = rating.averageScore />
-	<#assign voteCount = rating.voteCount />
-</#if>
-<#if show == "all" || show == "vote">
-	<p>
-		<label for="">#i18n{module.extend.rating.rating.labelScore} : </label>
-		<img src="images/local/skin/plugins/extend/modules/rating/stars_${averageScore!}.png" alt="#i18n{module.extend.rating.rating.labelScore}" title="#i18n{module.extend.rating.rating.labelScore}" />
-		(${voteCount!})
-	</p>
-</#if>
-<#if show == "all" || show == "actionVote">
-	<#if canVote>
-		<div>
-			#i18n{module.extend.rating.rating.labelVote} :
-		</div>
-		<div class="resource-vote-star-rating" style="display:none;">
-			<form name="resource_vote_form" action="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType}" method="post" >
-				<input class="star-rating" type="radio" name="voteValue" value="-2" />
-				<input class="star-rating" type="radio" name="voteValue" value="-1" />
-				<input class="star-rating" type="radio" name="voteValue" value="1" />
-				<input class="star-rating" type="radio" name="voteValue" value="2" />
-			</form>
-		</div>
-		<div class="resource-vote-star-rating-javascript-disable" >
-		 	<div class="star">
-				<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=-2" >
-				</a>
-			</div >
-			<div class="star">
-				<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=-1" >
-				</a>
-			</div>
-			<div class="star">
-				<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=1" >
-				</a>
-			</div>
-			<div class="star">
-				<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=2" >
-				</a>
-			</div>
-		</div>
-		<br/>
-	</#if>
-</#if>
-');
+
+INSERT INTO core_template VALUES ('extend_rating_vote_type_star','<#assign averageScore = 0 />\r\n<#assign voteCount = 0 />\r\n<#if rating??>\r\n	<#assign averageScore = rating.averageScore />\r\n	<#assign voteCount = rating.voteCount />\r\n</#if>\r\n<#if show == \"all\" || show == \"vote\">\r\n	<p>\r\n		<img src=\"images/local/skin/plugins/extend/modules/rating/stars_${averageScore!}.png\" alt=\"Note\" title=\"Note\" />\r\n		(${voteCount!})\r\n	</p>\r\n</#if>\r\n<#if show == \"all\" || show == \"actionVote\">\r\n	<#if canVote>\r\n		<div> Votez : </div>\r\n		<div class=\"resource-vote-star-rating\" style=\"display:none;\">\r\n			<form name=\"resource_vote_form\" action=\"jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType}\" method=\"post\" >\r\n				<input type=\"hidden\" name=\"voteValue\" value=\"-2\" />\r\n				<input class=\"star-rating\" type=\"radio\" name=\"voteValue_${extendableResourceType}_${idExtendableResource!}\" value=\"-2\" />\r\n				<input class=\"star-rating\" type=\"radio\" name=\"voteValue_${extendableResourceType}_${idExtendableResource!}\" value=\"-1\" />\r\n				<input class=\"star-rating\" type=\"radio\" name=\"voteValue_${extendableResourceType}_${idExtendableResource!}\" value=\"1\" />\r\n				<input class=\"star-rating\" type=\"radio\" name=\"voteValue_${extendableResourceType}_${idExtendableResource!}\" value=\"2\" />\r\n			</form>\r\n		</div>\r\n		<div class=\"resource-vote-star-rating-javascript-disable\" >\r\n			<div class=\"star\">\r\n				<a href=\"jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&voteValue=-2\" ></a>\r\n			</div >\r\n			<div class=\"star\">\r\n				<a href=\"jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&voteValue=-1\" > </a>\r\n			</div>\r\n			<div class=\"star\">\r\n				<a href=\"jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&voteValue=1\" > </a>\r\n			</div>\r\n			<div class=\"star\">\r\n				<a href=\"jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&voteValue=2\" > </a>\r\n			</div>\r\n		</div>\r\n		<br/>\r\n	</#if>\r\n</#if>');
 INSERT INTO core_template VALUES ('extend_rating_vote_type_thumb', '
 <#assign scoreValue = 0 />
 <#assign voteCount = 0 />
