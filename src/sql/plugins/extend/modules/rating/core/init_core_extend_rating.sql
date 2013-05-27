@@ -26,7 +26,7 @@ INSERT INTO core_template VALUES ('extend_rating_vote_type_thumb', '
 	<p>
 		<#if ( scoreValue < 0 )>
 			<img src="images/local/skin/plugins/extend/modules/rating/vote_against.png" title="#i18n{module.extend.rating.rating.labelVoteAgainst}" alt="#i18n{module.extend.rating.rating.labelVoteAgainst}"/>
-			<span class="alert">${scoreValue!}</span>
+			${scoreValue!}
 		<#else>
 			<img src="images/local/skin/plugins/extend/modules/rating/vote_for.png" title="#i18n{module.extend.rating.rating.labelScore}" alt="#i18n{module.extend.rating.rating.labelScore}"/>
 			${scoreValue!}
@@ -43,8 +43,6 @@ INSERT INTO core_template VALUES ('extend_rating_vote_type_thumb', '
 					<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=-1">
 						<img src="images/local/skin/plugins/extend/modules/rating/vote_against.png" title="#i18n{module.extend.rating.rating.labelVoteAgainst}" alt="#i18n{module.extend.rating.rating.labelVoteAgainst}"/> 
 					</a>
-				</span>
-				<span class="extend-rating-vote-span">
 					<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;voteValue=1">
 						<img src="images/local/skin/plugins/extend/modules/rating/vote_for.png" title="#i18n{module.extend.rating.rating.labelVoteFor}" alt="#i18n{module.extend.rating.rating.labelVoteFor}"/>
 					</a>
