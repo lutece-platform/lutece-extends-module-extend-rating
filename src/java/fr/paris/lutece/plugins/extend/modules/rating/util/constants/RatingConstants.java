@@ -86,6 +86,7 @@ public final class RatingConstants
     public static final String SHOW_ALL = "all";
     public static final String SHOW_VOTE = "vote";
     public static final String SHOW_VOTE_ACTION = "voteAction";
+    public static final String PARAMETER_FROM_URL = "from_url";
 
     /**
      * Instantiates a new comment constants.

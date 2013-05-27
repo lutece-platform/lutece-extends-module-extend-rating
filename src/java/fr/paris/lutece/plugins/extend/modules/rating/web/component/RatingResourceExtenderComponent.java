@@ -44,8 +44,8 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSec
 import fr.paris.lutece.plugins.extend.modules.rating.service.type.IVoteTypeService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
-import fr.paris.lutece.plugins.extend.util.JSONUtils;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
+import fr.paris.lutece.plugins.extend.util.JSONUtils;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -55,19 +55,18 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
+
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -117,6 +116,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
 
             if ( voteType != null )
             {
+                String strFromUrl = request.getParameter( RatingConstants.PARAMETER_FROM_URL );
                 Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
                 Map<String, Object> model = new HashMap<String, Object>(  );
                 model.put( RatingConstants.MARK_RATING, rating );
@@ -125,6 +125,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
                 model.put( RatingConstants.MARK_CAN_VOTE,
                     _ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) );
+                model.put( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
                 model.put( RatingConstants.MARK_RATING_HTML_CONTENT,
                     AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent(  ),
                         request.getLocale(  ), model ).getHtml(  ) );

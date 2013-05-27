@@ -57,16 +57,15 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.IOException;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -101,7 +100,7 @@ public class RatingJspBean
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         String strVoteValue = request.getParameter( RatingConstants.PARAMETER_VOTE_VALUE );
-
+        String strFromUrl = request.getParameter( RatingConstants.PARAMETER_FROM_URL );
         if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) ||
                 StringUtils.isBlank( strVoteValue ) )
         {
@@ -134,6 +133,10 @@ public class RatingJspBean
         if ( strReferer != null )
         {
             UrlItem url = new UrlItem( strReferer );
+            if ( StringUtils.isNotEmpty( strFromUrl ) )
+            {
+                url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+            }
             response.sendRedirect( url.getUrl(  ) );
         }
         else
