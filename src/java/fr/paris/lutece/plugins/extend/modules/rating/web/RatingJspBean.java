@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingReso
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSecurityService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingSecurityService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
+import fr.paris.lutece.plugins.extend.service.ExtendPlugin;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
@@ -100,7 +101,8 @@ public class RatingJspBean
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         String strVoteValue = request.getParameter( RatingConstants.PARAMETER_VOTE_VALUE );
-        String strFromUrl = request.getParameter( RatingConstants.PARAMETER_FROM_URL );
+        String strFromUrl = (String) request.getSession( ).getAttribute(
+                ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL );
         if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) ||
                 StringUtils.isBlank( strVoteValue ) )
         {
@@ -135,6 +137,7 @@ public class RatingJspBean
             UrlItem url = new UrlItem( strReferer );
             if ( StringUtils.isNotEmpty( strFromUrl ) )
             {
+                strFromUrl = strFromUrl.replaceAll( "%", "%25" );
                 url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
             }
             response.sendRedirect( url.getUrl(  ) );

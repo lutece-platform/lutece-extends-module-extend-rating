@@ -116,7 +116,6 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
 
             if ( voteType != null )
             {
-                String strFromUrl = request.getParameter( RatingConstants.PARAMETER_FROM_URL );
                 Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
                 Map<String, Object> model = new HashMap<String, Object>(  );
                 model.put( RatingConstants.MARK_RATING, rating );
@@ -125,7 +124,6 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
                 model.put( RatingConstants.MARK_CAN_VOTE,
                     _ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) );
-                model.put( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
                 model.put( RatingConstants.MARK_RATING_HTML_CONTENT,
                     AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent(  ),
                         request.getLocale(  ), model ).getHtml(  ) );
