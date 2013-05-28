@@ -132,9 +132,9 @@ public class Rating
     }
 
     /**
-     * Calculate the score (min : 0 - max : 4).
-     *
-     * @return the calcultated score
+     * Calculate the score (min : 1 - max : 4).
+     * 
+     * @return the calculated score
      */
     public int getAverageScore(  )
     {
@@ -142,10 +142,18 @@ public class Rating
 
         if ( _nVoteCount > 0 )
         {
-            nScore = Math.round( (float) _nScoreValue / (float) _nVoteCount );
+            float averageScore = (float) _nScoreValue / (float) _nVoteCount;
+            nScore = Math.round( averageScore );
             // The score value interval is [-2, 2], so the score must add 2
             // in order to have the interval [0, 4]
             nScore = nScore + 2;
+
+            // We also add 1 to the score if the average score is negative
+            // n order to have the interval [1, 4]
+            if ( averageScore < 0f )
+            {
+                nScore++;
+            }
         }
 
         return nScore;
