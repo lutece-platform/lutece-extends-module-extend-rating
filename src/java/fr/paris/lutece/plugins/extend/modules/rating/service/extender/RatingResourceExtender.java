@@ -117,7 +117,10 @@ public class RatingResourceExtender extends AbstractResourceExtender
     @Override
     public void doDeleteResourceAddOn( ResourceExtenderDTO extender )
     {
-        _configService.remove( extender.getIdExtender(  ) );
+        if ( extender.getIdExtender( ) > 0 )
+        {
+            _configService.remove( extender.getIdExtender( ) );
+        }
         _ratingService.removeByResource( extender.getIdExtendableResource( ), extender.getExtendableResourceType( ) );
     }
 }
