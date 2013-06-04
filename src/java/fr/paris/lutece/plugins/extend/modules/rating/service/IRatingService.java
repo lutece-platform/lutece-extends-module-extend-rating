@@ -35,9 +35,11 @@ package fr.paris.lutece.plugins.extend.modules.rating.service;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -106,4 +108,17 @@ public interface IRatingService
      * @return the rating
      */
     Rating findByResource( String strIdExtendableResource, String strExtendableResourceType );
+    
+    /**
+     * Get the ids of resources ordered by their number of ratings
+     * @param strExtendableResourceType The type of resources to consider
+     * @param nItemsOffset The offset of the items to get, or 0 to get items
+     *            from the first one
+     * @param nMaxItemsNumber The maximum number of items to return, or 0 to get
+     *            every items
+     * @return The list of ids of resources ordered by the number of associated
+     *         comments
+     */
+    public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
+            int nMaxItemsNumber );
 }

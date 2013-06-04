@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.extend.modules.rating.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
+import java.util.List;
+
 
 /**
  * ICommentDAO.
@@ -43,7 +45,7 @@ public interface IRatingDAO
 {
     /**
      * Delete.
-     *
+     * 
      * @param nIdRating the n id rating
      * @param plugin the plugin
      */
@@ -51,7 +53,7 @@ public interface IRatingDAO
 
     /**
      * Delete by id hub resource.
-     *
+     * 
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin
@@ -60,7 +62,7 @@ public interface IRatingDAO
 
     /**
      * Insert.
-     *
+     * 
      * @param rating the rating
      * @param plugin the plugin
      */
@@ -68,7 +70,7 @@ public interface IRatingDAO
 
     /**
      * Load.
-     *
+     * 
      * @param nIdRating the n id rating
      * @param plugin the plugin
      * @return the rating
@@ -77,7 +79,7 @@ public interface IRatingDAO
 
     /**
      * Store.
-     *
+     * 
      * @param rating the rating
      * @param plugin the plugin
      */
@@ -85,11 +87,23 @@ public interface IRatingDAO
 
     /**
      * Select by id hub resource.
-     *
+     * 
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin
      * @return the rating
      */
     Rating loadByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin );
+
+    /**
+     * Get the ids of resources ordered by their number of ratings
+     * @param strExtendableResourceType The type of resources to consider
+     * @param nItemsOffset The offset of the items to get, or 0 to get items
+     *            from the first one
+     * @param nMaxItemsNumber The maximum number of items to return, or 0 to get
+     *            every items
+     * @return The list of ids of resources ordered by the number of associated
+     *         comments
+     */
+    List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber );
 }

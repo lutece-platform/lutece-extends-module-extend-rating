@@ -38,11 +38,12 @@ import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -148,5 +149,15 @@ public class RatingService implements IRatingService
     public Rating findByResource( String strIdExtendableResource, String strExtendableResourceType )
     {
         return _ratingDAO.loadByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin(  ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
+            int nMaxItemsNumber )
+    {
+        return _ratingDAO.findIdMostRatedResources( strExtendableResourceType, nItemsOffset, nMaxItemsNumber );
     }
 }
