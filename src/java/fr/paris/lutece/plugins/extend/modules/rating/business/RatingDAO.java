@@ -229,7 +229,7 @@ public class RatingDAO implements IRatingDAO
      */
     @Override
     public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
-            int nMaxItemsNumber )
+            int nMaxItemsNumber, Plugin plugin )
     {
         List<Integer> listIds;
         if ( nMaxItemsNumber > 0 )
@@ -253,7 +253,7 @@ public class RatingDAO implements IRatingDAO
         }
 
         int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ) );
+        DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin );
         daoUtil.setString( nIndex++, strExtendableResourceType );
         if ( nMaxItemsNumber > 0 )
         {

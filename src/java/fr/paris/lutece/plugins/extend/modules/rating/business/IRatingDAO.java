@@ -102,8 +102,10 @@ public interface IRatingDAO
      *            from the first one
      * @param nMaxItemsNumber The maximum number of items to return, or 0 to get
      *            every items
+     * @param plugin the plugin
      * @return The list of ids of resources ordered by the number of associated
      *         comments
      */
-    List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber );
+    List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber,
+            Plugin plugin );
 }

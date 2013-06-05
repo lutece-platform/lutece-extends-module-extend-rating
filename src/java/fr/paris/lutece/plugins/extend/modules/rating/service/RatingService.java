@@ -158,6 +158,7 @@ public class RatingService implements IRatingService
     public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
             int nMaxItemsNumber )
     {
-        return _ratingDAO.findIdMostRatedResources( strExtendableResourceType, nItemsOffset, nMaxItemsNumber );
+        return _ratingDAO.findIdMostRatedResources( strExtendableResourceType, nItemsOffset, nMaxItemsNumber,
+                RatingPlugin.getPlugin( ) );
     }
 }
