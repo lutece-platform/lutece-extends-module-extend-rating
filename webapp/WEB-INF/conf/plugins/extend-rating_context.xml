@@ -39,5 +39,6 @@
 	
 	<!-- Actions -->
 	<bean id="extend-rating.ratingInstallerAction" class="fr.paris.lutece.plugins.extend.modules.rating.web.action.RatingInstallerPluginAction" />
-	
+	<bean id="extend-rating.ratingAddon" class="fr.paris.lutece.plugins.extend.modules.rating.service.RatingAddOnService" />
+
 </beans>
