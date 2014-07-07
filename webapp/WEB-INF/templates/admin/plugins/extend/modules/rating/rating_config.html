@@ -25,6 +25,17 @@
 		#i18n{module.extend.rating.rating_config.labelTemporalVote} (#i18n{module.extend.rating.rating_config.labelTemporalVoteComment})
 	</div>
 </div>
+<div class="control-group" >
+	<label class="control-label" for="">&nbsp;</label>
+	<div class="controls">
+		<input id="extend-rating-limited-connected-user-vote" type="checkbox" name="limitedConnectedUser" <#if ratingConfig.limitedConnectedUser>checked="checked"</#if> />&nbsp;
+		#i18n{module.extend.rating.rating_config.labelConnectedVoteComment}
+	</div>
+	<div class="controls">
+		<input type="checkbox" id="deleteVote" name="deleteVote" <#if ratingConfig.deleteVote>checked="checked"</#if> />&nbsp;
+		#i18n{module.extend.rating.rating_config.deleteVoteComment}
+	</div>
+</div>
 <div class="control-group" id="extend-rating-temporal-vote-options">
 	<label class="control-label" for="nbDaysToVote">#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote} * : </label>
 	<div class="controls">
@@ -34,6 +45,23 @@
 		<span class="help-block">#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}</span>
 	</div>
 </div>
+<div class="control-group" >
+	<label class="control-label">#i18n{module.extend.rating.rating_config.labelVoteLimit} : </label>
+	<div class="controls">
+		<input id="extend-rating-no-limit-vote-user" type="radio" name="limitVote" value="false" <#if ratingConfig.nbVotePerUser == 0>checked="checked"</#if> />&nbsp;
+		#i18n{portal.util.labelDisabled}
+	</div>
+	<div class="controls">
+		<input id="extend-rating-limit-vote-user" type="radio" name="limitVote" value="true" <#if ratingConfig.nbVotePerUser != 0>checked="checked"</#if> />&nbsp;
+		#i18n{portal.util.labelEnabled}
+	</div>
+</div>
+<div class="control-group" id="extend-rating-limit-vote-options">
+	<label class="control-label" for="nbVotePerUser">#i18n{module.extend.rating.rating_config.limitVote.labelLimitVote} * : </label>
+	<div class="controls">
+		<input type="text" maxlength="3" size="3" class="input-small" id="nbVotePerUser" name="nbVotePerUser" value="${ratingConfig.nbVotePerUser!}" />
+	</div>
+</div>
 
 <script type="text/javascript">
 	$( document ).ready( function (  ) {
@@ -41,11 +69,35 @@
 		if ( $( '#extend-rating-unique-vote' ).attr( 'checked' ) != "undefined" && $( '#extend-rating-unique-vote' ).attr( 'checked' ) == "checked" ) {
 			$( '#extend-rating-temporal-vote-options' ).hide(  );
 		}
+		if ( $( '#extend-rating-no-limit-vote-user' ).attr( 'checked' ) != "undefined" && $( '#extend-rating-no-limit-vote-user' ).attr( 'checked' ) == "checked" ) {
+			$( '#extend-rating-limit-vote-options' ).hide(  );
+		}
+		if ( $( '#extend-rating-limited-connected-user-vote' ).is(':checked')) {
+			$( '#deleteVote' ).removeAttr( 'disabled' );
+		}
+		else {
+			$( '#deleteVote' ).attr("disabled", true);
+		}
+		
 		$( '#extend-rating-unique-vote' ).click( function (  ) { 
 			$( '#extend-rating-temporal-vote-options' ).hide(  );
 		} );
 		$( '#extend-rating-temporal-vote' ).click( function (  ) { 
 			$( '#extend-rating-temporal-vote-options' ).show(  );
+		} );
+		$( '#extend-rating-no-limit-vote-user' ).click( function (  ) { 
+			$( '#extend-rating-limit-vote-options' ).hide(  );
+		} );
+		$( '#extend-rating-limit-vote-user' ).click( function (  ) { 
+			$( '#extend-rating-limit-vote-options' ).show(  );
+		} );
+		$( '#extend-rating-limited-connected-user-vote' ).click( function (  ) { 
+			if ( $( '#extend-rating-limited-connected-user-vote' ).is(':checked')) {
+				$( '#deleteVote' ).removeAttr( 'disabled' );
+			}
+			else {
+				$( '#deleteVote' ).attr("disabled", true);
+			}
 		} );
 	} );
 </script>

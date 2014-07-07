@@ -31,36 +31,44 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.extend.modules.rating.service.security;
+package fr.paris.lutece.plugins.extend.modules.rating.business;
 
-import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 
 /**
- * 
- * IRatingSecurityService
- * 
+ * ICommentDAO.
  */
-public interface IRatingSecurityService
+public interface IRatingHistoryDAO
 {
     /**
-     * Check if the given user (authenticated or not) can vote or not.
-     * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * Delete.
+     * @param nId the n id rating
+     * @param plugin the plugin
      */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    void remove( int nId, Plugin plugin );
 
     /**
-     * Check if the given user (authenticated) can delete his vote.
+     * Delete by resource
      * 
-     * @param request the request
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * @param plugin the plugin
      */
-    boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    void removeByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin );
 
+    /**
+     * Insert.
+     * @param ratingHistory the ratingHistory
+     * @param plugin the plugin
+     */
+    void create( RatingHistory ratingHistory, Plugin plugin );
+
+    /**
+     * Find a {@link RatingHistory}
+     * @param lIdHistoryExtenderId the extender id
+     * @param plugin the plugin
+     * @return the corresponding {@link RatingHistory}
+     */
+    RatingHistory findByHistoryExtenderId( long lIdHistoryExtenderId, Plugin plugin );
 }

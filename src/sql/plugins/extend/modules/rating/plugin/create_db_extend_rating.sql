@@ -21,6 +21,10 @@ CREATE TABLE extend_rating_config (
 	id_vote_type INT DEFAULT 1 NOT NULL,
 	is_unique_vote SMALLINT DEFAULT 0 NOT NULL,
 	nb_days_to_vote INT DEFAULT 0 NOT NULL,
+	is_connected INT DEFAULT 0 NOT NULL,
+	is_active INT DEFAULT 1 NOT NULL,
+	nb_vote_per_user INT DEFAULT 0 NOT NULL,
+	delete_vote INT DEFAULT 0 NOT NULL,
 	PRIMARY KEY (id_extender)
 );
 
@@ -33,4 +37,15 @@ CREATE TABLE extend_rating_vote_type (
 	title VARCHAR(255) DEFAULT '' NOT NULL,
 	template_name VARCHAR(100) DEFAULT '' NOT NULL,
 	PRIMARY KEY (id_vote_type)
+);
+
+--
+-- Structure for table extend_rating_vote_history
+--
+DROP TABLE IF EXISTS extend_rating_vote_history;
+CREATE TABLE extend_rating_vote_history (
+	id_vote_history INT DEFAULT 0 NOT NULL,
+	id_extender_history INT DEFAULT 0 NOT NULL,
+	vote_value INT DEFAULT 0 NOT NULL,
+	PRIMARY KEY (id_vote_history)
 );

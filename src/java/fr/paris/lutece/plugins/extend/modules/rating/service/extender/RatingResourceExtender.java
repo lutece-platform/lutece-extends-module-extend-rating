@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.service.extender;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingHistoryService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
@@ -49,9 +50,9 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- *
+ * 
  * YourOpinionResourceExtender
- *
+ * 
  */
 public class RatingResourceExtender extends AbstractResourceExtender
 {
@@ -63,6 +64,8 @@ public class RatingResourceExtender extends AbstractResourceExtender
     @Inject
     @Named( RatingService.BEAN_SERVICE )
     private IRatingService _ratingService;
+    @Inject
+    private IRatingHistoryService _ratingHistoryService;
 
     /**
      * {@inheritDoc}
@@ -72,7 +75,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
     {
         if ( StringUtils.isNotBlank( strExtenderType ) )
         {
-            return getKey(  ).equals( strExtenderType );
+            return getKey( ).equals( strExtenderType );
         }
 
         return false;
@@ -83,10 +86,10 @@ public class RatingResourceExtender extends AbstractResourceExtender
      */
     @Override
     public String getContent( String strIdExtendableResource, String strExtendableResourceType, String strParameters,
-        HttpServletRequest request )
+            HttpServletRequest request )
     {
-        return getResourceExtenderComponent(  )
-                   .getPageAddOn( strIdExtendableResource, strExtendableResourceType, strParameters, request );
+        return getResourceExtenderComponent( ).getPageAddOn( strIdExtendableResource, strExtendableResourceType,
+                strParameters, request );
     }
 
     /**
@@ -97,7 +100,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
     {
         // Default values
         RatingExtenderConfig config = new RatingExtenderConfig( );
-        config.setIdExtender( extender.getIdExtender(  ) );
+        config.setIdExtender( extender.getIdExtender( ) );
 
         RatingExtenderConfig defaultConfig = _configService.find( -1 );
         if ( defaultConfig != null )
@@ -122,5 +125,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
             _configService.remove( extender.getIdExtender( ) );
         }
         _ratingService.removeByResource( extender.getIdExtendableResource( ), extender.getExtendableResourceType( ) );
+        _ratingHistoryService.removeByResource( extender.getIdExtendableResource( ),
+                extender.getExtendableResourceType( ) );
     }
 }

@@ -33,11 +33,10 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.util.constants;
 
-
 /**
- *
+ * 
  * CommentConstants
- *
+ * 
  */
 public final class RatingConstants
 {
@@ -80,6 +79,7 @@ public final class RatingConstants
     public static final String MARK_LOCALE = "locale";
     public static final String MARK_SHOW = "show";
     public static final String MARK_CAN_VOTE = "canVote";
+    public static final String MARK_CAN_DELETE_VOTE = "canDeleteVote";
 
     // CONSTANTS
     public static final String JSON_KEY_SHOW = "show";
@@ -91,7 +91,7 @@ public final class RatingConstants
     /**
      * Instantiates a new comment constants.
      */
-    private RatingConstants(  )
+    private RatingConstants( )
     {
     }
 }

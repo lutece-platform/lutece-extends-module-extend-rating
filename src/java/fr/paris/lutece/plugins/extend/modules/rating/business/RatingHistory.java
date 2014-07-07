@@ -31,36 +31,64 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.extend.modules.rating.service.security;
-
-import javax.servlet.http.HttpServletRequest;
-
+package fr.paris.lutece.plugins.extend.modules.rating.business;
 
 /**
  * 
- * IRatingSecurityService
+ * Rating
  * 
  */
-public interface IRatingSecurityService
+public class RatingHistory
 {
-    /**
-     * Check if the given user (authenticated or not) can vote or not.
-     * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
-     */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    private int _nIdRatingHistory;
+    private long _lIdExtenderHistory;
+    private int _nVoteValue;
 
     /**
-     * Check if the given user (authenticated) can delete his vote.
-     * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * @return the _nIdRatingHistory
      */
-    boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    public int getIdRatingHistory( )
+    {
+        return _nIdRatingHistory;
+    }
 
+    /**
+     * @param nIdRatingHistory the _nIdRatingHistory to set
+     */
+    public void setIdRatingHistory( int nIdRatingHistory )
+    {
+        this._nIdRatingHistory = nIdRatingHistory;
+    }
+
+    /**
+     * @return the _nIdExtenderHistory
+     */
+    public long getIdExtenderHistory( )
+    {
+        return _lIdExtenderHistory;
+    }
+
+    /**
+     * @param lIdExtenderHistory the _nIdExtenderHistory to set
+     */
+    public void setIdExtenderHistory( long lIdExtenderHistory )
+    {
+        this._lIdExtenderHistory = lIdExtenderHistory;
+    }
+
+    /**
+     * @return the _nVoteValue
+     */
+    public int getVoteValue( )
+    {
+        return _nVoteValue;
+    }
+
+    /**
+     * @param nVoteValue the _nVoteValue to set
+     */
+    public void setVoteValue( int nVoteValue )
+    {
+        this._nVoteValue = nVoteValue;
+    }
 }

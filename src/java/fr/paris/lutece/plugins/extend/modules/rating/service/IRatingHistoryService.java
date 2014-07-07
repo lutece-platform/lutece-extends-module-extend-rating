@@ -31,36 +31,47 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.extend.modules.rating.service.security;
+package fr.paris.lutece.plugins.extend.modules.rating.service;
 
-import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
+
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- * 
- * IRatingSecurityService
- * 
+ * IRatingService.
  */
-public interface IRatingSecurityService
+public interface IRatingHistoryService
 {
     /**
-     * Check if the given user (authenticated or not) can vote or not.
+     * Delete.
      * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * @param nId the n id rating
      */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
+    void remove( int nId );
 
     /**
-     * Check if the given user (authenticated) can delete his vote.
+     * Delete by resource
      * 
-     * @param request the request
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
      */
-    boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
+    void removeByResource( String strIdExtendableResource, String strExtendableResourceType );
 
+    /**
+     * Insert.
+     * @param ratingHistory the ratingHistory
+     */
+    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
+    void create( RatingHistory ratingHistory );
+
+    /**
+     * Find a {@link RatingHistory}
+     * @param lIdHistoryExtenderId the extender id
+     * @return the corresponding {@link RatingHistory}
+     */
+    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
+    RatingHistory findByHistoryExtenderId( long lIdHistoryExtenderId );
 }

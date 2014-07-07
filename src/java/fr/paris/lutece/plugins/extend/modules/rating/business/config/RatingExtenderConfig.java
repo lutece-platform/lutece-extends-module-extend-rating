@@ -37,21 +37,25 @@ import fr.paris.lutece.plugins.extend.business.extender.config.ExtenderConfig;
 
 
 /**
- *
+ * 
  * CommentExtenderConfig
- *
+ * 
  */
 public class RatingExtenderConfig extends ExtenderConfig
 {
     private int _nIdMailingList = -1;
     private int _nIdVoteType = 1;
     private boolean _bUniqueVote;
+    private boolean _bLimitVote;
+    private boolean _bLimitedConnectedUser;
+    private boolean _bDeleteVote;
     private int _nNbDaysToVote;
+    private int _nNbVotePerUser;
 
     /**
      * @return the nIdMailingList
      */
-    public int getIdMailingList(  )
+    public int getIdMailingList( )
     {
         return _nIdMailingList;
     }
@@ -67,7 +71,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the nIdVoteType
      */
-    public int getIdVoteType(  )
+    public int getIdVoteType( )
     {
         return _nIdVoteType;
     }
@@ -83,7 +87,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the bUniqueVote
      */
-    public boolean isUniqueVote(  )
+    public boolean isUniqueVote( )
     {
         return _bUniqueVote;
     }
@@ -101,15 +105,14 @@ public class RatingExtenderConfig extends ExtenderConfig
      * This attribute is used only if the vote type is temporal (!= unique).
      * @return the nNbDaysToVote
      */
-    public int getNbDaysToVote(  )
+    public int getNbDaysToVote( )
     {
         return _nNbDaysToVote;
     }
 
     /**
      * This number of days before one can vote again.
-     * This attribute is used only if the vote type is temporal (!= unique).
-     * <br />
+     * This attribute is used only if the vote type is temporal (!= unique). <br />
      * Set 0 if there are no limits.
      * @param nNbDaysToVote the nNbDaysToVote to set
      */
@@ -122,11 +125,75 @@ public class RatingExtenderConfig extends ExtenderConfig
      * Checks if it is an unlimited vote system.
      * To enable this system, the extension must have the option "Temporal vote"
      * and have 0 day as the number of day to vote.
-     *
+     * 
      * @return true, if is unlimited vote
      */
-    public boolean isUnlimitedVote(  )
+    public boolean isUnlimitedVote( )
     {
         return !_bUniqueVote && ( _nNbDaysToVote == 0 );
+    }
+
+    /**
+     * @return the _nNbVotePerUser
+     */
+    public int getNbVotePerUser( )
+    {
+        return _nNbVotePerUser;
+    }
+
+    /**
+     * @param nNbVotePerUser the _nNbVotePerUser to set
+     */
+    public void setNbVotePerUser( int nNbVotePerUser )
+    {
+        this._nNbVotePerUser = nNbVotePerUser;
+    }
+
+    /**
+     * @return the _bLimitVote
+     */
+    public boolean isLimitVote( )
+    {
+        return _bLimitVote;
+    }
+
+    /**
+     * @param bLimitVote the _bLimitVote to set
+     */
+    public void setLimitVote( boolean bLimitVote )
+    {
+        this._bLimitVote = bLimitVote;
+    }
+
+    /**
+     * @return the _bLimitedConnectedUser
+     */
+    public boolean isLimitedConnectedUser( )
+    {
+        return _bLimitedConnectedUser;
+    }
+
+    /**
+     * @param bLimitedConnectedUser the _bLimitedConnectedUser to set
+     */
+    public void setLimitedConnectedUser( boolean bLimitedConnectedUser )
+    {
+        this._bLimitedConnectedUser = bLimitedConnectedUser;
+    }
+
+    /**
+     * @return the _bDeleteVote
+     */
+    public boolean isDeleteVote( )
+    {
+        return _bDeleteVote;
+    }
+
+    /**
+     * @param bDeleteVote the _bDeleteVote to set
+     */
+    public void setDeleteVote( boolean bDeleteVote )
+    {
+        this._bDeleteVote = bDeleteVote;
     }
 }

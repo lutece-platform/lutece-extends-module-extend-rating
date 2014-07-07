@@ -33,23 +33,29 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.service;
 
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
 import fr.paris.lutece.plugins.extend.modules.rating.business.IRatingDAO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- *
+ * 
  * RatingService
- *
+ * 
  */
 public class RatingService implements IRatingService
 {
@@ -59,6 +65,8 @@ public class RatingService implements IRatingService
     private IRatingDAO _ratingDAO;
     @Inject
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;
+    @Inject
+    private IRatingHistoryService _ratingHistoryService;
 
     /**
      * {@inheritDoc}
@@ -67,7 +75,7 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void create( Rating rating )
     {
-        _ratingDAO.insert( rating, RatingPlugin.getPlugin(  ) );
+        _ratingDAO.insert( rating, RatingPlugin.getPlugin( ) );
     }
 
     /**
@@ -77,7 +85,7 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void update( Rating rating )
     {
-        _ratingDAO.store( rating, RatingPlugin.getPlugin(  ) );
+        _ratingDAO.store( rating, RatingPlugin.getPlugin( ) );
     }
 
     /**
@@ -86,14 +94,14 @@ public class RatingService implements IRatingService
     @Override
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
-        HttpServletRequest request )
+            HttpServletRequest request )
     {
         Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
 
         // Create the rating if not exists
         if ( rating == null )
         {
-            rating = new Rating(  );
+            rating = new Rating( );
             rating.setIdExtendableResource( strIdExtendableResource );
             rating.setExtendableResourceType( strExtendableResourceType );
             rating.setVoteCount( 1 );
@@ -102,13 +110,35 @@ public class RatingService implements IRatingService
         }
         else
         {
-            rating.setVoteCount( rating.getVoteCount(  ) + 1 );
-            rating.setScoreValue( rating.getScoreValue(  ) + nVoteValue );
+            rating.setVoteCount( rating.getVoteCount( ) + 1 );
+            rating.setScoreValue( rating.getScoreValue( ) + nVoteValue );
             update( rating );
         }
 
         _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource,
-            strExtendableResourceType, request );
+                strExtendableResourceType, request );
+
+        ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
+        filter.setIdExtendableResource( strIdExtendableResource );
+        filter.setExtendableResourceType( strExtendableResourceType );
+        String strUserGuid = StringUtils.EMPTY;
+        if ( SecurityService.isAuthenticationEnable( ) )
+        {
+            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+            if ( user != null )
+            {
+                strUserGuid = user.getName( );
+            }
+        }
+        filter.setUserGuid( strUserGuid );
+
+        List<ResourceExtenderHistory> history = _resourceExtenderHistoryService.findByFilter( filter );
+
+        RatingHistory ratingHistory = new RatingHistory( );
+        ratingHistory.setIdExtenderHistory( history.get( 0 ).getIdHistory( ) );
+        ratingHistory.setVoteValue( nVoteValue );
+        _ratingHistoryService.create( ratingHistory );
     }
 
     /**
@@ -118,7 +148,7 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void remove( int nIdRating )
     {
-        _ratingDAO.delete( nIdRating, RatingPlugin.getPlugin(  ) );
+        _ratingDAO.delete( nIdRating, RatingPlugin.getPlugin( ) );
     }
 
     /**
@@ -128,7 +158,7 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void removeByResource( String strIdExtendableResource, String strExtendableResourceType )
     {
-        _ratingDAO.deleteByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin(  ) );
+        _ratingDAO.deleteByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin( ) );
     }
 
     // GET
@@ -139,7 +169,7 @@ public class RatingService implements IRatingService
     @Override
     public Rating findByPrimaryKey( int nIdRating )
     {
-        return _ratingDAO.load( nIdRating, RatingPlugin.getPlugin(  ) );
+        return _ratingDAO.load( nIdRating, RatingPlugin.getPlugin( ) );
     }
 
     /**
@@ -148,7 +178,8 @@ public class RatingService implements IRatingService
     @Override
     public Rating findByResource( String strIdExtendableResource, String strExtendableResourceType )
     {
-        return _ratingDAO.loadByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin(  ) );
+        return _ratingDAO
+                .loadByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin( ) );
     }
 
     /**

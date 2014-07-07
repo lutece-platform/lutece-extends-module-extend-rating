@@ -70,9 +70,9 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- *
+ * 
  * RatingResourceExtenderComponent
- *
+ * 
  */
 public class RatingResourceExtenderComponent extends AbstractResourceExtenderComponent
 {
@@ -95,7 +95,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
      */
     @Override
     public void buildXmlAddOn( String strIdExtendableResource, String strExtendableResourceType, String strParameters,
-        StringBuffer strXml )
+            StringBuffer strXml )
     {
         // Nothing yet
     }
@@ -105,32 +105,35 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
      */
     @Override
     public String getPageAddOn( String strIdExtendableResource, String strExtendableResourceType, String strParameters,
-        HttpServletRequest request )
+            HttpServletRequest request )
     {
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
 
         if ( config != null )
         {
-            VoteType voteType = _voteTypeService.findByPrimaryKey( config.getIdVoteType(  ), true );
+            VoteType voteType = _voteTypeService.findByPrimaryKey( config.getIdVoteType( ), true );
 
             if ( voteType != null )
             {
                 Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
-                Map<String, Object> model = new HashMap<String, Object>(  );
+                Map<String, Object> model = new HashMap<String, Object>( );
                 model.put( RatingConstants.MARK_RATING, rating );
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
                 model.put( RatingConstants.MARK_CAN_VOTE,
-                    _ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) );
-                model.put( RatingConstants.MARK_RATING_HTML_CONTENT,
-                    AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent(  ),
-                        request.getLocale(  ), model ).getHtml(  ) );
+                        _ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) );
+                model.put( RatingConstants.MARK_CAN_DELETE_VOTE, _ratingSecurityService.canDeleteVote( request,
+                        strIdExtendableResource, strExtendableResourceType ) );
+                model.put(
+                        RatingConstants.MARK_RATING_HTML_CONTENT,
+                        AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent( ),
+                                request.getLocale( ), model ).getHtml( ) );
 
-                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING, request.getLocale(  ), model );
+                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING, request.getLocale( ), model );
 
-                return template.getHtml(  );
+                return template.getHtml( );
             }
         }
 
@@ -143,19 +146,19 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     @Override
     public String getConfigHtml( ResourceExtenderDTO resourceExtender, Locale locale, HttpServletRequest request )
     {
-        ReferenceList listIdsMailingList = new ReferenceList(  );
+        ReferenceList listIdsMailingList = new ReferenceList( );
         listIdsMailingList.addItem( -1,
-            I18nService.getLocalizedString( RatingConstants.PROPERTY_RATING_CONFIG_LABEL_NO_MAILING_LIST, locale ) );
+                I18nService.getLocalizedString( RatingConstants.PROPERTY_RATING_CONFIG_LABEL_NO_MAILING_LIST, locale ) );
         listIdsMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( RatingConstants.MARK_RATING_CONFIG, _configService.find( resourceExtender.getIdExtender(  ) ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( RatingConstants.MARK_RATING_CONFIG, _configService.find( resourceExtender.getIdExtender( ) ) );
         model.put( RatingConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
-        model.put( RatingConstants.MARK_LIST_IDS_VOTE_TYPE, _voteTypeService.findAll(  ) );
+        model.put( RatingConstants.MARK_LIST_IDS_VOTE_TYPE, _voteTypeService.findAll( ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_CONFIG, request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_CONFIG, request.getLocale( ), model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -175,14 +178,15 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     {
         if ( resourceExtender != null )
         {
-            Map<String, Object> model = new HashMap<String, Object>(  );
-            model.put( RatingConstants.MARK_RATING,
-                _ratingService.findByResource( resourceExtender.getIdExtendableResource(  ),
-                    resourceExtender.getExtendableResourceType(  ) ) );
+            Map<String, Object> model = new HashMap<String, Object>( );
+            model.put(
+                    RatingConstants.MARK_RATING,
+                    _ratingService.findByResource( resourceExtender.getIdExtendableResource( ),
+                            resourceExtender.getExtendableResourceType( ) ) );
 
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_INFO, request.getLocale(  ), model );
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_INFO, request.getLocale( ), model );
 
-            return template.getHtml(  );
+            return template.getHtml( );
         }
 
         return StringUtils.EMPTY;
@@ -192,15 +196,23 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
      * {@inheritDoc}
      */
     @Override
-    public void doSaveConfig( HttpServletRequest request, IExtenderConfig config )
-        throws ExtendErrorException
+    public void doSaveConfig( HttpServletRequest request, IExtenderConfig config ) throws ExtendErrorException
     {
+        if ( request.getParameter( "limitedConnectedUser" ) == null )
+        {
+            ( (RatingExtenderConfig) config ).setLimitedConnectedUser( false );
+            ( (RatingExtenderConfig) config ).setDeleteVote( false );
+        }
+        if ( request.getParameter( "deleteVote" ) == null )
+        {
+            ( (RatingExtenderConfig) config ).setDeleteVote( false );
+        }
         _configService.update( config );
     }
 
     /**
      * Fetch show parameter.
-     *
+     * 
      * @param strParameters the str parameters
      * @return the string
      */
@@ -217,7 +229,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
             }
             catch ( JSONException je )
             {
-                AppLogService.debug( je.getMessage(  ), je );
+                AppLogService.debug( je.getMessage( ), je );
             }
         }
 

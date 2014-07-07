@@ -31,36 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.extend.modules.rating.service.security;
+package fr.paris.lutece.plugins.extend.modules.rating.service;
 
-import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.plugins.extend.modules.rating.business.IRatingHistoryDAO;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
+
+import javax.inject.Inject;
 
 
 /**
  * 
- * IRatingSecurityService
+ * RatingService
  * 
  */
-public interface IRatingSecurityService
+public class RatingHistoryService implements IRatingHistoryService
 {
-    /**
-     * Check if the given user (authenticated or not) can vote or not.
-     * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
-     */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    /** The Constant BEAN_SERVICE. */
+    public static final String BEAN_SERVICE = "extend-rating.ratingHistoryService";
 
-    /**
-     * Check if the given user (authenticated) can delete his vote.
-     * 
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
-     */
-    boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    @Inject
+    private IRatingHistoryDAO _ratingHistoryDAO;
 
+    @Override
+    public void remove( int nId )
+    {
+        _ratingHistoryDAO.remove( nId, RatingPlugin.getPlugin( ) );
+    }
+
+    @Override
+    public void removeByResource( String strIdExtendableResource, String strExtendableResourceType )
+    {
+        _ratingHistoryDAO.removeByResource( strIdExtendableResource, strExtendableResourceType,
+                RatingPlugin.getPlugin( ) );
+    }
+
+    @Override
+    public void create( RatingHistory ratingHistory )
+    {
+        _ratingHistoryDAO.create( ratingHistory, RatingPlugin.getPlugin( ) );
+    }
+
+    @Override
+    public RatingHistory findByHistoryExtenderId( long lIdHistoryExtenderId )
+    {
+        return _ratingHistoryDAO.findByHistoryExtenderId( lIdHistoryExtenderId, RatingPlugin.getPlugin( ) );
+    }
 }
