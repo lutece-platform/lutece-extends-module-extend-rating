@@ -50,9 +50,11 @@ import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComp
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.HashMap;
@@ -80,6 +82,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private static final String TEMPLATE_RATING = "skin/plugins/extend/modules/rating/rating.html";
     private static final String TEMPLATE_RATING_CONFIG = "admin/plugins/extend/modules/rating/rating_config.html";
     private static final String TEMPLATE_RATING_INFO = "admin/plugins/extend/modules/rating/rating_info.html";
+    private static final String MARK_LOCALE = "locale";
     @Inject
     private IRatingService _ratingService;
     @Inject
@@ -122,8 +125,16 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
-                model.put( RatingConstants.MARK_CAN_VOTE,
-                        _ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) );
+                try
+                {
+                    model.put( RatingConstants.MARK_CAN_VOTE, _ratingSecurityService.canVote( request,
+                            strIdExtendableResource, strExtendableResourceType ) );
+                }
+                catch ( UserNotSignedException e )
+                {
+                    // In case of user not signed, he can vote but will be redirected to login page
+                    model.put( RatingConstants.MARK_CAN_VOTE, true );
+                }
                 model.put( RatingConstants.MARK_CAN_DELETE_VOTE, _ratingSecurityService.canDeleteVote( request,
                         strIdExtendableResource, strExtendableResourceType ) );
                 model.put(
@@ -155,6 +166,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
         model.put( RatingConstants.MARK_RATING_CONFIG, _configService.find( resourceExtender.getIdExtender( ) ) );
         model.put( RatingConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( RatingConstants.MARK_LIST_IDS_VOTE_TYPE, _voteTypeService.findAll( ) );
+        model.put( MARK_LOCALE, request.getLocale( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_CONFIG, request.getLocale( ), model );
 
@@ -203,9 +215,30 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
             ( (RatingExtenderConfig) config ).setLimitedConnectedUser( false );
             ( (RatingExtenderConfig) config ).setDeleteVote( false );
         }
+
         if ( request.getParameter( "deleteVote" ) == null )
         {
             ( (RatingExtenderConfig) config ).setDeleteVote( false );
+        }
+
+        if ( StringUtils.isNotBlank( request.getParameter( "date_start" ) ) )
+        {
+            ( (RatingExtenderConfig) config ).setDateStart( DateUtil.formatTimestamp(
+                    request.getParameter( "date_start" ), request.getLocale( ) ) );
+        }
+        else
+        {
+            ( (RatingExtenderConfig) config ).setDateStart( null );
+        }
+
+        if ( StringUtils.isNotBlank( request.getParameter( "date_end" ) ) )
+        {
+            ( (RatingExtenderConfig) config ).setDateEnd( DateUtil.formatTimestamp( request.getParameter( "date_end" ),
+                    request.getLocale( ) ) );
+        }
+        else
+        {
+            ( (RatingExtenderConfig) config ).setDateEnd( null );
         }
         _configService.update( config );
     }

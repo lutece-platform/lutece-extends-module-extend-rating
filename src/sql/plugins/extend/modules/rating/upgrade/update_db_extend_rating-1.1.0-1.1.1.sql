@@ -2,6 +2,8 @@ ALTER TABLE extend_rating_config ADD COLUMN is_active INT DEFAULT 1 NOT NULL;
 ALTER TABLE extend_rating_config ADD COLUMN is_connected INT DEFAULT 0 NOT NULL;
 ALTER TABLE extend_rating_config ADD COLUMN nb_vote_per_user INT DEFAULT 0 NOT NULL;
 ALTER TABLE extend_rating_config ADD COLUMN delete_vote INT DEFAULT 0 NOT NULL;
+ALTER TABLE extend_rating_config ADD COLUMN date_start TIMESTAMP DEFAULT NULL NULL;
+ALTER TABLE extend_rating_config ADD COLUMN date_end TIMESTAMP DEFAULT NULL NULL;
 
 --
 -- Structure for table extend_rating_vote_history

@@ -61,6 +61,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -115,7 +116,7 @@ public class RatingJspBean
      * @throws SiteMessageException the site message exception
      */
     public void doVote( HttpServletRequest request, HttpServletResponse response ) throws IOException,
-            SiteMessageException
+            SiteMessageException, UserNotSignedException
     {
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
@@ -130,9 +131,16 @@ public class RatingJspBean
         }
 
         // Check if the user can vote or not
-        if ( !_ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) )
+        try
         {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_CANNOT_VOTE, SiteMessage.TYPE_STOP );
+            if ( !_ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) )
+            {
+                SiteMessageService.setMessage( request, RatingConstants.MESSAGE_CANNOT_VOTE, SiteMessage.TYPE_STOP );
+            }
+        }
+        catch ( UserNotSignedException e )
+        {
+            throw e;
         }
 
         int nVoteValue = 0;

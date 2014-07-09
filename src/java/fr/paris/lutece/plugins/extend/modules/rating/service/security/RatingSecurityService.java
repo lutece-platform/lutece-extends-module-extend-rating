@@ -47,6 +47,7 @@ import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderC
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -82,9 +83,11 @@ public class RatingSecurityService implements IRatingSecurityService
 
     /**
      * {@inheritDoc}
+     * @throws UserNotSignedException
      */
     @Override
     public boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
+            throws UserNotSignedException
     {
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
@@ -95,6 +98,25 @@ public class RatingSecurityService implements IRatingSecurityService
             return false;
         }
 
+        if ( config.getDateStart( ) != null || config.getDateEnd( ) != null )
+        {
+            // Check activation date
+            if ( config.getDateStart( ) != null && config.getDateStart( ).compareTo( new Date( ) ) > 0 )
+            {
+                return false;
+            }
+            else if ( config.getDateEnd( ) != null )
+            {
+                Calendar cal = Calendar.getInstance( );
+                cal.setTime( config.getDateEnd( ) );
+                cal.add( Calendar.DAY_OF_WEEK, 1 );
+                if ( cal.getTime( ).compareTo( new Date( ) ) < 0 )
+                {
+                    return false;
+                }
+            }
+        }
+
         // Only connected user can vote
         if ( config.isLimitedConnectedUser( ) && SecurityService.isAuthenticationEnable( ) )
         {
@@ -102,7 +124,7 @@ public class RatingSecurityService implements IRatingSecurityService
 
             if ( user == null )
             {
-                return false;
+                throw new UserNotSignedException( );
             }
         }
 

@@ -46,9 +46,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtenderConfig>
 {
     private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating_config ( id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote ) VALUES ( ?, ?, ?, ?, ? ) ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating_config SET id_mailing_list = ?, id_vote_type = ?, is_unique_vote = ?, nb_days_to_vote = ?, nb_vote_per_user = ?, is_connected = ?, delete_vote = ? WHERE id_extender = ? ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating_config SET id_mailing_list = ?, id_vote_type = ?, is_unique_vote = ?, nb_days_to_vote = ?, nb_vote_per_user = ?, is_connected = ?, delete_vote = ?, date_start = ?, date_end = ? WHERE id_extender = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating_config WHERE id_extender = ? ";
-    private static final String SQL_QUERY_SELECT = " SELECT id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote, nb_vote_per_user, is_connected, delete_vote FROM extend_rating_config WHERE id_extender = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote, nb_vote_per_user, is_connected, delete_vote, date_start, date_end FROM extend_rating_config WHERE id_extender = ? ";
 
     /**
      * {@inheritDoc}
@@ -93,6 +93,9 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
         daoUtil.setBoolean( nIndex++, config.isLimitedConnectedUser( ) );
         daoUtil.setBoolean( nIndex++, config.isDeleteVote( ) );
 
+        daoUtil.setTimestamp( nIndex++, config.getDateStart( ) );
+        daoUtil.setTimestamp( nIndex++, config.getDateEnd( ) );
+
         daoUtil.setInt( nIndex, config.getIdExtender( ) );
 
         daoUtil.executeUpdate( );
@@ -135,7 +138,9 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
             config.setNbDaysToVote( daoUtil.getInt( nIndex++ ) );
             config.setNbVotePerUser( daoUtil.getInt( nIndex++ ) );
             config.setLimitedConnectedUser( daoUtil.getBoolean( nIndex++ ) );
-            config.setDeleteVote( daoUtil.getBoolean( nIndex ) );
+            config.setDeleteVote( daoUtil.getBoolean( nIndex++ ) );
+            config.setDateStart( daoUtil.getTimestamp( nIndex++ ) );
+            config.setDateEnd( daoUtil.getTimestamp( nIndex ) );
         }
 
         daoUtil.free( );

@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.service.security;
 
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -51,7 +53,8 @@ public interface IRatingSecurityService
      * @param strExtendableResourceType the str extendable resource type
      * @return true, if successful
      */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
+            throws UserNotSignedException;
 
     /**
      * Check if the given user (authenticated) can delete his vote.

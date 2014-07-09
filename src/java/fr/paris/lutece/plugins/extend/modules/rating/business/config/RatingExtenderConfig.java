@@ -35,6 +35,9 @@ package fr.paris.lutece.plugins.extend.modules.rating.business.config;
 
 import fr.paris.lutece.plugins.extend.business.extender.config.ExtenderConfig;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 
 /**
  * 
@@ -51,6 +54,8 @@ public class RatingExtenderConfig extends ExtenderConfig
     private boolean _bDeleteVote;
     private int _nNbDaysToVote;
     private int _nNbVotePerUser;
+    private Timestamp _dateStart;
+    private Timestamp _dateEnd;
 
     /**
      * @return the nIdMailingList
@@ -195,5 +200,61 @@ public class RatingExtenderConfig extends ExtenderConfig
     public void setDeleteVote( boolean bDeleteVote )
     {
         this._bDeleteVote = bDeleteVote;
+    }
+
+    /**
+     * @return the _dateStart
+     */
+    public Timestamp getDateStart( )
+    {
+        return _dateStart;
+    }
+
+    /**
+     * @param dateStart the _dateStart to set
+     */
+    public void setDateStart( Timestamp dateStart )
+    {
+        this._dateStart = dateStart;
+    }
+
+    /**
+     * @return the _dateEnd
+     */
+    public Timestamp getDateEnd( )
+    {
+        return _dateEnd;
+    }
+
+    /**
+     * @param dateEnd the _dateEnd to set
+     */
+    public void setDateEnd( Timestamp dateEnd )
+    {
+        this._dateEnd = dateEnd;
+    }
+
+    /**
+     * @return the _dateEnd
+     */
+    public String getDateEndString( )
+    {
+        if ( _dateEnd != null )
+        {
+            return new SimpleDateFormat( "dd/MM/yyyy" ).format( _dateEnd );
+        }
+        return null;
+    }
+
+    /**
+     * @return the _dateStart
+     */
+    public String getDateStartString( )
+    {
+        if ( _dateStart != null )
+        {
+            return new SimpleDateFormat( "dd/MM/yyyy" ).format( _dateStart );
+        }
+        return null;
     }
 }

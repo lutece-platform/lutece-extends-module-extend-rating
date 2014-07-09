@@ -48,7 +48,7 @@ public class RatingDAO implements IRatingDAO
 {
     private static final String SQL_QUERY_NEW_PK = " SELECT max( id_rating ) FROM extend_rating ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( id_rating, id_resource, resource_type, vote_count, "
-            + " score_value ) " + " VALUES ( ?, ?, ?, ?, ? ) ";
+            + " score_value ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_SELECT_ALL = " SELECT id_rating, id_resource, resource_type, vote_count, score_value "
             + " FROM extend_rating ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_rating = ? ";

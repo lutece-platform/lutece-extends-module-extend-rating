@@ -12,7 +12,16 @@
 	</div>
 </div>
 <div class="control-group" >
-	<label class="control-label" for="uniqueVote">&nbsp;</label>
+	<label class="control-label" for="idVoteType">#i18n{module.extend.rating.rating_config.labelActivation} : </label>
+	<div class="controls">
+		#i18n{module.extend.rating.rating_config.labelDateStart}&nbsp;
+		<input class="input-small" id="date_start" type="text" maxlength="10" name="date_start" value="${ratingConfig.dateStartString!}" />&nbsp;
+		#i18n{module.extend.rating.rating_config.labelDateEnd}&nbsp;
+		<input class="input-small" id="date_end" type="text" maxlength="10" name="date_end" value="${ratingConfig.dateEndString!}" />&nbsp;
+	</div>
+</div>
+<div class="control-group" >
+	<label class="control-label" for="uniqueVote">#i18n{module.extend.rating.rating_config.labelOptions}</label>
 	<div class="controls">
 		<input id="extend-rating-unique-vote" type="radio" name="uniqueVote" value="true" <#if ratingConfig.uniqueVote>checked="checked"</#if> />&nbsp;
 		#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})
@@ -62,6 +71,9 @@
 		<input type="text" maxlength="3" size="3" class="input-small" id="nbVotePerUser" name="nbVotePerUser" value="${ratingConfig.nbVotePerUser!}" />
 	</div>
 </div>
+<script src="js/jquery/plugins/ui/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="js/jquery/plugins/ui/ui.datepicker-${locale.language}.js"></script>
+<@getDatePickerRange idFieldFrom="date_start" idFieldTo="date_end" language=locale />
 
 <script type="text/javascript">
 	$( document ).ready( function (  ) {

@@ -25,6 +25,8 @@ CREATE TABLE extend_rating_config (
 	is_active INT DEFAULT 1 NOT NULL,
 	nb_vote_per_user INT DEFAULT 0 NOT NULL,
 	delete_vote INT DEFAULT 0 NOT NULL,
+	date_start TIMESTAMP DEFAULT NULL NULL,
+	date_end TIMESTAMP DEFAULT NULL NULL,
 	PRIMARY KEY (id_extender)
 );
 
