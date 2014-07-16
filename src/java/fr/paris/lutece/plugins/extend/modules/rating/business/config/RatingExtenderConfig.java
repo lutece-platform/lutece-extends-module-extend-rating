@@ -40,9 +40,7 @@ import java.text.SimpleDateFormat;
 
 
 /**
- * 
- * CommentExtenderConfig
- * 
+ * RatingExtenderConfig
  */
 public class RatingExtenderConfig extends ExtenderConfig
 {

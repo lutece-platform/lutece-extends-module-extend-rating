@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSecurityService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingSecurityService;
+import fr.paris.lutece.plugins.extend.modules.rating.service.validator.RatingValidationManagementService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.ExtendPlugin;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
@@ -69,6 +70,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,19 +82,18 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
 
 /**
- * 
  * RatingJspBean
- * 
  */
 public class RatingJspBean
 {
+    public static final String URL_JSP_DO_VOTE = "jsp/site/plugins/extend/modules/rating/DoVote.jsp";
+
     // TEMPLATES
     private static final String TEMPLATE_RATING_NOTIFY_MESSAGE = "skin/plugins/extend/modules/rating/rating_notify_message.html";
+
+    private static final String CONSTANT_HTTP = "http";
 
     // SERVICES
     private IRatingService _ratingService = SpringContextService.getBean( RatingService.BEAN_SERVICE );
@@ -114,6 +117,7 @@ public class RatingJspBean
      * @param response The HTTP response
      * @throws IOException the io exception
      * @throws SiteMessageException the site message exception
+     * @throws UserNotSignedException If the user has not signed in
      */
     public void doVote( HttpServletRequest request, HttpServletResponse response ) throws IOException,
             SiteMessageException, UserNotSignedException
@@ -130,6 +134,33 @@ public class RatingJspBean
                     SiteMessage.TYPE_STOP );
         }
 
+        String strSessionKeyNextUrl = getSessionKeyUrlRedirect( strIdExtendableResource, strExtendableResourceType );
+
+        String strNextUrl = (String) request.getSession( ).getAttribute( strSessionKeyNextUrl );
+        if ( StringUtils.isEmpty( strNextUrl ) )
+        {
+            strNextUrl = request.getHeader( RatingConstants.PARAMETER_HTTP_REFERER );
+
+            if ( strNextUrl != null )
+            {
+                UrlItem url = new UrlItem( strNextUrl );
+                if ( StringUtils.isNotEmpty( strFromUrl ) )
+                {
+                    strFromUrl = strFromUrl.replaceAll( "%", "%25" );
+                    url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+                }
+                strNextUrl = url.getUrl( );
+            }
+            else
+            {
+                strNextUrl = AppPathService.getPortalUrl( );
+            }
+        }
+        else
+        {
+            request.getSession( ).removeAttribute( strSessionKeyNextUrl );
+        }
+
         // Check if the user can vote or not
         try
         {
@@ -140,6 +171,10 @@ public class RatingJspBean
         }
         catch ( UserNotSignedException e )
         {
+            request.getSession( ).setAttribute(
+                    ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL + strExtendableResourceType
+                            + strIdExtendableResource, strNextUrl );
+
             throw e;
         }
 
@@ -155,26 +190,25 @@ public class RatingJspBean
                     SiteMessage.TYPE_STOP );
         }
 
+        String strErrorUrl = RatingValidationManagementService.validateRating( request, SecurityService.getInstance( )
+                .getRemoteUser( request ), strIdExtendableResource, strExtendableResourceType, nVoteValue );
+        if ( StringUtils.isNotEmpty( strErrorUrl ) )
+        {
+            if ( !strErrorUrl.startsWith( CONSTANT_HTTP ) )
+            {
+                strErrorUrl = AppPathService.getBaseUrl( request ) + strErrorUrl;
+            }
+
+            request.getSession( ).setAttribute( strSessionKeyNextUrl, strNextUrl );
+
+            response.sendRedirect( strErrorUrl );
+            return;
+        }
+
         _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, nVoteValue, request );
 
         sendNotification( request, strIdExtendableResource, strExtendableResourceType, nVoteValue );
-
-        String strReferer = request.getHeader( RatingConstants.PARAMETER_HTTP_REFERER );
-
-        if ( strReferer != null )
-        {
-            UrlItem url = new UrlItem( strReferer );
-            if ( StringUtils.isNotEmpty( strFromUrl ) )
-            {
-                strFromUrl = strFromUrl.replaceAll( "%", "%25" );
-                url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
-            }
-            response.sendRedirect( url.getUrl( ) );
-        }
-        else
-        {
-            response.sendRedirect( AppPathService.getPortalUrl( ) );
-        }
+        response.sendRedirect( strNextUrl );
     }
 
     /**
@@ -282,5 +316,17 @@ public class RatingJspBean
 
             MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, strSubject, strBody );
         }
+    }
+
+    /**
+     * Get the session key of the URL to redirect the user to after he has voted
+     * for the resource
+     * @param strIdResource The id of the resource
+     * @param strResourceType The type of the resource
+     * @return The session key
+     */
+    public static String getSessionKeyUrlRedirect( String strIdResource, String strResourceType )
+    {
+        return ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL + strResourceType + strIdResource;
     }
 }
