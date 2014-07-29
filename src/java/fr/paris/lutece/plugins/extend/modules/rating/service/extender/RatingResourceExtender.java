@@ -42,17 +42,18 @@ import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConsta
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * YourOpinionResourceExtender
- * 
+ *
  */
 public class RatingResourceExtender extends AbstractResourceExtender
 {
@@ -75,7 +76,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
     {
         if ( StringUtils.isNotBlank( strExtenderType ) )
         {
-            return getKey( ).equals( strExtenderType );
+            return getKey(  ).equals( strExtenderType );
         }
 
         return false;
@@ -86,10 +87,10 @@ public class RatingResourceExtender extends AbstractResourceExtender
      */
     @Override
     public String getContent( String strIdExtendableResource, String strExtendableResourceType, String strParameters,
-            HttpServletRequest request )
+        HttpServletRequest request )
     {
-        return getResourceExtenderComponent( ).getPageAddOn( strIdExtendableResource, strExtendableResourceType,
-                strParameters, request );
+        return getResourceExtenderComponent(  )
+                   .getPageAddOn( strIdExtendableResource, strExtendableResourceType, strParameters, request );
     }
 
     /**
@@ -99,16 +100,17 @@ public class RatingResourceExtender extends AbstractResourceExtender
     public void doCreateResourceAddOn( ResourceExtenderDTO extender )
     {
         // Default values
-        RatingExtenderConfig config = new RatingExtenderConfig( );
-        config.setIdExtender( extender.getIdExtender( ) );
+        RatingExtenderConfig config = new RatingExtenderConfig(  );
+        config.setIdExtender( extender.getIdExtender(  ) );
 
         RatingExtenderConfig defaultConfig = _configService.find( -1 );
+
         if ( defaultConfig != null )
         {
-            config.setIdMailingList( defaultConfig.getIdMailingList( ) );
-            config.setIdVoteType( defaultConfig.getIdVoteType( ) );
-            config.setNbDaysToVote( defaultConfig.getNbDaysToVote( ) );
-            config.setUniqueVote( defaultConfig.isUniqueVote( ) );
+            config.setIdMailingList( defaultConfig.getIdMailingList(  ) );
+            config.setIdVoteType( defaultConfig.getIdVoteType(  ) );
+            config.setNbDaysToVote( defaultConfig.getNbDaysToVote(  ) );
+            config.setUniqueVote( defaultConfig.isUniqueVote(  ) );
         }
 
         _configService.create( config );
@@ -120,12 +122,13 @@ public class RatingResourceExtender extends AbstractResourceExtender
     @Override
     public void doDeleteResourceAddOn( ResourceExtenderDTO extender )
     {
-        if ( extender.getIdExtender( ) > 0 )
+        if ( extender.getIdExtender(  ) > 0 )
         {
-            _configService.remove( extender.getIdExtender( ) );
+            _configService.remove( extender.getIdExtender(  ) );
         }
-        _ratingService.removeByResource( extender.getIdExtendableResource( ), extender.getExtendableResourceType( ) );
-        _ratingHistoryService.removeByResource( extender.getIdExtendableResource( ),
-                extender.getExtendableResourceType( ) );
+
+        _ratingService.removeByResource( extender.getIdExtendableResource(  ), extender.getExtendableResourceType(  ) );
+        _ratingHistoryService.removeByResource( extender.getIdExtendableResource(  ),
+            extender.getExtendableResourceType(  ) );
     }
 }

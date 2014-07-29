@@ -34,12 +34,13 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -93,6 +94,15 @@ public interface IRatingService
         HttpServletRequest request );
 
     /**
+     * Do cancel the vote of a user
+     * @param user The user
+     * @param strIdExtendableResource The id of the extendable resource
+     * @param strExtendableResourceType The extendable resource type
+     * @param request The request
+     */
+    void doCancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
+
+    /**
      * Load.
      *
      * @param nIdRating the n id rating
@@ -108,7 +118,7 @@ public interface IRatingService
      * @return the rating
      */
     Rating findByResource( String strIdExtendableResource, String strExtendableResourceType );
-    
+
     /**
      * Get the ids of resources ordered by their number of ratings
      * @param strExtendableResourceType The type of resources to consider
@@ -120,5 +130,5 @@ public interface IRatingService
      *         comments
      */
     public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
-            int nMaxItemsNumber );
+        int nMaxItemsNumber );
 }

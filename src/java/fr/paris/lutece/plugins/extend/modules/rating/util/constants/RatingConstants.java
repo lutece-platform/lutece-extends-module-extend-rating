@@ -33,10 +33,11 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.util.constants;
 
+
 /**
- * 
+ *
  * CommentConstants
- * 
+ *
  */
 public final class RatingConstants
 {
@@ -91,7 +92,7 @@ public final class RatingConstants
     /**
      * Instantiates a new comment constants.
      */
-    private RatingConstants( )
+    private RatingConstants(  )
     {
     }
 }

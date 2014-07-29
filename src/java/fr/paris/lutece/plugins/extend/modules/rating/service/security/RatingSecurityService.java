@@ -49,6 +49,8 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -56,15 +58,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * RatingSecurityService
- * 
+ *
  */
 public class RatingSecurityService implements IRatingSecurityService
 {
@@ -87,7 +88,7 @@ public class RatingSecurityService implements IRatingSecurityService
      */
     @Override
     public boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
-            throws UserNotSignedException
+        throws UserNotSignedException
     {
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
@@ -98,19 +99,20 @@ public class RatingSecurityService implements IRatingSecurityService
             return false;
         }
 
-        if ( config.getDateStart( ) != null || config.getDateEnd( ) != null )
+        if ( ( config.getDateStart(  ) != null ) || ( config.getDateEnd(  ) != null ) )
         {
             // Check activation date
-            if ( config.getDateStart( ) != null && config.getDateStart( ).compareTo( new Date( ) ) > 0 )
+            if ( ( config.getDateStart(  ) != null ) && ( config.getDateStart(  ).compareTo( new Date(  ) ) > 0 ) )
             {
                 return false;
             }
-            else if ( config.getDateEnd( ) != null )
+            else if ( config.getDateEnd(  ) != null )
             {
-                Calendar cal = Calendar.getInstance( );
-                cal.setTime( config.getDateEnd( ) );
+                Calendar cal = Calendar.getInstance(  );
+                cal.setTime( config.getDateEnd(  ) );
                 cal.add( Calendar.DAY_OF_WEEK, 1 );
-                if ( cal.getTime( ).compareTo( new Date( ) ) < 0 )
+
+                if ( cal.getTime(  ).compareTo( new Date(  ) ) < 0 )
                 {
                     return false;
                 }
@@ -118,52 +120,54 @@ public class RatingSecurityService implements IRatingSecurityService
         }
 
         // Only connected user can vote
-        if ( config.isLimitedConnectedUser( ) && SecurityService.isAuthenticationEnable( ) )
+        if ( config.isLimitedConnectedUser(  ) && SecurityService.isAuthenticationEnable(  ) )
         {
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
             if ( user == null )
             {
-                throw new UserNotSignedException( );
+                throw new UserNotSignedException(  );
             }
         }
 
         // User can vote a limited time per ressource
-        if ( config.getNbVotePerUser( ) > 0 )
+        if ( config.getNbVotePerUser(  ) > 0 )
         {
-            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
+            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
 
             filter.setExtendableResourceType( strExtendableResourceType );
-            if ( SecurityService.isAuthenticationEnable( ) )
+
+            if ( SecurityService.isAuthenticationEnable(  ) )
             {
-                LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+                LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
                 if ( user != null )
                 {
-                    filter.setUserGuid( user.getName( ) );
+                    filter.setUserGuid( user.getName(  ) );
                 }
             }
 
-            filter.setIpAddress( request.getRemoteAddr( ) );
+            filter.setIpAddress( request.getRemoteAddr(  ) );
 
             List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
 
-            if ( listHistories.size( ) >= config.getNbVotePerUser( ) )
+            if ( listHistories.size(  ) >= config.getNbVotePerUser(  ) )
             {
                 // User has already use all is vote
                 return false;
             }
         }
 
-        ResourceExtenderDTOFilter extenderFilter = new ResourceExtenderDTOFilter( );
+        ResourceExtenderDTOFilter extenderFilter = new ResourceExtenderDTOFilter(  );
         extenderFilter.setFilterExtendableResourceType( strExtendableResourceType );
+
         List<ResourceExtenderDTO> extenders = _extenderService.findByFilter( extenderFilter );
 
         if ( CollectionUtils.isNotEmpty( extenders ) )
         {
             for ( ResourceExtenderDTO extender : extenders )
             {
-                if ( !extender.isIsActive( ) )
+                if ( !extender.isIsActive(  ) )
                 {
                     return false;
                 }
@@ -180,35 +184,35 @@ public class RatingSecurityService implements IRatingSecurityService
         }
 
         // If it is set as unlimited vote, then the user can vote anytime
-        if ( config.isUnlimitedVote( ) )
+        if ( config.isUnlimitedVote(  ) )
         {
             return true;
         }
 
         // Search the voting histories of the user
-        ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
-        filter.setIdExtendableResource( rating.getIdExtendableResource( ) );
+        ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
+        filter.setIdExtendableResource( rating.getIdExtendableResource(  ) );
 
-        if ( SecurityService.isAuthenticationEnable( ) )
+        if ( SecurityService.isAuthenticationEnable(  ) )
         {
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
             if ( user != null )
             {
-                filter.setUserGuid( user.getName( ) );
+                filter.setUserGuid( user.getName(  ) );
             }
         }
 
-        filter.setIpAddress( request.getRemoteAddr( ) );
+        filter.setIpAddress( request.getRemoteAddr(  ) );
         filter.setSortedAttributeName( FILTER_SORT_BY_DATE_VOTE );
         filter.setAscSort( false );
 
         List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
 
-        if ( ( listHistories != null ) && !listHistories.isEmpty( ) )
+        if ( ( listHistories != null ) && !listHistories.isEmpty(  ) )
         {
             // If unique vote, then the user is prohibited to vote
-            if ( config.isUniqueVote( ) )
+            if ( config.isUniqueVote(  ) )
             {
                 return false;
             }
@@ -216,14 +220,14 @@ public class RatingSecurityService implements IRatingSecurityService
             // Get the last vote history
             ResourceExtenderHistory ratingHistory = listHistories.get( 0 );
 
-            Calendar calendarToday = new GregorianCalendar( );
-            Calendar calendarVote = new GregorianCalendar( );
-            Date dateVote = ratingHistory.getDateCreation( );
-            calendarVote.setTimeInMillis( dateVote.getTime( ) );
-            calendarVote.add( Calendar.DATE, config.getNbDaysToVote( ) );
+            Calendar calendarToday = new GregorianCalendar(  );
+            Calendar calendarVote = new GregorianCalendar(  );
+            Date dateVote = ratingHistory.getDateCreation(  );
+            calendarVote.setTimeInMillis( dateVote.getTime(  ) );
+            calendarVote.add( Calendar.DATE, config.getNbDaysToVote(  ) );
 
             // The date of last vote must be < today
-            if ( calendarToday.getTimeInMillis( ) < calendarVote.getTimeInMillis( ) )
+            if ( calendarToday.getTimeInMillis(  ) < calendarVote.getTimeInMillis(  ) )
             {
                 return false;
             }
@@ -238,7 +242,7 @@ public class RatingSecurityService implements IRatingSecurityService
      */
     @Override
     public boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource,
-            String strExtendableResourceType )
+        String strExtendableResourceType )
     {
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
@@ -250,20 +254,20 @@ public class RatingSecurityService implements IRatingSecurityService
         }
 
         // Only connected user can delete vote
-        if ( config.isDeleteVote( ) && SecurityService.isAuthenticationEnable( ) )
+        if ( config.isDeleteVote(  ) && SecurityService.isAuthenticationEnable(  ) )
         {
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
             if ( user == null )
             {
                 return false;
             }
 
-            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
+            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
 
             filter.setExtendableResourceType( strExtendableResourceType );
-            filter.setUserGuid( user.getName( ) );
-            filter.setIpAddress( request.getRemoteAddr( ) );
+            filter.setUserGuid( user.getName(  ) );
+            filter.setIpAddress( request.getRemoteAddr(  ) );
             filter.setIdExtendableResource( strIdExtendableResource );
 
             List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
@@ -273,7 +277,6 @@ public class RatingSecurityService implements IRatingSecurityService
                 // User has already vote and so can delete it
                 return true;
             }
-
         }
 
         // No history found, then it is the first time the user is voting the resource

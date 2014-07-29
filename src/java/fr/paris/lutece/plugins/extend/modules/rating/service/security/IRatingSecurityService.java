@@ -39,31 +39,30 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * IRatingSecurityService
- * 
+ *
  */
 public interface IRatingSecurityService
 {
     /**
      * Check if the given user (authenticated or not) can vote or not.
-     * 
+     *
      * @param request the request
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @return true, if successful
      */
     boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
-            throws UserNotSignedException;
+        throws UserNotSignedException;
 
     /**
      * Check if the given user (authenticated) can delete his vote.
-     * 
+     *
      * @param request the request
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @return true, if successful
      */
     boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
-
 }

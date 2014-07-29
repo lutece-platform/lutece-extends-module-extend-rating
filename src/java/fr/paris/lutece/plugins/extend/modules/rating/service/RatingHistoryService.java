@@ -40,40 +40,39 @@ import javax.inject.Inject;
 
 
 /**
- * 
+ *
  * RatingService
- * 
+ *
  */
 public class RatingHistoryService implements IRatingHistoryService
 {
     /** The Constant BEAN_SERVICE. */
     public static final String BEAN_SERVICE = "extend-rating.ratingHistoryService";
-
     @Inject
     private IRatingHistoryDAO _ratingHistoryDAO;
 
     @Override
     public void remove( int nId )
     {
-        _ratingHistoryDAO.remove( nId, RatingPlugin.getPlugin( ) );
+        _ratingHistoryDAO.remove( nId, RatingPlugin.getPlugin(  ) );
     }
 
     @Override
     public void removeByResource( String strIdExtendableResource, String strExtendableResourceType )
     {
         _ratingHistoryDAO.removeByResource( strIdExtendableResource, strExtendableResourceType,
-                RatingPlugin.getPlugin( ) );
+            RatingPlugin.getPlugin(  ) );
     }
 
     @Override
     public void create( RatingHistory ratingHistory )
     {
-        _ratingHistoryDAO.create( ratingHistory, RatingPlugin.getPlugin( ) );
+        _ratingHistoryDAO.create( ratingHistory, RatingPlugin.getPlugin(  ) );
     }
 
     @Override
     public RatingHistory findByHistoryExtenderId( long lIdHistoryExtenderId )
     {
-        return _ratingHistoryDAO.findByHistoryExtenderId( lIdHistoryExtenderId, RatingPlugin.getPlugin( ) );
+        return _ratingHistoryDAO.findByHistoryExtenderId( lIdHistoryExtenderId, RatingPlugin.getPlugin(  ) );
     }
 }

@@ -47,17 +47,17 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * 
+ *
  * FeedbackInstallerPluginAction
- * 
+ *
  */
 public class RatingInstallerPluginAction extends AbstractPluginAction<IExtendableResource>
     implements IExtendableResourcePluginAction
 {
-	private static final String ACTION_NAME = "Rating";
-	
+    private static final String ACTION_NAME = "Rating";
+
     // TEMPLATE
-	private static final String TEMPLATE_BUTTON = "../plugins/extend/modules/rating/actions/install_rating.html";
+    private static final String TEMPLATE_BUTTON = "../plugins/extend/modules/rating/actions/install_rating.html";
 
     /**
      * {@inheritDoc}
@@ -65,7 +65,7 @@ public class RatingInstallerPluginAction extends AbstractPluginAction<IExtendabl
     @Override
     public boolean isInvoked( HttpServletRequest request )
     {
-		return false;
+        return false;
     }
 
     /**
@@ -101,6 +101,6 @@ public class RatingInstallerPluginAction extends AbstractPluginAction<IExtendabl
     public IPluginActionResult process( HttpServletRequest request, HttpServletResponse response, AdminUser adminUser,
         IExtendableResource sessionFields ) throws AccessDeniedException
     {
-		return null;
+        return null;
     }
 }

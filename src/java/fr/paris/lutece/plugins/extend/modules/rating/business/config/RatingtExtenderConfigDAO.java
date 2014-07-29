@@ -39,9 +39,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 
 /**
- * 
+ *
  * CommentExtenderConfigDAO
- * 
+ *
  */
 public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtenderConfig>
 {
@@ -58,15 +58,15 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
     {
         int nIndex = 1;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, RatingPlugin.getPlugin( ) );
-        daoUtil.setInt( nIndex++, config.getIdExtender( ) );
-        daoUtil.setInt( nIndex++, config.getIdMailingList( ) );
-        daoUtil.setInt( nIndex++, config.getIdVoteType( ) );
-        daoUtil.setBoolean( nIndex++, config.isUniqueVote( ) );
-        daoUtil.setInt( nIndex, config.getNbDaysToVote( ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, RatingPlugin.getPlugin(  ) );
+        daoUtil.setInt( nIndex++, config.getIdExtender(  ) );
+        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
+        daoUtil.setInt( nIndex++, config.getIdVoteType(  ) );
+        daoUtil.setBoolean( nIndex++, config.isUniqueVote(  ) );
+        daoUtil.setInt( nIndex, config.getNbDaysToVote(  ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
@@ -77,29 +77,31 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
     {
         int nIndex = 1;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, RatingPlugin.getPlugin( ) );
-        daoUtil.setInt( nIndex++, config.getIdMailingList( ) );
-        daoUtil.setInt( nIndex++, config.getIdVoteType( ) );
-        daoUtil.setBoolean( nIndex++, config.isUniqueVote( ) );
-        daoUtil.setInt( nIndex++, config.getNbDaysToVote( ) );
-        if ( config.isLimitVote( ) )
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, RatingPlugin.getPlugin(  ) );
+        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
+        daoUtil.setInt( nIndex++, config.getIdVoteType(  ) );
+        daoUtil.setBoolean( nIndex++, config.isUniqueVote(  ) );
+        daoUtil.setInt( nIndex++, config.getNbDaysToVote(  ) );
+
+        if ( config.isLimitVote(  ) )
         {
-            daoUtil.setInt( nIndex++, config.getNbVotePerUser( ) );
+            daoUtil.setInt( nIndex++, config.getNbVotePerUser(  ) );
         }
         else
         {
             daoUtil.setInt( nIndex++, 0 );
         }
-        daoUtil.setBoolean( nIndex++, config.isLimitedConnectedUser( ) );
-        daoUtil.setBoolean( nIndex++, config.isDeleteVote( ) );
 
-        daoUtil.setTimestamp( nIndex++, config.getDateStart( ) );
-        daoUtil.setTimestamp( nIndex++, config.getDateEnd( ) );
+        daoUtil.setBoolean( nIndex++, config.isLimitedConnectedUser(  ) );
+        daoUtil.setBoolean( nIndex++, config.isDeleteVote(  ) );
 
-        daoUtil.setInt( nIndex, config.getIdExtender( ) );
+        daoUtil.setTimestamp( nIndex++, config.getDateStart(  ) );
+        daoUtil.setTimestamp( nIndex++, config.getDateEnd(  ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.setInt( nIndex, config.getIdExtender(  ) );
+
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
@@ -108,11 +110,11 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
     @Override
     public void delete( int nIdExtender )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, RatingPlugin.getPlugin( ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, RatingPlugin.getPlugin(  ) );
         daoUtil.setInt( 1, nIdExtender );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
@@ -121,16 +123,16 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
     @Override
     public RatingExtenderConfig load( int nIdExtender )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, RatingPlugin.getPlugin( ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, RatingPlugin.getPlugin(  ) );
         daoUtil.setInt( 1, nIdExtender );
-        daoUtil.executeQuery( );
+        daoUtil.executeQuery(  );
 
         RatingExtenderConfig config = null;
 
-        if ( daoUtil.next( ) )
+        if ( daoUtil.next(  ) )
         {
             int nIndex = 1;
-            config = new RatingExtenderConfig( );
+            config = new RatingExtenderConfig(  );
             config.setIdExtender( daoUtil.getInt( nIndex++ ) );
             config.setIdMailingList( daoUtil.getInt( nIndex++ ) );
             config.setIdVoteType( daoUtil.getInt( nIndex++ ) );
@@ -143,7 +145,7 @@ public class RatingtExtenderConfigDAO implements IExtenderConfigDAO<RatingExtend
             config.setDateEnd( daoUtil.getTimestamp( nIndex ) );
         }
 
-        daoUtil.free( );
+        daoUtil.free(  );
 
         return config;
     }

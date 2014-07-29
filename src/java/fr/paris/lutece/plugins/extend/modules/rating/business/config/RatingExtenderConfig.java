@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.business.config;
 import fr.paris.lutece.plugins.extend.business.extender.config.ExtenderConfig;
 
 import java.sql.Timestamp;
+
 import java.text.SimpleDateFormat;
 
 
@@ -58,7 +59,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the nIdMailingList
      */
-    public int getIdMailingList( )
+    public int getIdMailingList(  )
     {
         return _nIdMailingList;
     }
@@ -74,7 +75,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the nIdVoteType
      */
-    public int getIdVoteType( )
+    public int getIdVoteType(  )
     {
         return _nIdVoteType;
     }
@@ -90,7 +91,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the bUniqueVote
      */
-    public boolean isUniqueVote( )
+    public boolean isUniqueVote(  )
     {
         return _bUniqueVote;
     }
@@ -108,7 +109,7 @@ public class RatingExtenderConfig extends ExtenderConfig
      * This attribute is used only if the vote type is temporal (!= unique).
      * @return the nNbDaysToVote
      */
-    public int getNbDaysToVote( )
+    public int getNbDaysToVote(  )
     {
         return _nNbDaysToVote;
     }
@@ -128,10 +129,10 @@ public class RatingExtenderConfig extends ExtenderConfig
      * Checks if it is an unlimited vote system.
      * To enable this system, the extension must have the option "Temporal vote"
      * and have 0 day as the number of day to vote.
-     * 
+     *
      * @return true, if is unlimited vote
      */
-    public boolean isUnlimitedVote( )
+    public boolean isUnlimitedVote(  )
     {
         return !_bUniqueVote && ( _nNbDaysToVote == 0 );
     }
@@ -139,7 +140,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _nNbVotePerUser
      */
-    public int getNbVotePerUser( )
+    public int getNbVotePerUser(  )
     {
         return _nNbVotePerUser;
     }
@@ -155,7 +156,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _bLimitVote
      */
-    public boolean isLimitVote( )
+    public boolean isLimitVote(  )
     {
         return _bLimitVote;
     }
@@ -171,7 +172,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _bLimitedConnectedUser
      */
-    public boolean isLimitedConnectedUser( )
+    public boolean isLimitedConnectedUser(  )
     {
         return _bLimitedConnectedUser;
     }
@@ -187,7 +188,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _bDeleteVote
      */
-    public boolean isDeleteVote( )
+    public boolean isDeleteVote(  )
     {
         return _bDeleteVote;
     }
@@ -203,7 +204,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _dateStart
      */
-    public Timestamp getDateStart( )
+    public Timestamp getDateStart(  )
     {
         return _dateStart;
     }
@@ -219,7 +220,7 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _dateEnd
      */
-    public Timestamp getDateEnd( )
+    public Timestamp getDateEnd(  )
     {
         return _dateEnd;
     }
@@ -235,24 +236,26 @@ public class RatingExtenderConfig extends ExtenderConfig
     /**
      * @return the _dateEnd
      */
-    public String getDateEndString( )
+    public String getDateEndString(  )
     {
         if ( _dateEnd != null )
         {
             return new SimpleDateFormat( "dd/MM/yyyy" ).format( _dateEnd );
         }
+
         return null;
     }
 
     /**
      * @return the _dateStart
      */
-    public String getDateStartString( )
+    public String getDateStartString(  )
     {
         if ( _dateStart != null )
         {
             return new SimpleDateFormat( "dd/MM/yyyy" ).format( _dateStart );
         }
+
         return null;
     }
 }

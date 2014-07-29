@@ -43,32 +43,32 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public class RatingHistoryDAO implements IRatingHistoryDAO
 {
     private static final String SQL_QUERY_NEW_PK = " SELECT max( id_vote_history ) FROM extend_rating_vote_history ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating_vote_history ( id_vote_history, id_extender_history, vote_value ) "
-            + " VALUES ( ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating_vote_history ( id_vote_history, id_extender_history, vote_value ) " +
+        " VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_FIND_BY_EXTENDER_HISTORY_ID = " SELECT id_vote_history, id_extender_history, vote_value FROM extend_rating_vote_history WHERE id_extender_history = ?";
-    private static final String SQL_QUERY_DELETE_BY_RESOURCE = " DELETE FROM extend_rating_vote_history WHERE id_vote_history "
-            + "IN (SELECT id_history FROM extend_resource_extender_history WHERE extender_type = ? AND resource_type = ?)";
+    private static final String SQL_QUERY_DELETE_BY_RESOURCE = " DELETE FROM extend_rating_vote_history WHERE id_vote_history " +
+        "IN (SELECT id_history FROM extend_resource_extender_history WHERE extender_type = ? AND resource_type = ?)";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating_vote_history WHERE id_vote_history = ? ";
 
     /**
      * Generates a new primary key.
-     * 
+     *
      * @param plugin the plugin
      * @return The new primary key
      */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
+        daoUtil.executeQuery(  );
 
         int nKey = 1;
 
-        if ( daoUtil.next( ) )
+        if ( daoUtil.next(  ) )
         {
             nKey = daoUtil.getInt( 1 ) + 1;
         }
 
-        daoUtil.free( );
+        daoUtil.free(  );
 
         return nKey;
     }
@@ -78,8 +78,8 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nId );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     @Override
@@ -88,8 +88,8 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_RESOURCE, plugin );
         daoUtil.setString( 1, strIdExtendableResource );
         daoUtil.setString( 2, strExtendableResourceType );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     @Override
@@ -100,12 +100,12 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
         int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, ratingHistory.getIdRatingHistory( ) );
-        daoUtil.setLong( nIndex++, ratingHistory.getIdExtenderHistory( ) );
-        daoUtil.setInt( nIndex++, ratingHistory.getVoteValue( ) );
+        daoUtil.setInt( nIndex++, ratingHistory.getIdRatingHistory(  ) );
+        daoUtil.setLong( nIndex++, ratingHistory.getIdExtenderHistory(  ) );
+        daoUtil.setInt( nIndex++, ratingHistory.getVoteValue(  ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     @Override
@@ -115,18 +115,20 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
 
         daoUtil.setLong( 1, lIdHistoryExtenderId );
 
-        daoUtil.executeQuery( );
+        daoUtil.executeQuery(  );
+
         RatingHistory ratingHistory = null;
 
-        if ( daoUtil.next( ) )
+        if ( daoUtil.next(  ) )
         {
-            ratingHistory = new RatingHistory( );
+            ratingHistory = new RatingHistory(  );
             ratingHistory.setIdRatingHistory( daoUtil.getInt( 1 ) );
             ratingHistory.setIdExtenderHistory( daoUtil.getLong( 2 ) );
             ratingHistory.setVoteValue( daoUtil.getInt( 3 ) );
         }
 
-        daoUtil.free( );
+        daoUtil.free(  );
+
         return ratingHistory;
     }
 }

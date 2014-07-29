@@ -33,10 +33,6 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.web;
 
-import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
-import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
-import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
-import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingHistoryService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
@@ -70,13 +66,12 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,51 +87,47 @@ public class RatingJspBean
 
     // TEMPLATES
     private static final String TEMPLATE_RATING_NOTIFY_MESSAGE = "skin/plugins/extend/modules/rating/rating_notify_message.html";
-
     private static final String CONSTANT_HTTP = "http";
 
     // SERVICES
     private IRatingService _ratingService = SpringContextService.getBean( RatingService.BEAN_SERVICE );
-    private IResourceExtenderHistoryService _resourceExtenderHistoryService = SpringContextService
-            .getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
-    private IResourceExtenderConfigService _configService = SpringContextService
-            .getBean( RatingConstants.BEAN_CONFIG_SERVICE );
-    private IResourceExtenderService _resourceExtenderService = SpringContextService
-            .getBean( ResourceExtenderService.BEAN_SERVICE );
-    private IRatingSecurityService _ratingSecurityService = SpringContextService
-            .getBean( RatingSecurityService.BEAN_SERVICE );
-    private IRatingHistoryService _ratingHistoryService = SpringContextService
-            .getBean( RatingHistoryService.BEAN_SERVICE );
+    private IResourceExtenderHistoryService _resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+    private IResourceExtenderConfigService _configService = SpringContextService.getBean( RatingConstants.BEAN_CONFIG_SERVICE );
+    private IResourceExtenderService _resourceExtenderService = SpringContextService.getBean( ResourceExtenderService.BEAN_SERVICE );
+    private IRatingSecurityService _ratingSecurityService = SpringContextService.getBean( RatingSecurityService.BEAN_SERVICE );
+    private IRatingHistoryService _ratingHistoryService = SpringContextService.getBean( RatingHistoryService.BEAN_SERVICE );
 
     /**
      * Update the vote value an count.
      * This method is called in FO by the following JSP :
      * <strong>jsp/site/plugins/extend/modules/rating/DoVote.Jsp</strong>
-     * 
+     *
      * @param request The HTTP request
      * @param response The HTTP response
      * @throws IOException the io exception
      * @throws SiteMessageException the site message exception
      * @throws UserNotSignedException If the user has not signed in
      */
-    public void doVote( HttpServletRequest request, HttpServletResponse response ) throws IOException,
-            SiteMessageException, UserNotSignedException
+    public void doVote( HttpServletRequest request, HttpServletResponse response )
+        throws IOException, SiteMessageException, UserNotSignedException
     {
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         String strVoteValue = request.getParameter( RatingConstants.PARAMETER_VOTE_VALUE );
-        String strFromUrl = (String) request.getSession( ).getAttribute(
-                ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL );
-        if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType )
-                || StringUtils.isBlank( strVoteValue ) )
+        String strFromUrl = (String) request.getSession(  )
+                                            .getAttribute( ExtendPlugin.PLUGIN_NAME +
+                RatingConstants.PARAMETER_FROM_URL );
+
+        if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) ||
+                StringUtils.isBlank( strVoteValue ) )
         {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE,
-                    SiteMessage.TYPE_STOP );
+            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
 
         String strSessionKeyNextUrl = getSessionKeyUrlRedirect( strIdExtendableResource, strExtendableResourceType );
 
-        String strNextUrl = (String) request.getSession( ).getAttribute( strSessionKeyNextUrl );
+        String strNextUrl = (String) request.getSession(  ).getAttribute( strSessionKeyNextUrl );
+
         if ( StringUtils.isEmpty( strNextUrl ) )
         {
             strNextUrl = request.getHeader( RatingConstants.PARAMETER_HTTP_REFERER );
@@ -144,21 +135,23 @@ public class RatingJspBean
             if ( strNextUrl != null )
             {
                 UrlItem url = new UrlItem( strNextUrl );
+
                 if ( StringUtils.isNotEmpty( strFromUrl ) )
                 {
                     strFromUrl = strFromUrl.replaceAll( "%", "%25" );
                     url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
                 }
-                strNextUrl = url.getUrl( );
+
+                strNextUrl = url.getUrl(  );
             }
             else
             {
-                strNextUrl = AppPathService.getPortalUrl( );
+                strNextUrl = AppPathService.getPortalUrl(  );
             }
         }
         else
         {
-            request.getSession( ).removeAttribute( strSessionKeyNextUrl );
+            request.getSession(  ).removeAttribute( strSessionKeyNextUrl );
         }
 
         // Check if the user can vote or not
@@ -171,9 +164,9 @@ public class RatingJspBean
         }
         catch ( UserNotSignedException e )
         {
-            request.getSession( ).setAttribute(
-                    ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL + strExtendableResourceType
-                            + strIdExtendableResource, strNextUrl );
+            request.getSession(  )
+                   .setAttribute( ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL +
+                strExtendableResourceType + strIdExtendableResource, strNextUrl );
 
             throw e;
         }
@@ -186,12 +179,13 @@ public class RatingJspBean
         }
         catch ( NumberFormatException e )
         {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE,
-                    SiteMessage.TYPE_STOP );
+            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
 
-        String strErrorUrl = RatingValidationManagementService.validateRating( request, SecurityService.getInstance( )
-                .getRemoteUser( request ), strIdExtendableResource, strExtendableResourceType, nVoteValue );
+        String strErrorUrl = RatingValidationManagementService.validateRating( request,
+                SecurityService.getInstance(  ).getRemoteUser( request ), strIdExtendableResource,
+                strExtendableResourceType, nVoteValue );
+
         if ( StringUtils.isNotEmpty( strErrorUrl ) )
         {
             if ( !strErrorUrl.startsWith( CONSTANT_HTTP ) )
@@ -199,9 +193,10 @@ public class RatingJspBean
                 strErrorUrl = AppPathService.getBaseUrl( request ) + strErrorUrl;
             }
 
-            request.getSession( ).setAttribute( strSessionKeyNextUrl, strNextUrl );
+            request.getSession(  ).setAttribute( strSessionKeyNextUrl, strNextUrl );
 
             response.sendRedirect( strErrorUrl );
+
             return;
         }
 
@@ -220,19 +215,19 @@ public class RatingJspBean
      * @throws IOException the io exception
      * @throws SiteMessageException the site message exception
      */
-    public void doCancelVote( HttpServletRequest request, HttpServletResponse response ) throws IOException,
-            SiteMessageException
+    public void doCancelVote( HttpServletRequest request, HttpServletResponse response )
+        throws IOException, SiteMessageException
     {
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
-        String strFromUrl = (String) request.getSession( ).getAttribute(
-                ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL );
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        String strFromUrl = (String) request.getSession(  )
+                                            .getAttribute( ExtendPlugin.PLUGIN_NAME +
+                RatingConstants.PARAMETER_FROM_URL );
+        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
         if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) )
         {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE,
-                    SiteMessage.TYPE_STOP );
+            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
 
         // Check if the user can vote or not
@@ -241,41 +236,25 @@ public class RatingJspBean
             SiteMessageService.setMessage( request, RatingConstants.MESSAGE_CANNOT_VOTE, SiteMessage.TYPE_STOP );
         }
 
-        ResourceExtenderHistoryFilter resourceExtenderHistoryFilter = new ResourceExtenderHistoryFilter( );
-        resourceExtenderHistoryFilter.setUserGuid( user.getName( ) );
-        resourceExtenderHistoryFilter.setIdExtendableResource( strIdExtendableResource );
-        List<ResourceExtenderHistory> histories = _resourceExtenderHistoryService
-                .findByFilter( resourceExtenderHistoryFilter );
-
-        if ( CollectionUtils.isNotEmpty( histories ) )
-        {
-            ResourceExtenderHistory history = histories.get( 0 );
-            RatingHistory ratingHistory = _ratingHistoryService.findByHistoryExtenderId( history.getIdHistory( ) );
-
-            _ratingHistoryService.remove( ratingHistory.getIdRatingHistory( ) );
-            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory( ) ) );
-
-            Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
-            rating.setVoteCount( rating.getVoteCount( ) - 1 );
-            rating.setScoreValue( rating.getScoreValue( ) - ratingHistory.getVoteValue( ) );
-            _ratingService.update( rating );
-        }
+        _ratingService.doCancelVote( user, strIdExtendableResource, strExtendableResourceType );
 
         String strReferer = request.getHeader( RatingConstants.PARAMETER_HTTP_REFERER );
 
         if ( strReferer != null )
         {
             UrlItem url = new UrlItem( strReferer );
+
             if ( StringUtils.isNotEmpty( strFromUrl ) )
             {
                 strFromUrl = strFromUrl.replaceAll( "%", "%25" );
                 url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
             }
-            response.sendRedirect( url.getUrl( ) );
+
+            response.sendRedirect( url.getUrl(  ) );
         }
         else
         {
-            response.sendRedirect( AppPathService.getPortalUrl( ) );
+            response.sendRedirect( AppPathService.getPortalUrl(  ) );
         }
     }
 
@@ -287,16 +266,16 @@ public class RatingJspBean
      * @param nVoteValue the n vote value
      */
     private void sendNotification( HttpServletRequest request, String strIdExtendableResource,
-            String strExtendableResourceType, int nVoteValue )
+        String strExtendableResourceType, int nVoteValue )
     {
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
-        int nMailingListId = config.getIdMailingList( );
+        int nMailingListId = config.getIdMailingList(  );
         Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( nMailingListId );
 
         for ( Recipient recipient : listRecipients )
         {
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<String, Object>(  );
 
             String strSenderName = AppPropertiesService.getProperty( RatingConstants.PROPERTY_LUTECE_NAME );
             String strSenderEmail = AppPropertiesService.getProperty( RatingConstants.PROPERTY_WEBMASTER_EMAIL );
@@ -305,16 +284,16 @@ public class RatingJspBean
 
             Object[] params = { strResourceName };
             String strSubject = I18nService.getLocalizedString( RatingConstants.MESSAGE_NOTIFY_SUBJECT, params,
-                    request.getLocale( ) );
+                    request.getLocale(  ) );
 
             model.put( RatingConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
             model.put( RatingConstants.MARK_VOTE_VALUE, nVoteValue );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_NOTIFY_MESSAGE,
-                    request.getLocale( ), model );
-            String strBody = template.getHtml( );
+                    request.getLocale(  ), model );
+            String strBody = template.getHtml(  );
 
-            MailService.sendMailHtml( recipient.getEmail( ), strSenderName, strSenderEmail, strSubject, strBody );
+            MailService.sendMailHtml( recipient.getEmail(  ), strSenderName, strSenderEmail, strSubject, strBody );
         }
     }
 

@@ -45,7 +45,7 @@ public interface IRatingDAO
 {
     /**
      * Delete.
-     * 
+     *
      * @param nIdRating the n id rating
      * @param plugin the plugin
      */
@@ -53,7 +53,7 @@ public interface IRatingDAO
 
     /**
      * Delete by id hub resource.
-     * 
+     *
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin
@@ -62,7 +62,7 @@ public interface IRatingDAO
 
     /**
      * Insert.
-     * 
+     *
      * @param rating the rating
      * @param plugin the plugin
      */
@@ -70,7 +70,7 @@ public interface IRatingDAO
 
     /**
      * Load.
-     * 
+     *
      * @param nIdRating the n id rating
      * @param plugin the plugin
      * @return the rating
@@ -79,7 +79,7 @@ public interface IRatingDAO
 
     /**
      * Store.
-     * 
+     *
      * @param rating the rating
      * @param plugin the plugin
      */
@@ -87,7 +87,7 @@ public interface IRatingDAO
 
     /**
      * Select by id hub resource.
-     * 
+     *
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin
@@ -107,5 +107,5 @@ public interface IRatingDAO
      *         comments
      */
     List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber,
-            Plugin plugin );
+        Plugin plugin );
 }

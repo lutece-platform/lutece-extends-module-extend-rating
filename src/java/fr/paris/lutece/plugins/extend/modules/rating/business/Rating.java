@@ -133,7 +133,7 @@ public class Rating
 
     /**
      * Calculate the score (min : 1 - max : 4).
-     * 
+     *
      * @return the calculated score
      */
     public int getAverageScore(  )

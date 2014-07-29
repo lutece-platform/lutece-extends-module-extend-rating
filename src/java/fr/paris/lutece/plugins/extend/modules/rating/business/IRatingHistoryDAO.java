@@ -50,7 +50,7 @@ public interface IRatingHistoryDAO
 
     /**
      * Delete by resource
-     * 
+     *
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin

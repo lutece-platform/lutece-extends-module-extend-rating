@@ -33,10 +33,11 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
+
 /**
- * 
+ *
  * Rating
- * 
+ *
  */
 public class RatingHistory
 {
@@ -47,7 +48,7 @@ public class RatingHistory
     /**
      * @return the _nIdRatingHistory
      */
-    public int getIdRatingHistory( )
+    public int getIdRatingHistory(  )
     {
         return _nIdRatingHistory;
     }
@@ -63,7 +64,7 @@ public class RatingHistory
     /**
      * @return the _nIdExtenderHistory
      */
-    public long getIdExtenderHistory( )
+    public long getIdExtenderHistory(  )
     {
         return _lIdExtenderHistory;
     }
@@ -79,7 +80,7 @@ public class RatingHistory
     /**
      * @return the _nVoteValue
      */
-    public int getVoteValue( )
+    public int getVoteValue(  )
     {
         return _nVoteValue;
     }

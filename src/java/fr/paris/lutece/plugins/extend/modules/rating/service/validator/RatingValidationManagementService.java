@@ -57,18 +57,20 @@ public final class RatingValidationManagementService
      *         resource, or null if he is allowed
      */
     public static String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
-            String strResourceTypeKey, int nVoteValue )
+        String strResourceTypeKey, int nVoteValue )
     {
-        for ( IRatingValidationService validationService : SpringContextService
-                .getBeansOfType( IRatingValidationService.class ) )
+        for ( IRatingValidationService validationService : SpringContextService.getBeansOfType( 
+                IRatingValidationService.class ) )
         {
             String strUrlError = validationService.validateRating( request, user, strIdResource, strResourceTypeKey,
                     nVoteValue );
+
             if ( StringUtils.isNotBlank( strUrlError ) )
             {
                 return strUrlError;
             }
         }
+
         return null;
     }
 }
