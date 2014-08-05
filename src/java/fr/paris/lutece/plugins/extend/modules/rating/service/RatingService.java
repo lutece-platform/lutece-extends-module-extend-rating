@@ -41,10 +41,8 @@ import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,31 +116,11 @@ public class RatingService implements IRatingService
             update( rating );
         }
 
-        _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource,
-            strExtendableResourceType, request );
-
-        ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
-        filter.setIdExtendableResource( strIdExtendableResource );
-        filter.setExtendableResourceType( strExtendableResourceType );
-
-        String strUserGuid = StringUtils.EMPTY;
-
-        if ( SecurityService.isAuthenticationEnable(  ) )
-        {
-            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
-            if ( user != null )
-            {
-                strUserGuid = user.getName(  );
-            }
-        }
-
-        filter.setUserGuid( strUserGuid );
-
-        List<ResourceExtenderHistory> history = _resourceExtenderHistoryService.findByFilter( filter );
+        ResourceExtenderHistory history = _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER,
+                strIdExtendableResource, strExtendableResourceType, request );
 
         RatingHistory ratingHistory = new RatingHistory(  );
-        ratingHistory.setIdExtenderHistory( history.get( 0 ).getIdHistory(  ) );
+        ratingHistory.setIdExtenderHistory( history.getIdHistory(  ) );
         ratingHistory.setVoteValue( nVoteValue );
         _ratingHistoryService.create( ratingHistory );
     }
