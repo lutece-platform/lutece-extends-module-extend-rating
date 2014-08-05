@@ -41,11 +41,14 @@ import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -97,7 +100,7 @@ public class RatingService implements IRatingService
     public void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
         HttpServletRequest request )
     {
-        Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
+    	Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
 
         // Create the rating if not exists
         if ( rating == null )
@@ -140,16 +143,21 @@ public class RatingService implements IRatingService
 
         if ( CollectionUtils.isNotEmpty( histories ) )
         {
-            ResourceExtenderHistory history = histories.get( 0 );
-            RatingHistory ratingHistory = _ratingHistoryService.findByHistoryExtenderId( history.getIdHistory(  ) );
-
-            _ratingHistoryService.remove( ratingHistory.getIdRatingHistory(  ) );
-            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory(  ) ) );
-
-            Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
-            rating.setVoteCount( rating.getVoteCount(  ) - 1 );
-            rating.setScoreValue( rating.getScoreValue(  ) - ratingHistory.getVoteValue(  ) );
-            update( rating );
+        	for(ResourceExtenderHistory history : histories)
+        	{
+        		RatingHistory ratingHistory = _ratingHistoryService.findByHistoryExtenderId( history.getIdHistory(  ) );
+	            if ( ratingHistory != null )
+	            {
+		            _ratingHistoryService.remove( ratingHistory.getIdRatingHistory(  ) );
+		            
+		            Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
+		            rating.setVoteCount( rating.getVoteCount(  ) - 1 );
+		            rating.setScoreValue( rating.getScoreValue(  ) - ratingHistory.getVoteValue(  ) );
+		            update( rating );
+	            }
+	            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory(  ) ) );
+	            	         
+        	}
         }
     }
 
