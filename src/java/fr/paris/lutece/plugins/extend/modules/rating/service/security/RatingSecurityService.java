@@ -146,8 +146,10 @@ public class RatingSecurityService implements IRatingSecurityService
                     filter.setUserGuid( user.getName(  ) );
                 }
             }
-
-            filter.setIpAddress( request.getRemoteAddr(  ) );
+            else
+            {
+            	filter.setIpAddress( request.getRemoteAddr(  ) );
+            }
 
             List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
 
@@ -202,8 +204,10 @@ public class RatingSecurityService implements IRatingSecurityService
                 filter.setUserGuid( user.getName(  ) );
             }
         }
-
-        filter.setIpAddress( request.getRemoteAddr(  ) );
+        else
+        {
+        	filter.setIpAddress( request.getRemoteAddr(  ) );
+        }
         filter.setSortedAttributeName( FILTER_SORT_BY_DATE_VOTE );
         filter.setAscSort( false );
 
@@ -267,7 +271,6 @@ public class RatingSecurityService implements IRatingSecurityService
 
             filter.setExtendableResourceType( strExtendableResourceType );
             filter.setUserGuid( user.getName(  ) );
-            filter.setIpAddress( request.getRemoteAddr(  ) );
             filter.setIdExtendableResource( strIdExtendableResource );
 
             List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
