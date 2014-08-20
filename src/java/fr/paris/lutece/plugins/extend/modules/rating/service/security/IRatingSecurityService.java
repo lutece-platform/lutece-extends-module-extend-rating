@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.service.security;
 
+import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,4 +66,13 @@ public interface IRatingSecurityService
      * @return true, if successful
      */
     boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+
+    /**
+     * Check if the Votes are closed 
+     * @param config the rating config
+     * @return true if the votes are closed
+     */
+    boolean isVoteClosed( RatingExtenderConfig config);
+    
+    
 }

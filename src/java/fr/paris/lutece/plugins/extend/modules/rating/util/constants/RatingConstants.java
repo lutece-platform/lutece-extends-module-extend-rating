@@ -81,6 +81,7 @@ public final class RatingConstants
     public static final String MARK_SHOW = "show";
     public static final String MARK_CAN_VOTE = "canVote";
     public static final String MARK_CAN_DELETE_VOTE = "canDeleteVote";
+    public static final String MARK_VOTE_CLOSED = "voteClosed";
 
     // CONSTANTS
     public static final String JSON_KEY_SHOW = "show";

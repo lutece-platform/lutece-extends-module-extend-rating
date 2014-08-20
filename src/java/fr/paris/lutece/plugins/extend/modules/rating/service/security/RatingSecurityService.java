@@ -94,31 +94,12 @@ public class RatingSecurityService implements IRatingSecurityService
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
 
-        if ( config == null )
+        if ( config == null  || isVoteClosed(config))
         {
             return false;
         }
 
-        if ( ( config.getDateStart(  ) != null ) || ( config.getDateEnd(  ) != null ) )
-        {
-            // Check activation date
-            if ( ( config.getDateStart(  ) != null ) && ( config.getDateStart(  ).compareTo( new Date(  ) ) > 0 ) )
-            {
-                return false;
-            }
-            else if ( config.getDateEnd(  ) != null )
-            {
-                Calendar cal = Calendar.getInstance(  );
-                cal.setTime( config.getDateEnd(  ) );
-                cal.add( Calendar.DAY_OF_WEEK, 1 );
-
-                if ( cal.getTime(  ).compareTo( new Date(  ) ) < 0 )
-                {
-                    return false;
-                }
-            }
-        }
-
+      
         // Only connected user can vote
         if ( config.isLimitedConnectedUser(  ) && SecurityService.isAuthenticationEnable(  ) )
         {
@@ -252,7 +233,7 @@ public class RatingSecurityService implements IRatingSecurityService
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
 
-        if ( config == null )
+        if ( config == null  || isVoteClosed(config))
         {
             return false;
         }
@@ -285,4 +266,33 @@ public class RatingSecurityService implements IRatingSecurityService
         // No history found, then it is the first time the user is voting the resource
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public boolean isVoteClosed(RatingExtenderConfig config) {
+		
+    	if ( ( config.getDateStart(  ) != null ) || ( config.getDateEnd(  ) != null ) )
+         {
+             // Check activation date
+             if ( ( config.getDateStart(  ) != null ) && ( config.getDateStart(  ).compareTo( new Date(  ) ) > 0 ) )
+             {
+                 return true;
+             }
+             else if ( config.getDateEnd(  ) != null )
+             {
+                 Calendar cal = Calendar.getInstance(  );
+                 cal.setTime( config.getDateEnd(  ) );
+                 cal.add( Calendar.DAY_OF_WEEK, 1 );
+
+                 if ( cal.getTime(  ).compareTo( new Date(  ) ) < 0 )
+                 {
+                     return true;
+                 }
+             }
+         }
+    	 
+    	 return false;
+	}
 }

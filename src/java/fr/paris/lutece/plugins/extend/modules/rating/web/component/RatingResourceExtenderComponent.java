@@ -137,12 +137,21 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                     // In case of user not signed, he can vote but will be redirected to login page
                     model.put( RatingConstants.MARK_CAN_VOTE, true );
                 }
-
-                model.put( RatingConstants.MARK_CAN_DELETE_VOTE,
-                    _ratingSecurityService.canDeleteVote( request, strIdExtendableResource, strExtendableResourceType ) );
-                model.put( RatingConstants.MARK_RATING_HTML_CONTENT,
-                    AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent(  ),
-                        request.getLocale(  ), model ).getHtml(  ) );
+                
+                if( !_ratingSecurityService.isVoteClosed(config))
+                {
+                
+	                model.put( RatingConstants.MARK_CAN_DELETE_VOTE,
+	                    _ratingSecurityService.canDeleteVote( request, strIdExtendableResource, strExtendableResourceType ) );
+	                model.put( RatingConstants.MARK_RATING_HTML_CONTENT,
+	                    AppTemplateService.getTemplateFromStringFtl( voteType.getTemplateContent(  ),
+	                        request.getLocale(  ), model ).getHtml(  ) );
+	                model.put( RatingConstants.MARK_VOTE_CLOSED, false );
+                }
+                else
+                {
+                	model.put( RatingConstants.MARK_VOTE_CLOSED, true );
+                }
 
                 HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING, request.getLocale(  ), model );
 
