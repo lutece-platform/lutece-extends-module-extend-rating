@@ -241,26 +241,7 @@ public class RatingSecurityService implements IRatingSecurityService
         // Only connected user can delete vote
         if ( config.isDeleteVote(  ) && SecurityService.isAuthenticationEnable(  ) )
         {
-            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
-            if ( user == null )
-            {
-                return false;
-            }
-
-            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
-
-            filter.setExtendableResourceType( strExtendableResourceType );
-            filter.setUserGuid( user.getName(  ) );
-            filter.setIdExtendableResource( strIdExtendableResource );
-
-            List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
-
-            if ( CollectionUtils.isNotEmpty( listHistories ) )
-            {
-                // User has already vote and so can delete it
-                return true;
-            }
+            return hasAlreadyVoted(request, strIdExtendableResource, strExtendableResourceType);
         }
 
         // No history found, then it is the first time the user is voting the resource
@@ -295,4 +276,36 @@ public class RatingSecurityService implements IRatingSecurityService
     	 
     	 return false;
 	}
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public boolean hasAlreadyVoted(HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType ) 
+    
+    {
+		LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
+    	if ( user == null )
+         {
+             return false;
+         }
+
+         ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
+
+         filter.setExtendableResourceType( strExtendableResourceType );
+         filter.setUserGuid( user.getName(  ) );
+         filter.setIdExtendableResource( strIdExtendableResource );
+
+         List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
+
+         if ( CollectionUtils.isNotEmpty( listHistories ) )
+         {
+             // User has already vote and so can delete it
+             return true;
+         }
+         
+         return false;
+	}
+    
+    
 }

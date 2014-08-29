@@ -74,5 +74,13 @@ public interface IRatingSecurityService
      */
     boolean isVoteClosed( RatingExtenderConfig config);
     
+    /**
+     * true if the use has already Voted
+     * @param request
+     * @param strIdExtendableResource the str id extendable resource
+     * @param strExtendableResourceType the str extendable resource type
+     */
+    boolean hasAlreadyVoted(HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    
     
 }
