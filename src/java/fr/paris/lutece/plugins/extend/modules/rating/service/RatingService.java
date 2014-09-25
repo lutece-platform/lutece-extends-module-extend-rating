@@ -97,7 +97,7 @@ public class RatingService implements IRatingService
      */
     @Override
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    public void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
+   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
         HttpServletRequest request )
     {
     	Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
@@ -133,7 +133,7 @@ public class RatingService implements IRatingService
      */
     @Override
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    public void doCancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
+    synchronized  public void doCancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
     {
         ResourceExtenderHistoryFilter resourceExtenderHistoryFilter = new ResourceExtenderHistoryFilter(  );
         resourceExtenderHistoryFilter.setUserGuid( user.getName(  ) );
