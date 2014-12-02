@@ -51,9 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- *
- * YourOpinionResourceExtender
- *
+ * RatingResourceExtender
  */
 public class RatingResourceExtender extends AbstractResourceExtender
 {
