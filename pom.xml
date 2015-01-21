@@ -53,8 +53,8 @@
 	</properties>
     
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-rating</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-rating</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/extends/module-extend-rating</url>
+        <connection>scm:git:https://github.com/lutece-platform/lutece-extends-module-extend-rating.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-extends-module-extend-rating.git</developerConnection>
+        <url>https://github.com/lutece-platform/lutece-extends-module-extend-rating.git</url>
     </scm>
 </project>
