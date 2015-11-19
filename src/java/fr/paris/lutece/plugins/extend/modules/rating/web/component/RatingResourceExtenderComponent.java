@@ -35,40 +35,47 @@ package fr.paris.lutece.plugins.extend.modules.rating.web.component;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.business.type.VoteType;
+import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingHistoryService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSecurityService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.type.IVoteTypeService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
+import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.util.JSONUtils;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -84,6 +91,9 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private static final String TEMPLATE_RATING_CONFIG = "admin/plugins/extend/modules/rating/rating_config.html";
     private static final String TEMPLATE_RATING_INFO = "admin/plugins/extend/modules/rating/rating_info.html";
     private static final String MARK_LOCALE = "locale";
+	// CONSTANTS
+    private static final String ORDER_BY_DATE_CREATION = " date_creation ";
+    
     @Inject
     private IRatingService _ratingService;
     @Inject
@@ -93,7 +103,10 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private IVoteTypeService _voteTypeService;
     @Inject
     private IRatingSecurityService _ratingSecurityService;
-
+    @Inject 
+    private IResourceExtenderHistoryService _resourceExtenderHistoryService ;
+    @Inject 
+    private IRatingHistoryService _ratingHistoryService ;
     /**
      * {@inheritDoc}
      */
@@ -113,6 +126,8 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     {
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
+        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
+       
 
         if ( config != null )
         {
@@ -121,11 +136,39 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
             if ( voteType != null )
             {
                 Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
+                int nVoteValue = 0 ;
+
+                if ( user != null )
+                {
+                 ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
+                 
+                 filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
+                 filter.setExtendableResourceType( strExtendableResourceType );
+                 filter.setIdExtendableResource( strIdExtendableResource );
+                 filter.setUserGuid( user.getName(  ) );
+                 filter.setAscSort( false );
+                 filter.setSortedAttributeName( ORDER_BY_DATE_CREATION );
+
+                 List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
+                 
+                 if ( CollectionUtils.isNotEmpty( listHistories ) && listHistories.get( 0 ) != null )
+                 {
+                	 long lHistoryExtenderId = listHistories.get( 0 ).getIdHistory( ) ;
+                	 RatingHistory ratingHistory = _ratingHistoryService.findByHistoryExtenderId( lHistoryExtenderId ) ;
+                	 
+                	 if( ratingHistory != null )
+                	 {
+                		 nVoteValue = ratingHistory.getVoteValue( ) ;
+                	 }
+                 }
+                }
+                
                 Map<String, Object> model = new HashMap<String, Object>(  );
                 model.put( RatingConstants.MARK_RATING, rating );
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
+                model.put("voteValue", nVoteValue ) ;
 
                 if( !_ratingSecurityService.isVoteClosed(config))
                 {

@@ -110,15 +110,31 @@ public class RatingService implements IRatingService
             rating.setExtendableResourceType( strExtendableResourceType );
             rating.setVoteCount( 1 );
             rating.setScoreValue( nVoteValue );
+            if ( nVoteValue == 1 )
+            {
+            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
+            }
+            else
+            {
+            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
+            }
             create( rating );
         }
         else
         {
             rating.setVoteCount( rating.getVoteCount(  ) + 1 );
             rating.setScoreValue( rating.getScoreValue(  ) + nVoteValue );
+            if ( nVoteValue == 1 )
+            {
+            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
+            }
+            else
+            {
+            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
+            }
             update( rating );
         }
-
+        
         ResourceExtenderHistory history = _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType, request );
 

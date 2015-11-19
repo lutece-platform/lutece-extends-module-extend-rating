@@ -50,6 +50,9 @@ public class Rating
     private String _strExtendableResourceType;
     private int _nVoteCount;
     private int _nScoreValue;
+    private int _nScorePositifsVotes;
+    private int _nScoreNegativesVotes;
+    
 
     /**
          * @return the nIdRating
@@ -130,8 +133,38 @@ public class Rating
     {
         _nScoreValue = nScoreValue;
     }
-
+    
     /**
+     * 
+     * @return
+     */
+    public int getScorePositifsVotes( ) 
+    {
+		return _nScorePositifsVotes;
+	}
+    /**
+     * 
+     * @param _nScorePositifVotes
+     */
+	public void setScorePositifsVotes( int _nScorePositifVotes ) 
+	{
+		this._nScorePositifsVotes = _nScorePositifVotes;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public int getScoreNegativesVotes( ) 
+	{
+		return _nScoreNegativesVotes;
+	}
+
+	public void setScoreNegativesVotes( int nScoreNegativeVotes ) 
+	{
+		this._nScoreNegativesVotes = nScoreNegativeVotes;
+	}
+
+	/**
      * Calculate the score (min : 1 - max : 4).
      *
      * @return the calculated score
