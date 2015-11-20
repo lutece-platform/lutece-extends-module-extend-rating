@@ -8,6 +8,8 @@ CREATE TABLE extend_rating (
 	resource_type VARCHAR(255) DEFAULT '' NOT NULL,
 	vote_count INT default 0 NOT NULL,
 	score_value INT default 0 NOT NULL,
+	score_positifs_votes INT default 0 NOT NULL,
+	score_negatives_votes INT default 0 NOT NULL,
 	PRIMARY KEY (id_rating)
 );
 
