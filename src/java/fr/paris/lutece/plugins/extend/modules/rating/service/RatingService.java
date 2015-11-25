@@ -154,9 +154,10 @@ public class RatingService implements IRatingService
         ResourceExtenderHistoryFilter resourceExtenderHistoryFilter = new ResourceExtenderHistoryFilter(  );
         resourceExtenderHistoryFilter.setUserGuid( user.getName(  ) );
         resourceExtenderHistoryFilter.setIdExtendableResource( strIdExtendableResource );
-
+        
         List<ResourceExtenderHistory> histories = _resourceExtenderHistoryService.findByFilter( resourceExtenderHistoryFilter );
-
+        boolean bDecrementCount = false ;
+        
         if ( CollectionUtils.isNotEmpty( histories ) )
         {
         	for(ResourceExtenderHistory history : histories)
@@ -169,6 +170,16 @@ public class RatingService implements IRatingService
 		            Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
 		            rating.setVoteCount( rating.getVoteCount(  ) - 1 );
 		            rating.setScoreValue( rating.getScoreValue(  ) - ratingHistory.getVoteValue(  ) );
+		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) > 0 )
+		            {
+		            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) - 1 );
+		            	bDecrementCount = true ; 
+		            }
+		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) < 0 )
+		            {
+		            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) - 1 );
+		            	bDecrementCount = true ; 
+		            }
 		            update( rating );
 	            }
 	            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory(  ) ) );

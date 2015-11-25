@@ -168,7 +168,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
-                model.put("voteValue", nVoteValue ) ;
+                model.put( RatingConstants.MARK_VOTE_VALUE, nVoteValue ) ;
 
                 if( !_ratingSecurityService.isVoteClosed(config))
                 {
