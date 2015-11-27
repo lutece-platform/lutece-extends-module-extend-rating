@@ -117,6 +117,7 @@ public class RatingSecurityService implements IRatingSecurityService
             ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
 
             filter.setExtendableResourceType( strExtendableResourceType );
+            filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
 
             if ( SecurityService.isAuthenticationEnable(  ) )
             {
@@ -143,6 +144,7 @@ public class RatingSecurityService implements IRatingSecurityService
 
         ResourceExtenderDTOFilter extenderFilter = new ResourceExtenderDTOFilter(  );
         extenderFilter.setFilterExtendableResourceType( strExtendableResourceType );
+        extenderFilter.setFilterExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
 
         List<ResourceExtenderDTO> extenders = _extenderService.findByFilter( extenderFilter );
 
@@ -175,6 +177,8 @@ public class RatingSecurityService implements IRatingSecurityService
         // Search the voting histories of the user
         ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
         filter.setIdExtendableResource( rating.getIdExtendableResource(  ) );
+        filter.setExtendableResourceType( strExtendableResourceType );
+        filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
 
         if ( SecurityService.isAuthenticationEnable(  ) )
         {
@@ -295,6 +299,7 @@ public class RatingSecurityService implements IRatingSecurityService
          filter.setExtendableResourceType( strExtendableResourceType );
          filter.setUserGuid( user.getName(  ) );
          filter.setIdExtendableResource( strIdExtendableResource );
+         filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
 
          List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
 

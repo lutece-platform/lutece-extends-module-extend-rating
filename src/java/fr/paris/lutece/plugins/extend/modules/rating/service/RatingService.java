@@ -154,6 +154,7 @@ public class RatingService implements IRatingService
         ResourceExtenderHistoryFilter resourceExtenderHistoryFilter = new ResourceExtenderHistoryFilter(  );
         resourceExtenderHistoryFilter.setUserGuid( user.getName(  ) );
         resourceExtenderHistoryFilter.setIdExtendableResource( strIdExtendableResource );
+        resourceExtenderHistoryFilter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
         
         List<ResourceExtenderHistory> histories = _resourceExtenderHistoryService.findByFilter( resourceExtenderHistoryFilter );
         boolean bDecrementCount = false ;
