@@ -139,7 +139,10 @@ public class RatingJspBean
                 if ( StringUtils.isNotEmpty( strFromUrl ) )
                 {
                     strFromUrl = strFromUrl.replaceAll( "%", "%25" );
-                    url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+                    if ( !url.getUrl().contains( RatingConstants.PARAMETER_FROM_URL ) )
+                    {
+                        url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+                    }
                 }
 
                 strNextUrl = url.getUrl(  );
@@ -247,7 +250,10 @@ public class RatingJspBean
             if ( StringUtils.isNotEmpty( strFromUrl ) )
             {
                 strFromUrl = strFromUrl.replaceAll( "%", "%25" );
-                url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+                if ( !url.getUrl().contains( RatingConstants.PARAMETER_FROM_URL ) )
+                {
+                    url.addParameter( RatingConstants.PARAMETER_FROM_URL, strFromUrl );
+                }
             }
 
             response.sendRedirect( url.getUrl(  ) );
