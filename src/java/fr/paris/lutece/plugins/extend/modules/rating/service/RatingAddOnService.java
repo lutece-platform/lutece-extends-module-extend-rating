@@ -68,7 +68,7 @@ public class RatingAddOnService implements IResourceDisplayManager
 
             if ( rating != null )
             {
-                XmlUtil.addElement( strXml, TAG_RATING, rating.getAverageScore(  ) );
+                XmlUtil.addElement( strXml, TAG_RATING, String.format( "%.1f", rating.getAverageScore(  ) ) );
                 XmlUtil.addElement( strXml, TAG_NUMBER_RATING, rating.getVoteCount(  ) );
             }
         }

@@ -52,18 +52,18 @@ public final class RatingValidationManagementService
      * @param user The user that wants to rate a resource
      * @param strIdResource the id of the resource
      * @param strResourceTypeKey The resource type key
-     * @param nVoteValue The vote value
+     * @param dVoteValue The vote value
      * @return The URL to redirect the user if he is not allowed to rate the
      *         resource, or null if he is allowed
      */
     public static String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
-        String strResourceTypeKey, int nVoteValue )
+        String strResourceTypeKey, double dVoteValue )
     {
         for ( IRatingValidationService validationService : SpringContextService.getBeansOfType( 
                 IRatingValidationService.class ) )
         {
             String strUrlError = validationService.validateRating( request, user, strIdResource, strResourceTypeKey,
-                    nVoteValue );
+                    dVoteValue );
 
             if ( StringUtils.isNotBlank( strUrlError ) )
             {

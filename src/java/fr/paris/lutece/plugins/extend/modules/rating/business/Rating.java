@@ -49,7 +49,7 @@ public class Rating
     @NotNull
     private String _strExtendableResourceType;
     private int _nVoteCount;
-    private int _nScoreValue;
+    private double _dScoreValue;
     private int _nScorePositifsVotes;
     private int _nScoreNegativesVotes;
     
@@ -119,19 +119,19 @@ public class Rating
     }
 
     /**
-     * @return the nScoreValue
+     * @return the dScoreValue
      */
-    public int getScoreValue(  )
+    public double getScoreValue(  )
     {
-        return _nScoreValue;
+        return _dScoreValue;
     }
 
     /**
-     * @param nScoreValue the nScoreValue to set
+     * @param dScoreValue the dScoreValue to set
      */
-    public void setScoreValue( int nScoreValue )
+    public void setScoreValue( double dScoreValue )
     {
-        _nScoreValue = nScoreValue;
+        _dScoreValue = dScoreValue;
     }
     
     /**
@@ -167,28 +167,35 @@ public class Rating
 	/**
      * Calculate the score (min : 1 - max : 4).
      *
-     * @return the calculated score
+     * @return the average score
      */
-    public int getAverageScore(  )
+    public double getAverageScore(  )
     {
-        int nScore = 0;
+        double dScore = 0;
 
         if ( _nVoteCount > 0 )
         {
-            float averageScore = (float) _nScoreValue / (float) _nVoteCount;
-            nScore = Math.round( averageScore );
-            // The score value interval is [-2, 2], so the score must add 2
-            // in order to have the interval [0, 4]
-            nScore = nScore + 2;
-
-            // We also add 1 to the score if the average score is negative
-            // n order to have the interval [1, 4]
-            if ( averageScore < 0f )
-            {
-                nScore++;
-            }
+            double averageScore = _dScoreValue / ( double ) _nVoteCount;
+            dScore =  Math.round( averageScore * 10 ) * 0.1;
         }
 
-        return nScore;
+        return dScore;
+    }
+    
+    /**
+     *
+     * @return the average score calculated with 0.5 precision
+     */
+    public double getAverageScoreRoundToHalf(  )
+    {
+        double dScore = 0;
+
+        if ( _nVoteCount > 0 )
+        {
+            double averageScore = _dScoreValue / (double) _nVoteCount;
+            dScore =  Math.round( averageScore * 2 ) * 0.5;
+        }
+
+        return dScore;
     }
 }

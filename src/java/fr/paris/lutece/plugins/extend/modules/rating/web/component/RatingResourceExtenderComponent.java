@@ -136,7 +136,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
             if ( voteType != null )
             {
                 Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
-                int nVoteValue = 0 ;
+                double dVoteValue = 0 ;
 
                 if ( user != null )
                 {
@@ -158,7 +158,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 	 
                 	 if( ratingHistory != null )
                 	 {
-                		 nVoteValue = ratingHistory.getVoteValue( ) ;
+                		 dVoteValue = ratingHistory.getVoteValue( ) ;
                 	 }
                  }
                 }
@@ -168,7 +168,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
                 model.put( RatingConstants.MARK_SHOW, fetchShowParameter( strParameters ) );
-                model.put( RatingConstants.MARK_VOTE_VALUE, nVoteValue ) ;
+                model.put( RatingConstants.MARK_VOTE_VALUE, dVoteValue ) ;
 
                 if( !_ratingSecurityService.isVoteClosed(config))
                 {

@@ -102,7 +102,7 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
 
         daoUtil.setInt( nIndex++, ratingHistory.getIdRatingHistory(  ) );
         daoUtil.setLong( nIndex++, ratingHistory.getIdExtenderHistory(  ) );
-        daoUtil.setInt( nIndex++, ratingHistory.getVoteValue(  ) );
+        daoUtil.setDouble( nIndex++, ratingHistory.getVoteValue(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -124,7 +124,7 @@ public class RatingHistoryDAO implements IRatingHistoryDAO
             ratingHistory = new RatingHistory(  );
             ratingHistory.setIdRatingHistory( daoUtil.getInt( 1 ) );
             ratingHistory.setIdExtenderHistory( daoUtil.getLong( 2 ) );
-            ratingHistory.setVoteValue( daoUtil.getInt( 3 ) );
+            ratingHistory.setVoteValue( daoUtil.getDouble( 3 ) );
         }
 
         daoUtil.free(  );

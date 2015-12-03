@@ -174,11 +174,11 @@ public class RatingJspBean
             throw e;
         }
 
-        int nVoteValue = 0;
+        double dVoteValue = 0;
 
         try
         {
-            nVoteValue = Integer.parseInt( strVoteValue );
+            dVoteValue = Double.parseDouble( strVoteValue );
         }
         catch ( NumberFormatException e )
         {
@@ -187,7 +187,7 @@ public class RatingJspBean
 
         String strErrorUrl = RatingValidationManagementService.validateRating( request,
                 SecurityService.getInstance(  ).getRemoteUser( request ), strIdExtendableResource,
-                strExtendableResourceType, nVoteValue );
+                strExtendableResourceType, dVoteValue );
 
         if ( StringUtils.isNotEmpty( strErrorUrl ) )
         {
@@ -203,9 +203,9 @@ public class RatingJspBean
             return;
         }
 
-        _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, nVoteValue, request );
+        _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, dVoteValue, request );
 
-        sendNotification( request, strIdExtendableResource, strExtendableResourceType, nVoteValue );
+        sendNotification( request, strIdExtendableResource, strExtendableResourceType, dVoteValue );
         response.sendRedirect( strNextUrl );
     }
 
@@ -272,7 +272,7 @@ public class RatingJspBean
      * @param nVoteValue the n vote value
      */
     private void sendNotification( HttpServletRequest request, String strIdExtendableResource,
-        String strExtendableResourceType, int nVoteValue )
+        String strExtendableResourceType, double dVoteValue )
     {
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
@@ -293,7 +293,7 @@ public class RatingJspBean
                     request.getLocale(  ) );
 
             model.put( RatingConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
-            model.put( RatingConstants.MARK_VOTE_VALUE, nVoteValue );
+            model.put( RatingConstants.MARK_VOTE_VALUE, dVoteValue );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_NOTIFY_MESSAGE,
                     request.getLocale(  ), model );

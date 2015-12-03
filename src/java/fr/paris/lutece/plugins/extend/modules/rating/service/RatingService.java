@@ -97,7 +97,7 @@ public class RatingService implements IRatingService
      */
     @Override
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
+   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, double nVoteValue,
         HttpServletRequest request )
     {
     	Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );

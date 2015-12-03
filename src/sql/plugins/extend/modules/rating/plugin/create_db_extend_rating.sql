@@ -7,7 +7,7 @@ CREATE TABLE extend_rating (
 	id_resource VARCHAR(100) DEFAULT '' NOT NULL,
 	resource_type VARCHAR(255) DEFAULT '' NOT NULL,
 	vote_count INT default 0 NOT NULL,
-	score_value INT default 0 NOT NULL,
+	score_value DOUBLE default 0 NOT NULL,
 	score_positifs_votes INT default 0 NOT NULL,
 	score_negatives_votes INT default 0 NOT NULL,
 	PRIMARY KEY (id_rating)
@@ -50,6 +50,6 @@ DROP TABLE IF EXISTS extend_rating_vote_history;
 CREATE TABLE extend_rating_vote_history (
 	id_vote_history INT DEFAULT 0 NOT NULL,
 	id_extender_history INT DEFAULT 0 NOT NULL,
-	vote_value INT DEFAULT 0 NOT NULL,
+	vote_value DOUBLE DEFAULT 0 NOT NULL,
 	PRIMARY KEY (id_vote_history)
 );

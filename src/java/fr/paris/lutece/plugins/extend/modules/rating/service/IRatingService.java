@@ -86,11 +86,11 @@ public interface IRatingService
      *
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
-     * @param nVoteValue the n vote value
+     * @param dVoteValue the vote value
      * @param request the request
      */
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    void doVote( String strIdExtendableResource, String strExtendableResourceType, int nVoteValue,
+    void doVote( String strIdExtendableResource, String strExtendableResourceType, double dVoteValue,
         HttpServletRequest request );
 
     /**

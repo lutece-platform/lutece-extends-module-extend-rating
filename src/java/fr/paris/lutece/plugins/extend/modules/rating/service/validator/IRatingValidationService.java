@@ -49,10 +49,10 @@ public interface IRatingValidationService
      * @param user The user that wants to rate a resource
      * @param strIdResource the id of the resource
      * @param strResourceTypeKey The resource type key
-     * @param nVoteValue The value of the vote
+     * @param dVoteValue The value of the vote
      * @return The URL to redirect the user if he is not allowed to rate the
      *         resource, or null if he is allowed
      */
     String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
-        String strResourceTypeKey, int nVoteValue );
+        String strResourceTypeKey, double dVoteValue );
 }

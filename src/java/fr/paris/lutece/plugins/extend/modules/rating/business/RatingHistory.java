@@ -43,7 +43,7 @@ public class RatingHistory
 {
     private int _nIdRatingHistory;
     private long _lIdExtenderHistory;
-    private int _nVoteValue;
+    private double _dVoteValue;
 
     /**
      * @return the _nIdRatingHistory
@@ -78,18 +78,18 @@ public class RatingHistory
     }
 
     /**
-     * @return the _nVoteValue
+     * @return the _dVoteValue
      */
-    public int getVoteValue(  )
+    public double getVoteValue(  )
     {
-        return _nVoteValue;
+        return _dVoteValue;
     }
 
     /**
-     * @param nVoteValue the _nVoteValue to set
+     * @param nVoteValue the _dVoteValue to set
      */
-    public void setVoteValue( int nVoteValue )
+    public void setVoteValue( double dVoteValue )
     {
-        this._nVoteValue = nVoteValue;
+        this._dVoteValue = dVoteValue;
     }
 }

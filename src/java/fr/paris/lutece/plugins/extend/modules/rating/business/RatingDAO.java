@@ -102,7 +102,7 @@ public class RatingDAO implements IRatingDAO
         daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
-        daoUtil.setInt( nIndex++, rating.getScoreValue(  ) );
+        daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
         daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
         daoUtil.setInt( nIndex, rating.getScoreNegativesVotes(  ) );
 
@@ -130,7 +130,7 @@ public class RatingDAO implements IRatingDAO
             rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
             rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
             rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getInt( nIndex++ ) );
+            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
             rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
             rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
         }
@@ -190,7 +190,7 @@ public class RatingDAO implements IRatingDAO
         daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
-        daoUtil.setInt( nIndex++, rating.getScoreValue(  ) );
+        daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
         daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
         daoUtil.setInt( nIndex++, rating.getScoreNegativesVotes(  ) );
 
@@ -223,7 +223,7 @@ public class RatingDAO implements IRatingDAO
             rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
             rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
             rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getInt( nIndex++ ) );
+            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
             rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
             rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
         }
