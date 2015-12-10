@@ -41,20 +41,12 @@ import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Iterator;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
-
+ 
 
 /**
  *
@@ -80,6 +72,8 @@ public class RatingService implements IRatingService
     public void create( Rating rating )
     {
         _ratingDAO.insert( rating, RatingPlugin.getPlugin(  ) );
+        
+        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
     }
 
     /**
@@ -90,6 +84,7 @@ public class RatingService implements IRatingService
     public void update( Rating rating )
     {
         _ratingDAO.store( rating, RatingPlugin.getPlugin(  ) );
+        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
     }
 
     /**
@@ -142,6 +137,8 @@ public class RatingService implements IRatingService
         ratingHistory.setIdExtenderHistory( history.getIdHistory(  ) );
         ratingHistory.setVoteValue( nVoteValue );
         _ratingHistoryService.create( ratingHistory );
+        
+        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
     }
 
     /**
@@ -182,6 +179,11 @@ public class RatingService implements IRatingService
 		            	bDecrementCount = true ; 
 		            }
 		            update( rating );
+		            
+		            if ( RatingListenerService.hasListener( ) )
+		            {
+		            	RatingListenerService.deleteRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ),  user );
+		            }
 	            }
 	            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory(  ) ) );
 	            	         
@@ -196,6 +198,7 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void remove( int nIdRating )
     {
+    	
         _ratingDAO.delete( nIdRating, RatingPlugin.getPlugin(  ) );
     }
 
