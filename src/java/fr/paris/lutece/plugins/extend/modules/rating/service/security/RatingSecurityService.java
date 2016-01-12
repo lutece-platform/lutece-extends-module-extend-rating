@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtender
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
+import fr.paris.lutece.plugins.extend.modules.rating.service.RatingListenerService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
@@ -58,7 +59,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -90,6 +90,11 @@ public class RatingSecurityService implements IRatingSecurityService
     public boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
         throws UserNotSignedException
     {
+    	
+    	// Check if we can vote
+    	if( !RatingListenerService.canVote(SecurityService.getInstance(  ).getRegisteredUser( request ), strIdExtendableResource, strExtendableResourceType )){
+    		return false;
+    	}
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );

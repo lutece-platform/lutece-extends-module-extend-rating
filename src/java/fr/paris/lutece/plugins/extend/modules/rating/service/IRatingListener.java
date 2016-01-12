@@ -56,4 +56,15 @@ public interface IRatingListener
      * @param strExtendableResourceType The id of removed rating
      */
     void cancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
+    
+    /**
+     * Check if user can to vote
+     * @param user
+     * @param strIdExtendableResource
+     * @param strExtendableResourceType
+     * @return
+     */
+    boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
+    
+    
 }

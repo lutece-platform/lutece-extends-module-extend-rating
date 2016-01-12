@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.service;
 
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.util.AppLogService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,6 +155,48 @@ public class RatingListenerService
         {
             AppLogService.error( e.getMessage( ), e );
         }
+    }
+    /**
+     * Check if user can to vote. Only listeners
+     * @param user
+     * @param strIdExtendableResource
+     * @param strExtendableResourceType
+     * @return
+     */
+    public static boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType ){
+    	
+    	
+    	try
+        {
+            List<IRatingListener> listListeners = _mapListeners.get( strExtendableResourceType );
+            if ( listListeners != null )
+            {
+                for ( IRatingListener listener : listListeners )
+                {
+                    if(!listener.canVote( user, strIdExtendableResource, strExtendableResourceType )){
+                    	return false;
+                    }
+                    
+                }
+            }
+            listListeners = _mapListeners.get( CONSTANT_EVERY_EXTENDABLE_RESOURCE_TYPE );
+            if ( listListeners != null )
+            {
+                for ( IRatingListener listener : listListeners )
+                {
+                	if(!listener.canVote( user, strIdExtendableResource, strExtendableResourceType )){
+                		return false;
+                	}
+                	
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
+    	return true;
+
     }
 
 }
