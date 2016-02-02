@@ -90,11 +90,6 @@ public class RatingSecurityService implements IRatingSecurityService
     public boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
         throws UserNotSignedException
     {
-    	
-    	// Check if we can vote
-    	if( !RatingListenerService.canVote(SecurityService.getInstance(  ).getRegisteredUser( request ), strIdExtendableResource, strExtendableResourceType )){
-    		return false;
-    	}
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
@@ -113,6 +108,11 @@ public class RatingSecurityService implements IRatingSecurityService
             if ( user == null )
             {
                 throw new UserNotSignedException(  );
+            }
+            // Check if we can vote
+            if ( !RatingListenerService.canVote( user, strIdExtendableResource, strExtendableResourceType ) )
+            {
+                return false;
             }
         }
 
@@ -293,12 +293,17 @@ public class RatingSecurityService implements IRatingSecurityService
 	public boolean hasAlreadyVoted(HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType ) 
     
     {
-		LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-    	if ( user == null )
-         {
-             return false;
-         }
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        if ( user == null )
+        {
+            return false;
+        }
 
+        // Check if we can vote
+        if ( !RatingListenerService.canVote( user, strIdExtendableResource, strExtendableResourceType ) )
+        {
+            return false;
+        }
          ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
 
          filter.setExtendableResourceType( strExtendableResourceType );
