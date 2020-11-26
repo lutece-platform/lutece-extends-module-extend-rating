@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.web.component;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
@@ -63,8 +64,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -310,17 +309,17 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private String fetchShowParameter( String strParameters )
     {
         String strShowParameter = StringUtils.EMPTY;
-        JSONObject jsonParameters = JSONUtils.parseParameters( strParameters );
+        ObjectNode jsonParameters = JSONUtils.parseParameters( strParameters );
 
         if ( jsonParameters != null )
         {
-            try
+            if ( jsonParameters.has( RatingConstants.JSON_KEY_SHOW ) )
             {
-                strShowParameter = jsonParameters.getString( RatingConstants.JSON_KEY_SHOW );
+                strShowParameter = jsonParameters.get( RatingConstants.JSON_KEY_SHOW ).asText( );
             }
-            catch ( JSONException je )
+            else 
             {
-                AppLogService.debug( je.getMessage(  ), je );
+                AppLogService.debug( "No " + RatingConstants.JSON_KEY_SHOW + " found in " + jsonParameters );
             }
         }
 
