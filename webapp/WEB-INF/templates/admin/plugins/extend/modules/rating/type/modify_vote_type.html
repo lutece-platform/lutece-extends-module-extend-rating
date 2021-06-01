@@ -1,78 +1,45 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{module.extend.rating.modify_vote_types.pageTitle}</h3>
-			</div>
-			<div class="box-body table-responsive">
-				<div class="row">
-					<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-						<form class="form-horizontal" method="post" action="jsp/admin/plugins/extend/modules/rating/DoModifyVoteType.jsp">
-							<input type="hidden" name="idVoteType" value="${voteType.idVoteType!}">
-							<input type="hidden" name="templateName" value="${voteType.templateName!}">
-							<div class="form-group" >
-								<label class="col-xs-12 col-sm-12 col-md-2 col-lg-3" for="title">#i18n{module.extend.rating.modify_vote_types.labelTitle} *</label>
-								<div class="col-xs-12 col-sm-12 col-md-4 col-lg-5">
-									<input type="text" class="form-control"  maxlength="20" value="${voteType.title!}" name="title">
-								</div>
-							</div>
-							<div class="form-group" >
-								<label class="col-xs-12 col-sm-12 col-md-2 col-lg-3" for="templateContent">#i18n{module.extend.rating.modify_vote_types.labelContent} * </label>
-								<div class="col-xs-12 col-sm-12 col-md-4 col-lg-5">
-									<textarea name="templateContent" class="form-control" rows="20">${voteType.templateContent!}</textarea>
-								</div>
-							</div>
-							<div class="form-group" >
-								<div class="col-xs-12 col-sm-12 col-md-offset-2 col-lg-offset-3">
-									<button class="btn btn-primary btn-flat" type="submit" name="save" class="button" value="#i18n{portal.util.labelModify}" >
-										<i class="fa fa-check">&nbsp;</i>&nbsp;#i18n{portal.util.labelModify}
-									</button>
-									<button class="btn btn-default btn-flat" type="submit" name="cancel" class="button" value="#i18n{portal.util.labelCancel}" >
-										<i class="fa fa-close">&nbsp;</i>&nbsp;#i18n{portal.util.labelCancel}
-									</button>
-								</div>
-							</div>
-						</form>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-						<p class="lead">#i18n{module.extend.rating.modify_vote_types.labelTemplateContentComment}</p>
-						<table class="table table-hover table-condensed">
-							<tr>
-								<th>#i18n{module.extend.rating.modify_vote_types.labelName}</th>
-								<th>#i18n{module.extend.rating.modify_vote_types.labelFreemarker}</th>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelIdExtendableResource}</td>
-								<td>&#36;&#123;idExtendableResource!&#125;</td>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelExtendableResourceType}</td>
-								<td>&#36;&#123;extendableResourceType!&#125;</td>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelScoreValue}</td>
-								<td>&#36;&#123;rating.scoreValue!&#125;</td>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelAverageScore}</td>
-								<td>&#36;&#123;rating.score!&#125;</td>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelVoteCount}</td>
-								<td>&#36;&#123;rating.voteCount!&#125;</td>
-							</tr>
-							<tr>
-								<td>#i18n{module.extend.rating.modify_vote_types.labelUrl}</td>
-								<td>
-									<em>jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=&#36;&#123;idExtendableResource!&#125;&amp;extendableResourceType=&#36;&#123;extendableResourceType!&#125;&amp;voteValue=<b>&lt;voteValue&gt;</b></em>
-									<br />
-									#i18n{module.extend.rating.modify_vote_types.labelUrlComment}
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{module.extend.rating.modify_vote_types.pageTitle}' />
+			<@boxBody>
+			<@row>
+				<@columns sm=6 offsetSm=1>
+					<@tform action='jsp/admin/plugins/extend/modules/rating/DoModifyVoteType.jsp'>
+					<input type="hidden" name="idVoteType" value="${voteType.idVoteType!}">
+					<input type="hidden" name="templateName" value="${voteType.templateName!}">
+					<@formGroup rows=2 labelFor='title' labelKey='#i18n{module.extend.rating.modify_vote_types.labelTitle}' mandatory=true >
+						<@input name='title' value='${voteType.title!}' maxlength=20 />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='templateContent' labelKey='#i18n{module.extend.rating.modify_vote_types.labelContent}' mandatory=true >
+						<@input type='textarea' name='templateContent' rows=20 >${voteType.templateContent!}</@input>
+					</@formGroup>
+					<@formGroup rows=2>
+						<@row>
+							<@columns sm=6 offsetSm=3 >
+							<@button color='primary' type='submit' name='save' value='#i18n{portal.util.labelModify}' >
+								<@icon style='check' /> #i18n{portal.util.labelModify}
+							</@button>
+							<@button class='default' type='submit' name='cancel' value='#i18n{portal.util.labelCancel}' >
+								<@icon style='times' /> #i18n{portal.util.labelCancel}
+							</@button>
+							</@columns>
+						</@row>
+					</@formGroup>
+					</@tform>
+				</@columns>
+				<@columns sm=4>
+					<@p><strong>#i18n{module.extend.rating.modify_vote_types.labelIdExtendableResource} :</strong> <span class="copy-content"> &#36;&#123;idExtendableResource!&#125;</span></@p>
+					<@p>#i18n{module.extend.rating.modify_vote_types.labelExtendableResourceType} : <span class="copy-content"> &#36;&#123;extendableResourceType!&#125;</span></@p>
+					<@p>#i18n{module.extend.rating.modify_vote_types.labelScoreValue} : <span class="copy-content"> &#36;&#123;rating.scoreValue!&#125;</span></@p>
+					<@p>#i18n{module.extend.rating.modify_vote_types.labelAverageScore} : <span class="copy-content"> &#36;&#123;rating.score!&#125;</span></@p>
+					<@p>#i18n{module.extend.rating.modify_vote_types.labelVoteCount} <span class="copy-content"> &#36;&#123;rating.voteCount!&#125;</span></@p>
+					<@p>#i18n{module.extend.rating.modify_vote_types.labelUrl} : <span class="copy-content">jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=&#36;&#123;idExtendableResource!&#125;&amp;extendableResourceType=&#36;&#123;extendableResourceType!&#125;&amp;voteValue=&lt;voteValue&gt;</span> 
+					<br><strong>#i18n{module.extend.rating.modify_vote_types.labelUrlComment}</strong></@p>
+				</@columns>
+			</@row>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<@copyElementToClipboard selector='.copy-content' class='"copy-icon"' />
