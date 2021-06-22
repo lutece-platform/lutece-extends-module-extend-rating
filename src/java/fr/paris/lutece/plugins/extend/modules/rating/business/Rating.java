@@ -41,17 +41,16 @@ import javax.validation.constraints.NotNull;
  * Rating
  *
  */
-public class Rating
-{
-    private int _nIdRating;
+public abstract class Rating {
+    protected int _nIdRating;
     @NotNull
-    private String _strIdExtendableResource;
+    protected String _strIdExtendableResource;
     @NotNull
-    private String _strExtendableResourceType;
-    private int _nVoteCount;
-    private double _dScoreValue;
-    private int _nScorePositifsVotes;
-    private int _nScoreNegativesVotes;
+    protected String _strExtendableResourceType;
+    @NotNull
+    protected String _strRatingType;
+    protected int _nVoteCount;
+    protected double _dScoreValue;
     
 
     /**
@@ -68,6 +67,21 @@ public class Rating
     public void setIdRating( int nIdRating )
     {
         _nIdRating = nIdRating;
+    }
+
+    /**
+     *
+     * @return rating type
+     */
+    public String getRatingType() {
+        return _strRatingType;
+    }
+
+    /**
+     * @param ratingType the nIdRating to set
+     */
+    public void setRatingType(String ratingType) {
+        _strRatingType = ratingType;
     }
 
     /**
@@ -133,36 +147,6 @@ public class Rating
     {
         _dScoreValue = dScoreValue;
     }
-    
-    /**
-     * 
-     * @return
-     */
-    public int getScorePositifsVotes( ) 
-    {
-		return _nScorePositifsVotes;
-	}
-    /**
-     * 
-     * @param _nScorePositifVotes
-     */
-	public void setScorePositifsVotes( int _nScorePositifVotes ) 
-	{
-		this._nScorePositifsVotes = _nScorePositifVotes;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public int getScoreNegativesVotes( ) 
-	{
-		return _nScoreNegativesVotes;
-	}
-
-	public void setScoreNegativesVotes( int nScoreNegativeVotes ) 
-	{
-		this._nScoreNegativesVotes = nScoreNegativeVotes;
-	}
 
 	/**
      * Calculate the score (min : 1 - max : 4).

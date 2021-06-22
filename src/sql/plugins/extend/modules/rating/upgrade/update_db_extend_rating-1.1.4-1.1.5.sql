@@ -1,5 +1,7 @@
 ALTER TABLE extend_rating ADD COLUMN score_positifs_votes INT default 0 NOT NULL ;
 ALTER TABLE extend_rating ADD COLUMN score_negatives_votes INT default 0 NOT NULL ;
+ALTER TABLE extend_rating ADD COLUMN score_positifs_votes INT default 0 NOT NULL ;
+ALTER TABLE extend_rating ADD COLUMN score_negatives_votes INT default 0 NOT NULL ;
 ALTER TABLE extend_rating MODIFY COLUMN score_value DOUBLE default 0 NOT NULL;
 ALTER TABLE extend_rating_vote_history MODIFY COLUMN vote_value DOUBLE default 0 NOT NULL;
 

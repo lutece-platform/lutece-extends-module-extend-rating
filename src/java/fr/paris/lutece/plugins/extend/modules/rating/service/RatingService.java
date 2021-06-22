@@ -35,9 +35,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.service;
 
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
-import fr.paris.lutece.plugins.extend.modules.rating.business.IRatingDAO;
-import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
-import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
+import fr.paris.lutece.plugins.extend.modules.rating.business.*;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -92,7 +90,7 @@ public class RatingService implements IRatingService
      */
     @Override
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, double nVoteValue,
+   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, String strRatingType, double nVoteValue,
         HttpServletRequest request )
     {
     	Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
@@ -100,33 +98,17 @@ public class RatingService implements IRatingService
         // Create the rating if not exists
         if ( rating == null )
         {
-            rating = new Rating(  );
+            rating = RatingUtils.ratingForType(strRatingType);
             rating.setIdExtendableResource( strIdExtendableResource );
             rating.setExtendableResourceType( strExtendableResourceType );
             rating.setVoteCount( 1 );
             rating.setScoreValue( nVoteValue );
-            if ( nVoteValue == 1 )
-            {
-            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
-            }
-            else
-            {
-            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
-            }
             create( rating );
         }
         else
         {
             rating.setVoteCount( rating.getVoteCount(  ) + 1 );
             rating.setScoreValue( rating.getScoreValue(  ) + nVoteValue );
-            if ( nVoteValue == 1 )
-            {
-            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
-            }
-            else
-            {
-            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
-            }
             update( rating );
         }
         
@@ -171,12 +153,14 @@ public class RatingService implements IRatingService
 		            rating.setScoreValue( rating.getScoreValue(  ) - ratingHistory.getVoteValue(  ) );
 		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) > 0 )
 		            {
-		            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) - 1 );
+                        //TODO replace
+		            	//rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) - 1 );
 		            	bDecrementCount = true ; 
 		            }
 		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) < 0 )
 		            {
-		            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) - 1 );
+                        //TODO replace
+		            	//rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) - 1 );
 		            	bDecrementCount = true ; 
 		            }
 		            update( rating );
@@ -199,7 +183,6 @@ public class RatingService implements IRatingService
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void remove( int nIdRating )
     {
-    	
         _ratingDAO.delete( nIdRating, RatingPlugin.getPlugin(  ) );
     }
 
