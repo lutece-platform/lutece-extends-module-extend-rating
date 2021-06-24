@@ -47,9 +47,9 @@ import java.util.List;
 public class RatingDAO implements IRatingDAO
 {
     private static final String SQL_QUERY_NEW_PK = " SELECT max( id_rating ) FROM extend_rating ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( id_rating, id_resource, resource_type, vote_count, " +
-        " score_value, score_positifs_votes, score_negatives_votes ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
-    private static final String SQL_QUERY_SELECT_ALL = " SELECT id_rating, id_resource, resource_type, vote_count, score_value, score_positifs_votes, score_negatives_votes " +
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( id_rating, id_resource, resource_type, rating_type, vote_count, " +
+        " score_value ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT_ALL = " SELECT id_rating, id_resource, resource_type, rating_type, vote_count, score_value" +
         " FROM extend_rating ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_rating = ? ";
     private static final String SQL_QUERY_SELECT_BY_RESOURCE = SQL_QUERY_SELECT_ALL +
@@ -57,11 +57,12 @@ public class RatingDAO implements IRatingDAO
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating WHERE id_rating = ? ";
     private static final String SQL_QUERY_DELETE_BY_RESOURCE = " DELETE FROM extend_rating WHERE resource_type = ? ";
     private static final String SQL_QUERY_FILTER_ID_RESOURCE = " AND id_resource = ? ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating SET id_resource = ?, resource_type = ?, vote_count = ?, score_value = ?, score_positifs_votes= ?, score_negatives_votes = ? WHERE id_rating = ?  ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating SET id_resource = ?, resource_type = ?, rating_type = ?, vote_count = ?, score_value = ? WHERE id_rating = ?  ";
     private static final String SQL_QUERY_SELECT_ID_MOST_RATED_RESOURCES = " SELECT DISTINCT(id_resource) FROM extend_rating WHERE resource_type = ? ORDER BY vote_count ";
     private static final String SQL_LIMIT = " LIMIT ";
     private static final String CONSTANT_COMMA = ",";
     private static final String CONSTANT_QUESTION_MARK = "?";
+    public static final int RATING_TYPE_INDEX = 4;
 
     /**
      * Generates a new primary key.
@@ -103,8 +104,6 @@ public class RatingDAO implements IRatingDAO
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
         daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
-        daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
-        daoUtil.setInt( nIndex, rating.getScoreNegativesVotes(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -116,26 +115,18 @@ public class RatingDAO implements IRatingDAO
     @Override
     public Rating load( int nIdRating, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nIdRating );
-        daoUtil.executeQuery(  );
-
         Rating rating = null;
 
-        if ( daoUtil.next(  ) )
-        {
-            int nIndex = 1;
-            rating = new Rating(  );
-            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
-        }
+        try (DAOUtil daoUtil = new DAOUtil(SQL_QUERY_SELECT, plugin)) {
+            daoUtil.setInt(1, nIdRating);
+            daoUtil.executeQuery();
 
-        daoUtil.free(  );
+            if (daoUtil.next()) {
+                int nIndex = 1;
+                rating = RatingUtils.ratingForType(daoUtil.getString(RATING_TYPE_INDEX));
+                populateRating(rating, nIndex, daoUtil);
+            }
+        }
 
         return rating;
     }
@@ -191,8 +182,6 @@ public class RatingDAO implements IRatingDAO
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
         daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
-        daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
-        daoUtil.setInt( nIndex++, rating.getScoreNegativesVotes(  ) );
 
         daoUtil.setInt( nIndex, rating.getIdRating(  ) );
 
@@ -218,19 +207,22 @@ public class RatingDAO implements IRatingDAO
         {
             nIndex = 1;
 
-            rating = new Rating(  );
-            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
+            //TODO get type
+            rating = RatingUtils.ratingForType( daoUtil.getString( nIndex++));
+            populateRating(rating, nIndex, daoUtil);
         }
 
         daoUtil.free(  );
 
         return rating;
+    }
+
+    private void populateRating(Rating rating, int nIndex, DAOUtil daoUtil) {
+        rating.setIdRating( daoUtil.getInt( nIndex++ ) );
+        rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
+        rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
+        rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
+        rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
     }
 
     /**

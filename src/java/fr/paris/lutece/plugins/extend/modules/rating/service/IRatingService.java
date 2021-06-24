@@ -90,7 +90,7 @@ public interface IRatingService
      * @param request the request
      */
     @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    void doVote( String strIdExtendableResource, String strExtendableResourceType, double dVoteValue,
+    void doVote( String strIdExtendableResource, String strExtendableResourceType, String strRatingType, double dVoteValue,
         HttpServletRequest request );
 
     /**
@@ -108,7 +108,7 @@ public interface IRatingService
      * @param nIdRating the n id rating
      * @return the rating
      */
-    Rating findByPrimaryKey( int nIdRating );
+    Rating findByPrimaryKey(int nIdRating );
 
     /**
      * Select by resource.

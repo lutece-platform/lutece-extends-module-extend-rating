@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.web.component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
@@ -51,7 +53,6 @@ import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConsta
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
-import fr.paris.lutece.plugins.extend.util.JSONUtils;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -64,15 +65,12 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -162,7 +160,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
                  }
                 }
                 
-                Map<String, Object> model = new HashMap<String, Object>(  );
+                Map<String, Object> model = new HashMap<>(  );
                 model.put( RatingConstants.MARK_RATING, rating );
                 model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
                 model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
@@ -218,7 +216,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
             I18nService.getLocalizedString( RatingConstants.PROPERTY_RATING_CONFIG_LABEL_NO_MAILING_LIST, locale ) );
         listIdsMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<>(  );
         model.put( RatingConstants.MARK_RATING_CONFIG, _configService.find( resourceExtender.getIdExtender(  ) ) );
         model.put( RatingConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( RatingConstants.MARK_LIST_IDS_VOTE_TYPE, _voteTypeService.findAll(  ) );
@@ -246,7 +244,7 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     {
         if ( resourceExtender != null )
         {
-            Map<String, Object> model = new HashMap<String, Object>(  );
+            Map<String, Object> model = new HashMap<>(  );
             model.put( RatingConstants.MARK_RATING,
                 _ratingService.findByResource( resourceExtender.getIdExtendableResource(  ),
                     resourceExtender.getExtendableResourceType(  ) ) );
@@ -309,7 +307,21 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private String fetchShowParameter( String strParameters )
     {
         String strShowParameter = StringUtils.EMPTY;
-        ObjectNode jsonParameters = JSONUtils.parseParameters( strParameters );
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonParameters = null;//JSONUtils.parseParameters( strParameters );
+
+        if(strParameters.length() > 5 && strParameters.charAt(1) != '"' && strParameters.contains(":")) {
+            StringBuilder stringBuilder = new StringBuilder(strParameters);
+            stringBuilder.insert(1, '"');
+            stringBuilder.insert(stringBuilder.indexOf(":"), '"');
+            strParameters = stringBuilder.toString();
+        }
+        
+        try {
+            jsonParameters = mapper.readValue( strParameters, ObjectNode.class );
+        } catch (JsonProcessingException e) {
+            AppLogService.error(e);
+        }
 
         if ( jsonParameters != null )
         {

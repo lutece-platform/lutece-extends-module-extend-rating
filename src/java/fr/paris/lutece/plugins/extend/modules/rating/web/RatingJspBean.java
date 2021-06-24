@@ -113,6 +113,7 @@ public class RatingJspBean
     {
         String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
+        String strRatingType = request.getParameter( RatingConstants.RATING_TYPE );
         String strVoteValue = request.getParameter( RatingConstants.PARAMETER_VOTE_VALUE );
         String strFromUrl = (String) request.getSession(  )
                                             .getAttribute( ExtendPlugin.PLUGIN_NAME +
@@ -203,7 +204,7 @@ public class RatingJspBean
             return;
         }
 
-        _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, dVoteValue, request );
+        _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, strRatingType, dVoteValue, request );
 
         sendNotification( request, strIdExtendableResource, strExtendableResourceType, dVoteValue );
         response.sendRedirect( strNextUrl );
