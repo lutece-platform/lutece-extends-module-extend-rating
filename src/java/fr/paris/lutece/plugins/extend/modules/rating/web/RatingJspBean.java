@@ -186,9 +186,13 @@ public class RatingJspBean
             SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
 
-        String strErrorUrl = RatingValidationManagementService.validateRating( request,
-                SecurityService.getInstance(  ).getRemoteUser( request ), strIdExtendableResource,
-                strExtendableResourceType, dVoteValue );
+        String strErrorUrl = StringUtils.EMPTY;
+
+        if(SecurityService.isAuthenticationEnable()) {
+            strErrorUrl = RatingValidationManagementService.validateRating( request,
+                    SecurityService.getInstance(  ).getRemoteUser( request ), strIdExtendableResource,
+                    strExtendableResourceType, dVoteValue );
+        }
 
         if ( StringUtils.isNotEmpty( strErrorUrl ) )
         {
