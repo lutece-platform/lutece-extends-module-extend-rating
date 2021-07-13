@@ -70,7 +70,6 @@ public class RatingService implements IRatingService
     public void create( Rating rating )
     {
         _ratingDAO.insert( rating, RatingPlugin.getPlugin(  ) );
-        
         RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
     }
 
@@ -108,7 +107,7 @@ public class RatingService implements IRatingService
         else
         {
             rating.setVoteCount( rating.getVoteCount(  ) + 1 );
-            rating.setScoreValue( rating.getScoreValue(  ) + nVoteValue );
+            rating.setScoreValue( nVoteValue );
             update( rating );
         }
         
