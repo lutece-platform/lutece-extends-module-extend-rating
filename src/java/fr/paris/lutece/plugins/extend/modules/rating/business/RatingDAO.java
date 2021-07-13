@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.extend.modules.rating.business;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,9 +98,10 @@ public class RatingDAO implements IRatingDAO
 
         int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, rating.getIdRating(  ) );
+        daoUtil.setInt( nIndex++, nNewPrimaryKey );
         daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
+        daoUtil.setString( nIndex++, rating.getRatingType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
         daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
 
@@ -178,13 +178,12 @@ public class RatingDAO implements IRatingDAO
     {
         int nIndex = 1;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        daoUtil.setInt( nIndex, rating.getIdRating(  ) );
         daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
+        daoUtil.setString( nIndex++, rating.getRatingType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
         daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
-
-        daoUtil.setInt( nIndex, rating.getIdRating(  ) );
-
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }
@@ -206,9 +205,7 @@ public class RatingDAO implements IRatingDAO
         if ( daoUtil.next(  ) )
         {
             nIndex = 1;
-
-            //TODO get type
-            rating = RatingUtils.ratingForType( daoUtil.getString( nIndex++));
+            rating = RatingUtils.ratingForType( daoUtil.getString( RATING_TYPE_INDEX ) );
             populateRating(rating, nIndex, daoUtil);
         }
 
@@ -221,6 +218,7 @@ public class RatingDAO implements IRatingDAO
         rating.setIdRating( daoUtil.getInt( nIndex++ ) );
         rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
         rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
+        rating.setRatingType( daoUtil.getString( nIndex++ ) );
         rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
         rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
     }
