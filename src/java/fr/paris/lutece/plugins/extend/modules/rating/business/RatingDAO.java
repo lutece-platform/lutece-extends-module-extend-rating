@@ -178,12 +178,14 @@ public class RatingDAO implements IRatingDAO
     {
         int nIndex = 1;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setInt( nIndex, rating.getIdRating(  ) );
+        
         daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
         daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
         daoUtil.setString( nIndex++, rating.getRatingType(  ) );
         daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
         daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
+        
+        daoUtil.setInt( nIndex, rating.getIdRating(  ) );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }

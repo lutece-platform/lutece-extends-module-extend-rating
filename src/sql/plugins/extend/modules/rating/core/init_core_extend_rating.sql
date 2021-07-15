@@ -154,7 +154,7 @@ INSERT INTO core_template VALUES ('extend_rating_vote_type_majority',
 <#if canDeleteVote><div class=\"cancel\"><a href=\"jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}\" > </a></div></#if>
 <#if show == \"all\" || show == \"vote\">
     <p>
-        Mention choisie : ${scoreValue!}
+        Mention choisie : ${voteValue!}
     </p>
 </#if>
 <#if show == \"all\" || show == \"actionVote\">
