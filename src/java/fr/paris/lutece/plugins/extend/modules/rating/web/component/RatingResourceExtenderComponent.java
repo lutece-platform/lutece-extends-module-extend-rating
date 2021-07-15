@@ -309,18 +309,29 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
     private String fetchShowParameter( String strParameters )
     {
         String strShowParameter = StringUtils.EMPTY;
-        ObjectNode jsonParameters = JSONUtils.parseParameters( strParameters );
 
-        if ( jsonParameters != null )
+        if( strParameters!=null &&  strParameters.contains(RatingConstants.JSON_KEY_SHOW))
         {
-            if ( jsonParameters.has( RatingConstants.JSON_KEY_SHOW ) )
-            {
-                strShowParameter = jsonParameters.get( RatingConstants.JSON_KEY_SHOW ).asText( );
-            }
-            else 
-            {
-                AppLogService.debug( "No " + RatingConstants.JSON_KEY_SHOW + " found in " + jsonParameters );
-            }
+        	if(strParameters.length() > 5 && strParameters.charAt(1) != '"' && strParameters.contains(":")) {
+	            StringBuilder stringBuilder = new StringBuilder(strParameters);
+	            stringBuilder.insert(1, '"');
+	            stringBuilder.insert(stringBuilder.indexOf(":"), '"');
+	            strParameters = stringBuilder.toString();
+	        }
+	       
+	        ObjectNode jsonParameters = JSONUtils.parseParameters( strParameters );
+	        
+	        if ( jsonParameters != null )
+	        {
+	            if ( jsonParameters.has( RatingConstants.JSON_KEY_SHOW ) )
+	            {
+	                strShowParameter = jsonParameters.get( RatingConstants.JSON_KEY_SHOW ).asText( );
+	            }
+	            else 
+	            {
+	                AppLogService.debug( "No " + RatingConstants.JSON_KEY_SHOW + " found in " + jsonParameters );
+	            }
+	        }
         }
 
         return strShowParameter;
