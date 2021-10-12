@@ -1,16 +1,16 @@
 <@row>
 	<@columns sm=4>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelVoteType} ' labelFor='' >
-			<@select name='idVoteType' default_value='${ratingConfig.idVoteType!}' items=listIdsVoteType class='form-control' />
+		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelVoteType}' labelFor='idVoteType'>
+			<@select name='idVoteType' default_value='${ratingConfig.idVoteType!}' items=listIdsVoteType />
 		</@formGroup>
 		<@row>
 			<@columns>
 				<@columns>
-					<strong>#i18n{module.extend.rating.rating_config.labelActivation} </strong>
+					<strong>#i18n{module.extend.rating.rating_config.labelActivation}</strong>
 				</@columns>
 			</@columns>
 			<@columns sm=6>
-				<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelDateStart}' labelFor='date_start' >
+				<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelDateStart}' labelFor='date_start'>
 				<@inputGroup>
 					<@input type='date' name='date_start' id='date_start' maxlength=10 value=ratingConfig.dateStartString! /> 
 					<@inputGroupItem>
@@ -31,7 +31,7 @@
 			</@columns>
 		</@row>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelMailingList}' labelFor='idMailingList' helpKey='#i18n{module.extend.rating.rating_config.labelMailingListComment}'>
-			<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList class='form-control' />
+			<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList />
 		</@formGroup>
 	</@columns>
 	<@columns sm=4>
@@ -41,7 +41,7 @@
 			<#assign voteTemporalCheck><#if !ratingConfig.uniqueVote>true<#else>false</#if></#assign>
 			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote'  orientation='' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='true' checked=voteTemporalCheck?boolean />
 		</@formGroup>
-		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote}' labelFor='nbDaysToVote' helpKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}' mandatory=true >
+		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote}' labelFor='nbDaysToVote' helpKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}' mandatory=true>
 			<@inputGroup>
 				<@input type='number' name='nbDaysToVote' value='${ratingConfig.nbDaysToVote!}' maxlength=3 params=' style="width:80px"' />
 				<@inputGroupItem> #i18n{module.extend.rating.rating_config.temporalVote.labelDay}</@inputGroupItem>

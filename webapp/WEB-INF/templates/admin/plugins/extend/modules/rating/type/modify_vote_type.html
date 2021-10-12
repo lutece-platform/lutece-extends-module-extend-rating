@@ -6,8 +6,8 @@
 			<@row>
 				<@columns sm=6 offsetSm=1>
 					<@tform action='jsp/admin/plugins/extend/modules/rating/DoModifyVoteType.jsp'>
-					<input type="hidden" name="idVoteType" value="${voteType.idVoteType!}">
-					<input type="hidden" name="templateName" value="${voteType.templateName!}">
+					<@input type='hidden' name='idVoteType' value='${voteType.idVoteType!}' />
+					<@input type='hidden' name='templateName' value='${voteType.templateName!}' />
 					<@formGroup rows=2 labelFor='title' labelKey='#i18n{module.extend.rating.modify_vote_types.labelTitle}' mandatory=true >
 						<@input name='title' value='${voteType.title!}' maxlength=20 />
 					</@formGroup>
