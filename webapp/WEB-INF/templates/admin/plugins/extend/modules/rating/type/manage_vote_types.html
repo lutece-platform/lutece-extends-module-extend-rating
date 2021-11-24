@@ -1,24 +1,21 @@
 <@row>
 	<@columns>
-		<@box color='primary'>
+		<@box>
 			<@boxHeader title='#i18n{module.extend.rating.manage_vote_types.pageTitle}' />
 			<@boxBody>
-				<@table params=' summary="#i18n{module.extend.rating.manage_vote_types.pageTitle}"'>
+				<@table headBody=true params=' summary="#i18n{module.extend.rating.manage_vote_types.pageTitle}"'>
 					<@tr>
 						<@th scope='col'>#i18n{module.extend.rating.manage_vote_types.labelId}</@th>
 						<@th scope='col'>#i18n{module.extend.rating.manage_vote_types.labelTitle}</@th>
 						<@th scope='col'>#i18n{module.extend.rating.manage_vote_types.labelActions}</@th>
 					</@tr>
-					<@tableHeadBodySeparator />
 					<#if listVoteTypes?? && listVoteTypes?has_content>
 						<#list listVoteTypes as voteType>
 							<@tr>
 								<@td>${voteType.idVoteType!}</@td>
 								<@td>${voteType.title!}</@td>
 								<@td>
-									<@link href='jsp/admin/plugins/extend/modules/rating/ModifyVoteType.jsp?idVoteType=${voteType.idVoteType!}' title='#i18n{portal.util.labelModify}' class='btn btn-primary' >
-										<@icon style='edit' />
-									</@link>
+									<@aButton href='jsp/admin/plugins/extend/modules/rating/ModifyVoteType.jsp?idVoteType=${voteType.idVoteType!}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
 								</@td>
 							</@tr>
 						</#list>

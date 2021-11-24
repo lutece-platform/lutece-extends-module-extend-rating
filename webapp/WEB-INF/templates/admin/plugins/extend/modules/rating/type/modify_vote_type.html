@@ -4,31 +4,23 @@
 			<@boxHeader title='#i18n{module.extend.rating.modify_vote_types.pageTitle}' />
 			<@boxBody>
 			<@row>
-				<@columns sm=6 offsetSm=1>
+				<@columns md=6>
 					<@tform action='jsp/admin/plugins/extend/modules/rating/DoModifyVoteType.jsp'>
-					<@input type='hidden' name='idVoteType' value='${voteType.idVoteType!}' />
-					<@input type='hidden' name='templateName' value='${voteType.templateName!}' />
-					<@formGroup rows=2 labelFor='title' labelKey='#i18n{module.extend.rating.modify_vote_types.labelTitle}' mandatory=true >
-						<@input name='title' value='${voteType.title!}' maxlength=20 />
-					</@formGroup>
-					<@formGroup rows=2 labelFor='templateContent' labelKey='#i18n{module.extend.rating.modify_vote_types.labelContent}' mandatory=true >
-						<@input type='textarea' name='templateContent' rows=20 >${voteType.templateContent!}</@input>
-					</@formGroup>
-					<@formGroup rows=2>
-						<@row>
-							<@columns sm=6 offsetSm=3 >
-							<@button color='primary' type='submit' name='save' value='#i18n{portal.util.labelModify}' >
-								<@icon style='check' /> #i18n{portal.util.labelModify}
-							</@button>
-							<@button class='default' type='submit' name='cancel' value='#i18n{portal.util.labelCancel}' >
-								<@icon style='times' /> #i18n{portal.util.labelCancel}
-							</@button>
-							</@columns>
-						</@row>
-					</@formGroup>
+						<@input type='hidden' name='idVoteType' value='${voteType.idVoteType!}' />
+						<@input type='hidden' name='templateName' value='${voteType.templateName!}' />
+						<@formGroup rows=2 labelFor='title' labelKey='#i18n{module.extend.rating.modify_vote_types.labelTitle}' mandatory=true >
+							<@input name='title' value='${voteType.title!}' maxlength=20 />
+						</@formGroup>
+						<@formGroup rows=2 labelFor='templateContent' labelKey='#i18n{module.extend.rating.modify_vote_types.labelContent}' mandatory=true >
+							<@input type='textarea' name='templateContent' rows=20 >${voteType.templateContent!}</@input>
+						</@formGroup>
+						<@formGroup rows=2>
+							<@button color='primary' type='submit' name='save' title='#i18n{portal.util.labelModify}' buttonIcon='check' />
+							<@button class='default' type='submit' name='cancel' title='#i18n{portal.util.labelCancel}' buttonIcon='times' color='default' />
+						</@formGroup>
 					</@tform>
 				</@columns>
-				<@columns sm=4>
+				<@columns md=4>
 					<@p><strong>#i18n{module.extend.rating.modify_vote_types.labelIdExtendableResource} :</strong> <span class="copy-content"> &#36;&#123;idExtendableResource!&#125;</span></@p>
 					<@p>#i18n{module.extend.rating.modify_vote_types.labelExtendableResourceType} : <span class="copy-content"> &#36;&#123;extendableResourceType!&#125;</span></@p>
 					<@p>#i18n{module.extend.rating.modify_vote_types.labelScoreValue} : <span class="copy-content"> &#36;&#123;rating.scoreValue!&#125;</span></@p>
