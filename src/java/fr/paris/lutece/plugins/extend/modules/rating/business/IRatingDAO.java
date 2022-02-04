@@ -108,4 +108,12 @@ public interface IRatingDAO
      */
     List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber,
         Plugin plugin );
+    /**
+     * Select by id resource list
+     * @param listIdExtendableResource the list of resources type to consider
+     * @param strExtendableResourceType the str extendable resource type
+     * @param plugin the plugin
+     * @return the rating list
+     */
+    List<Rating> loadByResourceList( List< String > listIdExtendableResource, String strExtendableResourceType, Plugin plugin );
 }

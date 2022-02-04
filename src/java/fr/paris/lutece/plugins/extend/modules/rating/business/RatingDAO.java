@@ -39,6 +39,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
 
 
 /**
@@ -59,6 +62,10 @@ public class RatingDAO implements IRatingDAO
     private static final String SQL_QUERY_FILTER_ID_RESOURCE = " AND id_resource = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating SET id_resource = ?, resource_type = ?, vote_count = ?, score_value = ?, score_positifs_votes= ?, score_negatives_votes = ? WHERE id_rating = ?  ";
     private static final String SQL_QUERY_SELECT_ID_MOST_RATED_RESOURCES = " SELECT DISTINCT(id_resource) FROM extend_rating WHERE resource_type = ? ORDER BY vote_count ";
+    private static final String SQL_QUERY_SELECT_BY_ID_RESOURCE_LIST = SQL_QUERY_SELECT_ALL +" WHERE resource_type= ? ";
+    private static final String SQL_FILTER_ID_LIST_RSOURCE = " id_resource IN ( ";
+    private static final String SQL_FILTER_ID_LIST_END = " ) ";
+    private static final String CONSTANT_AND = " AND ";
     private static final String SQL_LIMIT = " LIMIT ";
     private static final String CONSTANT_COMMA = ",";
     private static final String CONSTANT_QUESTION_MARK = "?";
@@ -289,5 +296,51 @@ public class RatingDAO implements IRatingDAO
         daoUtil.free(  );
 
         return listIds;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Rating> loadByResourceList( List< String > listIdExtendableResource, String strExtendableResourceType, Plugin plugin )
+    {	
+    	List<Rating> listRating = new ArrayList<>( );
+        StringBuilder sbSql = new StringBuilder( SQL_QUERY_SELECT_BY_ID_RESOURCE_LIST );
+        if ( CollectionUtils.isNotEmpty( listIdExtendableResource ) )
+        {
+            sbSql.append( CONSTANT_AND );
+            sbSql.append( SQL_FILTER_ID_LIST_RSOURCE );
+            sbSql.append( listIdExtendableResource.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
+            sbSql.append( SQL_FILTER_ID_LIST_END );
+        }
+    	        
+        try( DAOUtil daoUtil = new DAOUtil( sbSql.toString( ), plugin )){
+        	int nIndex = 0;
+    		
+	        daoUtil.setString( ++nIndex, strExtendableResourceType );
+	        for ( String id : listIdExtendableResource )
+	        {
+	            daoUtil.setString( ++nIndex, id );
+	        }
+	        daoUtil.executeQuery(  );
+	
+	        while ( daoUtil.next(  ) )
+	        {
+	            nIndex = 1;
+	
+	            Rating rating = new Rating(  );
+	            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
+	            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
+	            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
+	            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
+	            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
+	            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
+	            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
+	            
+	            listRating.add( rating );
+	        }
+
+        }
+        return listRating;
     }
 }
