@@ -33,118 +33,162 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
-import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
+import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * This class provides Data Access methods for Rating objects.
  */
 public class RatingDAO implements IRatingDAO
 {
-    private static final String SQL_QUERY_NEW_PK = " SELECT max( id_rating ) FROM extend_rating ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( id_rating, id_resource, resource_type, vote_count, " +
-        " score_value, score_positifs_votes, score_negatives_votes ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
-    private static final String SQL_QUERY_SELECT_ALL = " SELECT id_rating, id_resource, resource_type, vote_count, score_value, score_positifs_votes, score_negatives_votes " +
-        " FROM extend_rating ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( rating_type, id_extender_history, id_resource, resource_type, user_guid, rating_value ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT_ALL = " SELECT rating_type, id_rating, id_extender_history, id_resource, resource_type, user_guid, rating_value FROM extend_rating ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_rating = ? ";
-    private static final String SQL_QUERY_SELECT_BY_RESOURCE = SQL_QUERY_SELECT_ALL +
-        " WHERE id_resource = ? AND resource_type = ? ";
+    private static final String SQL_QUERY_SELECT_RATING = SQL_QUERY_SELECT_ALL + " WHERE id_resource = ? and resource_type = ? and rating_type = ? and rating_value = ? and user_guid= ? ";
+    private static final String SQL_QUERY_SELECT_BY_RESOURCE = SQL_QUERY_SELECT_ALL + " WHERE id_resource = ? and resource_type = ? " ;
+    private static final String SQL_QUERY_SELECT_BY_HISTORY_EXTENDER_ID = SQL_QUERY_SELECT_ALL + " WHERE id_extender_history = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating WHERE id_rating = ? ";
-    private static final String SQL_QUERY_DELETE_BY_RESOURCE = " DELETE FROM extend_rating WHERE resource_type = ? ";
-    private static final String SQL_QUERY_FILTER_ID_RESOURCE = " AND id_resource = ? ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating SET id_resource = ?, resource_type = ?, vote_count = ?, score_value = ?, score_positifs_votes= ?, score_negatives_votes = ? WHERE id_rating = ?  ";
-    private static final String SQL_QUERY_SELECT_ID_MOST_RATED_RESOURCES = " SELECT DISTINCT(id_resource) FROM extend_rating WHERE resource_type = ? ORDER BY vote_count ";
-    private static final String SQL_QUERY_SELECT_BY_ID_RESOURCE_LIST = SQL_QUERY_SELECT_ALL +" WHERE resource_type= ? ";
-    private static final String SQL_FILTER_ID_LIST_RSOURCE = " id_resource IN ( ";
-    private static final String SQL_FILTER_ID_LIST_END = " ) ";
-    private static final String CONSTANT_AND = " AND ";
-    private static final String SQL_LIMIT = " LIMIT ";
-    private static final String CONSTANT_COMMA = ",";
-    private static final String CONSTANT_QUESTION_MARK = "?";
+    private static final String SQL_QUERY_DELETE_BY_RESOURCE = "  DELETE FROM extend_rating WHERE id_resource = ? and resource_type = ? ";
 
-    /**
-     * Generates a new primary key.
-     *
-     * @param plugin the plugin
-     * @return The new primary key
-     */
-    private int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery(  );
+    private static final String SQL_QUERY_DELETE_BY_EXTENDER_HISTORY_ID = "  DELETE FROM extend_rating WHERE id_extender_history = ?  ";
+    private static final String SQL_QUERY_DELETE_BY_LIST_EXTENDER_HISTORY_ID = "  DELETE FROM extend_rating WHERE id_extender_history IN (  ";
 
-        int nKey = 1;
+    private static final String SQL_QUERY_FIND_BY_EXTENDER_RESOURCE_ID_LIST_AND_TYPE = " SELECT rating_type, id_rating, id_extender_history, id_resource, resource_type, user_guid, rating_value FROM extend_rating WHERE rating_type= ? and resource_type = ? and  id_resource IN ( ";
+    private static final String SQL_QUERY_FIND_BY_EXTENDER_HISTORY_ID_LIST = " SELECT rating_type, id_rating, id_extender_history, id_resource, resource_type, user_guid, rating_value FROM extend_rating WHERE id_extender_history IN ( ";
 
-        if ( daoUtil.next(  ) )
-        {
-            nKey = daoUtil.getInt( 1 ) + 1;
-        }
+    private static final String SQL_QUERY_SELECT_RATING_VALUE = " SELECT rating_value FROM extend_rating WHERE rating_type= ? and resource_type = ? and  id_resource IN ( ";
 
-        daoUtil.free(  );
+    private static final String SQL_FILTER_ID_RESOURCE = " id_resource = ? ";
+    private static final String SQL_FILTER_RESOURCE_TYPE = " resource_type = ? ";
+    private static final String SQL_FILTER_RATING_TYPE = " rating_type = ? ";
+    private static final String SQL_FILTER_RATING_VALUE = " rating_value = ? ";
+    private static final String SQL_FILTER_USER_GUID = " user_guid = ? ";
+    public static final String CONSTANT_WHERE = " WHERE ";
+    public static final String CONSTANT_AND = " AND ";
 
-        return nKey;
-    }
+    
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( Rating rating, Plugin plugin )
+    public void insert( Rating rating, Plugin plugin ) 
     {
-        int nNewPrimaryKey = newPrimaryKey( plugin );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        rating.setIdRating( nNewPrimaryKey );
+        
+    	try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ))
+        {	
+	        int nIndex = 1;
+	        
+	        daoUtil.setString( nIndex++, rating.getRatingType( ));
+	        daoUtil.setLong( nIndex++, rating.getIdHistory( ) );
+	        daoUtil.setString( nIndex++, rating.getIdExtendableResource( ));
+	        daoUtil.setString( nIndex++, rating.getExtendableResourceType( ));
+	        daoUtil.setString( nIndex++, rating.getUserGuid( ));
+	        daoUtil.setFloat( nIndex++, rating.getRatingValue( ) );
+	      
 
+	        daoUtil.executeUpdate(  );
+	        if ( daoUtil.nextGeneratedKey( ) )
+            {
+	        	rating.setIdRating( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Rating> loadByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin )
+    {
+		List<Rating> listRating= new ArrayList<>( );
         int nIndex = 1;
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESOURCE, plugin )){
+        	
+	        daoUtil.setString( nIndex++, strIdExtendableResource );
+	        daoUtil.setString( nIndex, strExtendableResourceType );
+	        daoUtil.executeQuery(  );
+	
+	        while ( daoUtil.next(  ) )
+	        {
+	        	 listRating.add( buildRating(  daoUtil ) );
+	        }
+        }
 
-        daoUtil.setInt( nIndex++, rating.getIdRating(  ) );
-        daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
-        daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
-        daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
-        daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
-        daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
-        daoUtil.setInt( nIndex, rating.getScoreNegativesVotes(  ) );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        return listRating;
     }
+
+    @Override
+	public Rating findByHistoryExtenderId(long lIdHistoryExtenderId, Plugin plugin) {
+    	try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_HISTORY_EXTENDER_ID, plugin ) )
+    	{
+	        daoUtil.setLong( 1, lIdHistoryExtenderId );
+	        daoUtil.executeQuery(  );
+	        Rating rating= null;
+	        
+	        if ( daoUtil.next(  ) )
+	        {
+	           rating= buildRating(  daoUtil  );
+	        }
+	        return rating;
+    	}
+	}
+
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Rating load( int nIdRating, Plugin plugin )
+    public Optional<Rating> load( int nIdRating, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nIdRating );
-        daoUtil.executeQuery(  );
-
-        Rating rating = null;
-
-        if ( daoUtil.next(  ) )
-        {
-            int nIndex = 1;
-            rating = new Rating(  );
-            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
-        }
-
-        daoUtil.free(  );
-
-        return rating;
+    	try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
+    	{
+	        daoUtil.setInt( 1, nIdRating );
+	        daoUtil.executeQuery(  );
+	
+	        Rating rating = null;
+	
+	        if ( daoUtil.next(  ) )
+	        {
+	           rating=  buildRating(  daoUtil );
+	        }
+	        
+	        return Optional.ofNullable(rating);
+    	}
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Rating> load( String strIdExtendableResource, String strExtendableResourceType, String ratingType, double value, String userGuid, Plugin plugin )
+    {
+    	try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_RATING, plugin ) )
+    	{
+    		daoUtil.setString(1, strIdExtendableResource);
+    		daoUtil.setString(2, strExtendableResourceType);
+    		daoUtil.setString(3, ratingType);
+	        daoUtil.setDouble(4, value );
+	        daoUtil.setString(5, userGuid );
+	        daoUtil.executeQuery(  );
+	
+	        Rating rating = null;
+	
+	        if ( daoUtil.next(  ) )
+	        {
+	           rating=  buildRating(  daoUtil );
+	        }
+	        return Optional.ofNullable(rating);
+    	}
     }
 
     /**
@@ -153,194 +197,271 @@ public class RatingDAO implements IRatingDAO
     @Override
     public void delete( int nIdRating, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nIdRating );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        try (  DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+	        daoUtil.setInt( 1, nIdRating );
+	        daoUtil.executeUpdate(  );
+        }
     }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin )
+    public void deleteByResource( String strIdResource, String strResourceType , Plugin plugin )
     {
-        int nIndex = 1;
-        StringBuilder sbSql = new StringBuilder( SQL_QUERY_DELETE_BY_RESOURCE );
-
-        if ( !ResourceExtenderDTOFilter.WILDCARD_ID_RESOURCE.equals( strIdExtendableResource ) )
+        try (  DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_RESOURCE, plugin ) )
         {
-            sbSql.append( SQL_QUERY_FILTER_ID_RESOURCE );
+	        daoUtil.setString( 1, strIdResource );
+	        daoUtil.setString( 2, strResourceType );
+
+	        daoUtil.executeUpdate(  );
         }
-
-        DAOUtil daoUtil = new DAOUtil( sbSql.toString(  ), plugin );
-        daoUtil.setString( nIndex++, strExtendableResourceType );
-
-        if ( !ResourceExtenderDTOFilter.WILDCARD_ID_RESOURCE.equals( strIdExtendableResource ) )
-        {
-            daoUtil.setString( nIndex, strIdExtendableResource );
-        }
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
     }
-
+   
     /**
      * {@inheritDoc}
      */
     @Override
-    public void store( Rating rating, Plugin plugin )
+    public void deleteByIdExtenderHistory( long nIdExtenderHistory, Plugin plugin )
     {
-        int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setString( nIndex++, rating.getIdExtendableResource(  ) );
-        daoUtil.setString( nIndex++, rating.getExtendableResourceType(  ) );
-        daoUtil.setInt( nIndex++, rating.getVoteCount(  ) );
-        daoUtil.setDouble( nIndex++, rating.getScoreValue(  ) );
-        daoUtil.setInt( nIndex++, rating.getScorePositifsVotes(  ) );
-        daoUtil.setInt( nIndex++, rating.getScoreNegativesVotes(  ) );
-
-        daoUtil.setInt( nIndex, rating.getIdRating(  ) );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        try (  DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_EXTENDER_HISTORY_ID, plugin ) )
+        {
+	        daoUtil.setLong( 1, nIdExtenderHistory );
+	        daoUtil.executeUpdate(  );
+        }
     }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Rating loadByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin )
+    public void deleteByListExtenderHistory( List<Long> listIdExtenderHistory, Plugin plugin )
     {
-        Rating rating = null;
-
-        int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESOURCE, plugin );
-        daoUtil.setString( nIndex++, strIdExtendableResource );
-        daoUtil.setString( nIndex, strExtendableResourceType );
-        daoUtil.executeQuery(  );
-
-        if ( daoUtil.next(  ) )
+    	StringBuilder sbSql = new StringBuilder( SQL_QUERY_DELETE_BY_LIST_EXTENDER_HISTORY_ID );
+	    if ( CollectionUtils.isNotEmpty( listIdExtenderHistory ) )
+	    {
+	        sbSql.append( listIdExtenderHistory.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
+	        sbSql.append( ")" );
+	    }
+	    
+        try (  DAOUtil daoUtil = new DAOUtil( sbSql.toString( ), plugin ) )
         {
-            nIndex = 1;
-
-            rating = new Rating(  );
-            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
+        	int nIndex= 0;
+ 	       for ( long id : listIdExtenderHistory )
+ 	       {
+ 	           daoUtil.setLong( ++nIndex, id );
+ 	       }
+ 	       daoUtil.executeUpdate(  );
         }
-
-        daoUtil.free(  );
-
-        return rating;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
-        int nMaxItemsNumber, Plugin plugin )
+  
+	@Override
+	public List<Rating> findByResourceAndRatingType(List<String> listIdResource, String strExtendableResourceType , String strRatingType, Plugin plugin) {
+	
+		List<Rating> listRating= new ArrayList<>( );
+		StringBuilder sbSql = new StringBuilder( SQL_QUERY_FIND_BY_EXTENDER_RESOURCE_ID_LIST_AND_TYPE );
+	    if ( CollectionUtils.isNotEmpty( listIdResource ) )
+	    {
+	        sbSql.append( listIdResource.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
+	        sbSql.append( ")" );
+	    }
+		       
+	   try ( DAOUtil daoUtil = new DAOUtil( sbSql.toString() , plugin ))
+	   {
+	   	int nIndex= 0;
+	       daoUtil.setString( ++nIndex, strRatingType );	
+	       daoUtil.setString( ++nIndex, strExtendableResourceType );
+	       for ( String id : listIdResource )
+	       {
+	           daoUtil.setString( ++nIndex, id );
+	       }
+	       daoUtil.executeQuery(  );
+	
+	       while ( daoUtil.next(  ) )
+	       {
+	       
+	        listRating.add(buildRating(  daoUtil  ) );
+	       }
+	       return listRating;
+	   }
+	}
+	
+	@Override
+	public float[] selectRatingValue(List<String> listIdResource, String strExtendableResourceType , String strRatingType, Plugin plugin) {
+	
+		List<Float> listRatingValue= new ArrayList<>( );
+		
+		
+		
+		StringBuilder sbSql = new StringBuilder( SQL_QUERY_SELECT_RATING_VALUE );
+	    if ( CollectionUtils.isNotEmpty( listIdResource ) )
+	    {
+	        sbSql.append( listIdResource.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
+	        sbSql.append( ")" );
+	    }
+		       
+	   try ( DAOUtil daoUtil = new DAOUtil( sbSql.toString() , plugin ))
+	   {
+	   	int nIndex= 0;
+	       daoUtil.setString( ++nIndex, strRatingType );	
+	       daoUtil.setString( ++nIndex, strExtendableResourceType );
+	       for ( String id : listIdResource )
+	       {
+	           daoUtil.setString( ++nIndex, id );
+	       }
+	       daoUtil.executeQuery(  );
+	       while ( daoUtil.next(  ) )
+	       {
+	       
+	    	   listRatingValue.add( daoUtil.getFloat( 1 ) );
+	       }
+	     
+	       return ArrayUtils.toPrimitive( listRatingValue.toArray(new Float[listRatingValue.size()]) );
+	   }
+	}
+	@Override
+	public List<Rating> findByHistoryExtenderIds(List<Long> lIdHistoryExtenderId, Plugin plugin) {
+	
+		List<Rating> listRating= new ArrayList<>( );
+		StringBuilder sbSql = new StringBuilder( SQL_QUERY_FIND_BY_EXTENDER_HISTORY_ID_LIST );
+	    if ( CollectionUtils.isNotEmpty( lIdHistoryExtenderId ) )
+	    {
+	        sbSql.append( lIdHistoryExtenderId.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
+	        sbSql.append( ")" );
+	    }
+		       
+	   try ( DAOUtil daoUtil = new DAOUtil( sbSql.toString() , plugin ))
+	   {
+	   	int nIndex= 0;
+	       for ( long id : lIdHistoryExtenderId )
+	       {
+	           daoUtil.setLong( ++nIndex, id );
+	       }
+	       daoUtil.executeQuery(  );
+	
+	       while ( daoUtil.next(  ) )
+	       {
+	       	 
+	           listRating.add( buildRating(  daoUtil ) );
+	       }
+	       return listRating;
+	   }
+	}
+	
+	
+	public List<Rating> selectRatingByFilter( RatingExtenderFilter filter, Plugin plugin )
     {
-        List<Integer> listIds;
+		List<Rating> listRating= new ArrayList<>( );
+        List<String> listStrFilter = new ArrayList<>( );
 
-        if ( nMaxItemsNumber > 0 )
+        if ( filter.containsIdExtendableResource( ) )
         {
-            listIds = new ArrayList<Integer>( nMaxItemsNumber );
-        }
-        else
-        {
-            listIds = new ArrayList<Integer>(  );
+            listStrFilter.add( SQL_FILTER_ID_RESOURCE );
         }
 
-        StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_ID_MOST_RATED_RESOURCES );
-
-        if ( nMaxItemsNumber > 0 )
+        if ( filter.containsExtendableResourceType() )
         {
-            sbSQL.append( SQL_LIMIT );
+            listStrFilter.add( SQL_FILTER_RESOURCE_TYPE );
+        }
 
-            if ( nItemsOffset > 0 )
+        if ( filter.containsRatingType( ) )
+        {
+            listStrFilter.add( SQL_FILTER_RATING_TYPE );
+        }
+        if ( filter.containsRatingValue() )
+        {
+            listStrFilter.add( SQL_FILTER_RATING_VALUE );
+        }
+        if ( filter.containsUserGuid() )
+        {
+            listStrFilter.add( SQL_FILTER_USER_GUID );
+        }        
+        
+        String strSQL = buildRequestWithFilter( SQL_QUERY_SELECT_ALL, listStrFilter );
+        try ( DAOUtil daoUtil = new DAOUtil( strSQL, plugin ) )
+        {
+            int nPos = 0;
+            if ( filter.containsIdExtendableResource( ) )
             {
-                sbSQL.append( CONSTANT_QUESTION_MARK ).append( CONSTANT_COMMA );
+            	daoUtil.setString( ++nPos, filter.getIdExtendableResource( ) );            
+            }
+            if ( filter.containsExtendableResourceType() )
+            {
+            	daoUtil.setString( ++nPos, filter.getExtendableResourceType( ) );            
             }
 
-            sbSQL.append( CONSTANT_QUESTION_MARK );
-        }
-
-        int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( sbSQL.toString(  ), plugin );
-        daoUtil.setString( nIndex++, strExtendableResourceType );
-
-        if ( nMaxItemsNumber > 0 )
-        {
-            if ( nItemsOffset > 0 )
+            if ( filter.containsRatingType( ) )
             {
-                daoUtil.setInt( nIndex++, nItemsOffset );
+            	daoUtil.setString( ++nPos, filter.getRatingType( ) );            
+
             }
+            if ( filter.containsRatingValue() )
+            {
+            	daoUtil.setFloat( ++nPos, filter.getRatingValue( ) );
 
-            daoUtil.setInt( nIndex, nMaxItemsNumber );
-        }
+            }
+            if ( filter.containsUserGuid() )
+            {
+            	daoUtil.setString( ++nPos, filter.getUserGuid() );
+            }
+            
+            daoUtil.executeQuery( );
 
-        daoUtil.executeQuery(  );
-
-        while ( daoUtil.next(  ) )
-        {
-            listIds.add( daoUtil.getInt( 1 ) );
-        }
-
-        daoUtil.free(  );
-
-        return listIds;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Rating> loadByResourceList( List< String > listIdExtendableResource, String strExtendableResourceType, Plugin plugin )
-    {	
-    	List<Rating> listRating = new ArrayList<>( );
-        StringBuilder sbSql = new StringBuilder( SQL_QUERY_SELECT_BY_ID_RESOURCE_LIST );
-        if ( CollectionUtils.isNotEmpty( listIdExtendableResource ) )
-        {
-            sbSql.append( CONSTANT_AND );
-            sbSql.append( SQL_FILTER_ID_LIST_RSOURCE );
-            sbSql.append( listIdExtendableResource.stream( ).map( s -> "?" ).collect( Collectors.joining( "," ) ) );
-            sbSql.append( SQL_FILTER_ID_LIST_END );
-        }
-    	        
-        try( DAOUtil daoUtil = new DAOUtil( sbSql.toString( ), plugin )){
-        	int nIndex = 0;
-    		
-	        daoUtil.setString( ++nIndex, strExtendableResourceType );
-	        for ( String id : listIdExtendableResource )
-	        {
-	            daoUtil.setString( ++nIndex, id );
-	        }
-	        daoUtil.executeQuery(  );
-	
-	        while ( daoUtil.next(  ) )
-	        {
-	            nIndex = 1;
-	
-	            Rating rating = new Rating(  );
-	            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-	            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-	            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-	            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-	            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-	            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-	            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
-	            
-	            listRating.add( rating );
-	        }
-
+            while ( daoUtil.next( ) )
+            {
+              
+                listRating.add( buildRating(  daoUtil ) );
+            }
         }
         return listRating;
     }
+	
+	private Rating buildRating( DAOUtil daoUtil ) {
+		 int nIndex =1;
+		 Rating rating= RatingFacadeFactory.getRatingInstance(daoUtil.getString( 1 ));	            
+         rating.setRatingType(daoUtil.getString( nIndex++ ) );
+         rating.setIdRating( daoUtil.getInt( nIndex++ ) );
+         rating.setIdHistory(daoUtil.getLong( nIndex++ ));
+         rating.setIdExtendableResource(daoUtil.getString( nIndex++ ));
+         rating.setExtendableResourceType(daoUtil.getString( nIndex++ ));
+         rating.setUserGuid(daoUtil.getString( nIndex++ ));
+         rating.setRatingValue(daoUtil.getFloat( nIndex ));
+
+         return rating;
+	}
+	
+	/**
+     * Builds a query with filters placed in parameters
+     * 
+     * @param strSelect
+     *            the select of the query
+     * @param listStrFilter
+     *            the list of filter to add in the query
+     * @return a query
+     */
+    private static String buildRequestWithFilter( String strSelect, List<String> listStrFilter )
+    {
+        StringBuilder strBuilder = new StringBuilder( );
+        strBuilder.append( strSelect );
+
+        int nCount = 0;
+
+        for ( String strFilter : listStrFilter )
+        {
+            if ( ++nCount == 1 )
+            {
+                strBuilder.append( CONSTANT_WHERE );
+            }
+
+            strBuilder.append( strFilter );
+
+            if ( nCount != listStrFilter.size( ) )
+            {
+                strBuilder.append( CONSTANT_AND );
+            }
+        }
+
+        return strBuilder.toString( );
+    }
+
+	
 }

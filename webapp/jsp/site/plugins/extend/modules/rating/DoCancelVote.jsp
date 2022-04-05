@@ -6,7 +6,7 @@
 <%
 	try
 	{
-		ratingJspBean.doCancelVote( request, response );
+		ratingJspBean.doCancelRating( request, response );
 	}
 	catch( SiteMessageException lme )
 	{

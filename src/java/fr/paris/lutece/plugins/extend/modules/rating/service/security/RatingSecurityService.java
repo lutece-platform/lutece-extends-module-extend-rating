@@ -38,14 +38,17 @@ import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilte
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingExtenderFilter;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHome;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
-import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.RatingListenerService;
+import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
+import fr.paris.lutece.plugins.extend.modules.rating.service.validator.RatingValidationManagementService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
+import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
@@ -59,7 +62,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -70,12 +72,10 @@ import javax.servlet.http.HttpServletRequest;
 public class RatingSecurityService implements IRatingSecurityService
 {
     /** The Constant BEAN_SERVICE. */
-    public static final String BEAN_SERVICE = "extend-rating.ratingSecurityService";
     private static final String FILTER_SORT_BY_DATE_VOTE = " date_creation ";
     @Inject
-    private IRatingService _ratingService;
-    @Inject
-    private IResourceExtenderHistoryService _resourceExtenderHistoryService;
+    @Named( ResourceExtenderHistoryService.BEAN_SERVICE )
+    private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
     @Inject
     @Named( RatingConstants.BEAN_CONFIG_SERVICE )
     private IResourceExtenderConfigService _configService;
@@ -84,176 +84,90 @@ public class RatingSecurityService implements IRatingSecurityService
 
     /**
      * {@inheritDoc}
-     * @throws UserNotSignedException
      */
     @Override
-    public boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
+    public boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
         throws UserNotSignedException
     {
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
 
-        if ( config == null  || isVoteClosed(config))
-        {
-            return false;
-        }
-
-      
-        // Only connected user can vote
-        if ( config.isLimitedConnectedUser(  ) && SecurityService.isAuthenticationEnable(  ) )
-        {
-            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
-            if ( user == null )
-            {
-                throw new UserNotSignedException(  );
-            }
-            // Check if we can vote
-            if ( !RatingListenerService.canVote( user, strIdExtendableResource, strExtendableResourceType ) )
-            {
-                return false;
-            }
-        }
-
-        // User can vote a limited time per ressource
-        if ( config.getNbVotePerUser(  ) > 0 )
-        {
-            ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
-
-            filter.setExtendableResourceType( strExtendableResourceType );
-            filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
-
-            if ( SecurityService.isAuthenticationEnable(  ) )
-            {
-                LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
-                if ( user != null )
-                {
-                    filter.setUserGuid( user.getName(  ) );
-                }
-            }
-            else
-            {
-            	filter.setIpAddress( request.getRemoteAddr(  ) );
-            }
-
-            List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
-
-            if ( listHistories.size(  ) >= config.getNbVotePerUser(  ) )
-            {
-                // User has already use all is vote
-                return false;
-            }
-        }
-
-        ResourceExtenderDTOFilter extenderFilter = new ResourceExtenderDTOFilter(  );
-        extenderFilter.setFilterExtendableResourceType( strExtendableResourceType );
-        extenderFilter.setFilterExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
-
-        List<ResourceExtenderDTO> extenders = _extenderService.findByFilter( extenderFilter );
-
-        if ( CollectionUtils.isNotEmpty( extenders ) )
-        {
-            for ( ResourceExtenderDTO extender : extenders )
-            {
-                if ( !extender.isIsActive(  ) )
-                {
-                    return false;
-                }
-            }
-        }
-
-        Rating rating = _ratingService.findByResource( strIdExtendableResource, strExtendableResourceType );
-
-        // Check if the rating exists
-        if ( rating == null )
-        {
-            // It is the first time the ressource is being voted
-            return true;
-        }
-
-        // If it is set as unlimited vote, then the user can vote anytime
-        if ( config.isUnlimitedVote(  ) )
-        {
-            return true;
-        }
-
-        // Search the voting histories of the user
-        ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
-        filter.setIdExtendableResource( rating.getIdExtendableResource(  ) );
-        filter.setExtendableResourceType( strExtendableResourceType );
-        filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
-
-        if ( SecurityService.isAuthenticationEnable(  ) )
-        {
-            LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
-            if ( user != null )
-            {
-                filter.setUserGuid( user.getName(  ) );
-            }
-        }
-        else
-        {
-        	filter.setIpAddress( request.getRemoteAddr(  ) );
-        }
-        filter.setSortedAttributeName( FILTER_SORT_BY_DATE_VOTE );
-        filter.setAscSort( false );
-
-        List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
-
-        if ( ( listHistories != null ) && !listHistories.isEmpty(  ) )
-        {
-            // If unique vote, then the user is prohibited to vote
-            if ( config.isUniqueVote(  ) )
-            {
-                return false;
-            }
-
-            // Get the last vote history
-            ResourceExtenderHistory ratingHistory = listHistories.get( 0 );
-
-            Calendar calendarToday = new GregorianCalendar(  );
-            Calendar calendarVote = new GregorianCalendar(  );
-            Date dateVote = ratingHistory.getDateCreation(  );
-            calendarVote.setTimeInMillis( dateVote.getTime(  ) );
-            calendarVote.add( Calendar.DATE, config.getNbDaysToVote(  ) );
-
-            // The date of last vote must be < today
-            if ( calendarToday.getTimeInMillis(  ) < calendarVote.getTimeInMillis(  ) )
-            {
-                return false;
-            }
-        }
-
-        // No history found, then it is the first time the user is voting the resource
-        return true;
+       return canVote( config, user, strIdExtendableResource, strExtendableResourceType );
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean  canVote( RatingExtenderConfig config, LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
+            throws UserNotSignedException 
+    {
+    	
+    	 if ( config == null  || isVoteClosed(config) || extenderIsNotActivated(strExtendableResourceType, strIdExtendableResource ))
+         {
+             return false;
+         }       
+         // Only connected user can vote
+         if ( config.isLimitedConnectedUser(  ) && SecurityService.isAuthenticationEnable(  ) && user == null )
+         {       
+                 throw new UserNotSignedException(  );
+         }
+         // Check if we can vote
+         if ( !RatingValidationManagementService.canRating(strIdExtendableResource, strExtendableResourceType,  user ) )
+         {
+             return false;
+         }
+         
+         // If it is set as unlimited vote, then the user can vote anytime
+         if ( config.isUnlimitedVote(  ) || RatingService.INSTANCE.findByResource( strIdExtendableResource, strExtendableResourceType)  == null )
+         {
+             return true;
+         }
+        
+         // User can vote a limited time per ressource
+         if ( ( config.isUniqueVote(  ) || config.getNbVotePerUser(  ) > 0 ) && user != null )
+         {            
+         
+        	return canIfRatingIsLimited( config,  user,  strIdExtendableResource, strExtendableResourceType);
+	          
+         } 
+         
+         
+         return true;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource,
+    public boolean canDeleteVote( LuteceUser user, String strIdExtendableResource,
         String strExtendableResourceType )
-    {
+    {   
         // Check if the config exists
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
 
+        return canDeleteVote( config, user, strIdExtendableResource, strExtendableResourceType );
+       
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canDeleteVote( RatingExtenderConfig config, LuteceUser user, String strIdExtendableResource,
+        String strExtendableResourceType )
+    {
         if ( config == null  || isVoteClosed(config))
-        {
+        {					
             return false;
         }
-
         // Only connected user can delete vote
-        if ( config.isDeleteVote(  ) && SecurityService.isAuthenticationEnable(  ) )
+        if ( config.isDeleteVote(  ) && SecurityService.isAuthenticationEnable(  ) && RatingValidationManagementService.canCancelRating( strIdExtendableResource, strExtendableResourceType, user )
+         )
         {
-            return hasAlreadyVoted(request, strIdExtendableResource, strExtendableResourceType);
+            return hasAlreadyVoted(user, strIdExtendableResource, strExtendableResourceType);
         }
-
-        // No history found, then it is the first time the user is voting the resource
+               
         return false;
     }
 
@@ -290,37 +204,110 @@ public class RatingSecurityService implements IRatingSecurityService
      * {@inheritDoc}
      */
     @Override
-	public boolean hasAlreadyVoted(HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType ) 
+	public boolean hasAlreadyVoted(LuteceUser user, String strIdExtendableResource, String strExtendableResourceType ) 
     
     {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         if ( user == null )
         {
             return false;
         }
-
-        // Check if we can vote
-        if ( !RatingListenerService.canVote( user, strIdExtendableResource, strExtendableResourceType ) )
-        {
-            return false;
-        }
-         ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
+        RatingExtenderFilter filter = new RatingExtenderFilter(  );
 
          filter.setExtendableResourceType( strExtendableResourceType );
          filter.setUserGuid( user.getName(  ) );
          filter.setIdExtendableResource( strIdExtendableResource );
-         filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
 
-         List<ResourceExtenderHistory> listHistories = _resourceExtenderHistoryService.findByFilter( filter );
-
-         if ( CollectionUtils.isNotEmpty( listHistories ) )
-         {
-             // User has already vote and so can delete it
-             return true;
-         }
+         return  CollectionUtils.isNotEmpty(RatingHome.findRatingByFilter( filter ));
          
-         return false;
 	}
     
+    private List<ResourceExtenderHistory> findListHistories(String strExtendableResourceType, LuteceUser user)
+    {
+    	 ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter(  );
+
+         filter.setExtendableResourceType( strExtendableResourceType );
+
+         filter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
+         filter.setUserGuid( user.getName(  ) );
+         filter.setSortedAttributeName( FILTER_SORT_BY_DATE_VOTE );
+         filter.setAscSort( false );
+
+         return _resourceExtenderHistoryService.findByFilter( filter );
+     
+    } 
     
+    private boolean extenderIsNotActivated(String strExtendableResourceType, String strIdExtendableResource ) {
+    	
+    	ResourceExtenderDTOFilter extenderFilter = new ResourceExtenderDTOFilter(  );
+        extenderFilter.setFilterExtendableResourceType( strExtendableResourceType );
+        extenderFilter.setFilterExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
+
+        List<ResourceExtenderDTO> extenders = _extenderService.findByFilter( extenderFilter );
+
+        if ( CollectionUtils.isNotEmpty( extenders ) )
+        {
+            for ( ResourceExtenderDTO extender : extenders )
+            {
+                if ( (extender.getIdExtendableResource().equals(ResourceExtenderDTOFilter.WILDCARD_ID_RESOURCE) 
+                		|| extender.getIdExtendableResource().equals( strIdExtendableResource )) 
+                		&& extender.isIsActive(  ))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    private boolean canIfRatingIsLimited(RatingExtenderConfig config, LuteceUser user, String strIdExtendableResource,  String strExtendableResourceType) 
+    {
+    	RatingExtenderFilter filter= new RatingExtenderFilter();
+		filter.setExtendableResourceType(strExtendableResourceType);
+		filter.setIdExtendableResource(strIdExtendableResource);
+		filter.setUserGuid(user.getName( ));
+		filter.setRatingType(config.getRatingType( ));
+		   
+		List<Rating> listRating= RatingHome.findRatingByFilter(  filter );
+	
+        if ( ( listRating != null ) && !listRating.isEmpty(  ) )
+        {
+          // If unique vote, then the user is prohibited to vote
+          if ( (config.isUniqueVote(  ) && listRating.stream().anyMatch(rating -> rating.getIdExtendableResource().equals(strIdExtendableResource)))
+          		|| (config.isLimitVote() && listRating.size(  ) >= config.getNbVotePerUser(  )) )
+          {
+              return false;
+          }                 
+         
+          if( config.getNbDaysToVote() > 0 ) {
+         	 
+	             ResourceExtenderHistory ratingHistory= null;
+	             // Get the last vote history or User has already use all is vote
+	             for(ResourceExtenderHistory hist: findListHistories( strExtendableResourceType, user) )
+	             {
+	            	 if( listRating.stream().anyMatch(  ra-> ra.getIdHistory( ) == hist.getIdHistory( ) ) )
+	            	 {
+	            		 ratingHistory = hist;
+	            		 break;
+	            	 }
+	            }
+	            
+	            if( ratingHistory != null && ratingHistory.getDateCreation( ).isPresent( )) {
+	            	 
+	            	 Calendar calendarToday = new GregorianCalendar(  );
+		             Calendar calendarVote = new GregorianCalendar(  );
+		             Date dateRating = ratingHistory.getDateCreation( ).get();
+		             calendarVote.setTimeInMillis( dateRating.getTime(  ) );
+		             calendarVote.add( Calendar.DATE, config.getNbDaysToVote(  ) );
+		
+		             // The date of last vote must be < today
+		             if ( calendarToday.getTimeInMillis(  ) < calendarVote.getTimeInMillis(  ) )
+		             {
+		                 return false;
+		             }  
+	             }
+          	}
+        }
+        
+        return true;
+    }
 }

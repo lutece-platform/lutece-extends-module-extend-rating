@@ -1,0 +1,104 @@
+<#if show == "vote" ||  show== "all" >
+	<#assign averageScore=0 />
+	<#assign averageScoreRoundToHalf=0 />
+	<#assign ratingCount=0 />
+	<#if rating??>
+	 	<#assign averageScore=rating.averageScore />
+	 	<#assign averageScoreRoundToHalf=rating.averageScoreRoundToHalf /> 
+	 	<#assign ratingCount=rating.ratingCount /> 
+
+
+	 </#if> 
+	<#if show == "all" || show=="vote">
+		<p>
+			<img
+				src="images/local/skin/plugins/extend/modules/rating/stars_${averageScoreRoundToHalf!}.png"
+				alt="Note : ${averageScore!}" title="Note : ${averageScore!}" />
+			(${ratingCount!})&nbsp;
+		</p>
+	</#if>
+</#if>
+<#if canDeleteVote>
+	<div class="cancel">
+	<#list ratingList as rat >
+		<#assign ratingValue=rat.ratingValue /> 	
+	     <a
+			href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${ratingValue?replace(',','.')}">
+		</a>
+		</br>
+      </#list>
+	</div>
+</#if> 
+<#if show== "all" || show=="actionVote">
+  <#if canVote>
+	<div>Votez :</div>
+	<div class="resource-vote-star-rating" style="display: none;">
+		<form name="resource_vote_form"
+			action="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType}"
+			method="post">
+			<input type="hidden" name="ratingValue" value="1" /> <input
+				class="star-rating {split:2}" type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="0.5" /> <input class="star-rating {split:2}" type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="1"> <input class="star-rating {split:2}" type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="1.5"> <input class="star-rating {split:2}"
+				type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="2"> <input class="star-rating {split:2}" type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="2.5"> <input class="star-rating {split:2}"
+				type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="3"> <input class="star-rating {split:2}" type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="3.5"> <input class="star-rating {split:2}"
+				type="radio"
+				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
+				value="4">
+		</form>
+	</div>
+	<div class="resource-vote-star-rating-javascript-disable">
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=0.5"></a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1">
+			</a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1.5">
+			</a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=2">
+			</a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=2.5"></a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=3">
+			</a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=3.5">
+			</a>
+		</div>
+		<div class="star {split:2}">
+			<a
+				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=4">
+			</a>
+		</div>
+	</div>
+	<br />
+  </#if> 
+</#if>

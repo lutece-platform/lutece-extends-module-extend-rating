@@ -23,15 +23,7 @@
     
     <!--Administration interface parameters -->
     <admin-features>
-        <admin-feature>
-            <feature-id>EXTEND_VOTE_TYPES_MANAGEMENT</feature-id>
-            <feature-title>module.extend.rating.adminFeature.vote_types_management.name</feature-title>
-            <feature-description>module.extend.rating.adminFeature.vote_types_management.description</feature-description>
-            <feature-level>2</feature-level>
-            <feature-url>jsp/admin/plugins/extend/modules/rating/ManageVoteTypes.jsp</feature-url>
-            <feature-icon-url>images/admin/skin/plugins/extend/modules/rating/extend-rating.png</feature-icon-url>
-            <feature-documentation-url>jsp/admin/documentation/AdminDocumentation.jsp?doc=admin-extend-rating</feature-documentation-url>
-        </admin-feature>
+      
     </admin-features>
     
     <!-- Specific plugin CSS stylesheet -->

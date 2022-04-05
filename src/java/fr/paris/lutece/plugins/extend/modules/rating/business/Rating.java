@@ -33,30 +33,29 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
-import javax.validation.constraints.NotNull;
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
+import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingUtils;
+import fr.paris.lutece.plugins.extend.service.extender.facade.IExtendableResourceResult;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 
 
 /**
  *
- * Rating
+ * Rating Class
  *
  */
-public class Rating
+public abstract class Rating  extends ResourceExtenderHistory implements IExtendableResourceResult
 {
-    private int _nIdRating;
-    @NotNull
-    private String _strIdExtendableResource;
-    @NotNull
-    private String _strExtendableResourceType;
-    private int _nVoteCount;
-    private double _dScoreValue;
-    private int _nScorePositifsVotes;
-    private int _nScoreNegativesVotes;
-    
+	private int _nIdRating;
+    protected int _nRatingCount;
+    protected double _dScoreValue;
+    private float _fRatingValue;
+    private String _strRatingType = this.getClass().getName( );
+    private LuteceUser _user; 
 
     /**
-         * @return the nIdRating
-         */
+     * @return the nIdRating
+     */
     public int getIdRating(  )
     {
         return _nIdRating;
@@ -65,137 +64,123 @@ public class Rating
     /**
      * @param nIdRating the nIdRating to set
      */
+    
     public void setIdRating( int nIdRating )
     {
         _nIdRating = nIdRating;
     }
 
     /**
-    * @return the strIdExtendableResource
-    */
-    public String getIdExtendableResource(  )
+   
+
+    /**
+     * @return the nRatingCount
+     */
+    public int getRatingCount(  )
     {
-        return _strIdExtendableResource;
+        return _nRatingCount;
     }
 
     /**
-     * @param strIdExtendableResource the strIdExtendableResource to set
+     * @param nRatingCount the nRatingCount to set
      */
-    public void setIdExtendableResource( String strIdExtendableResource )
+    public void setRatingCount( int nRatingCount )
     {
-        _strIdExtendableResource = strIdExtendableResource;
-    }
-
-    /**
-     * @return the extendableResourceType
-     */
-    public String getExtendableResourceType(  )
-    {
-        return _strExtendableResourceType;
-    }
-
-    /**
-     * @param strExtendableResourceType the extendableResourceType to set
-     */
-    public void setExtendableResourceType( String strExtendableResourceType )
-    {
-        _strExtendableResourceType = strExtendableResourceType;
-    }
-
-    /**
-     * @return the nVoteCount
-     */
-    public int getVoteCount(  )
-    {
-        return _nVoteCount;
-    }
-
-    /**
-     * @param nVoteCount the nVoteCount to set
-     */
-    public void setVoteCount( int nVoteCount )
-    {
-        _nVoteCount = nVoteCount;
+        _nRatingCount = nRatingCount;
     }
 
     /**
      * @return the dScoreValue
      */
+    
     public double getScoreValue(  )
     {
         return _dScoreValue;
     }
-
     /**
      * @param dScoreValue the dScoreValue to set
      */
-    public void setScoreValue( double dScoreValue )
+    public void setScoreValue(  float[] ratingValue )
     {
-        _dScoreValue = dScoreValue;
+        for (float x : ratingValue) {
+        	_dScoreValue += x;
+        }  	
+    }
+    /**
+     * @param dScoreValue the dScoreValue to set
+     */
+    public void setScoreValue(  double scoreValue )
+    {
+        _dScoreValue = scoreValue; 	
     }
     
     /**
-     * 
-     * @return
-     */
-    public int getScorePositifsVotes( ) 
-    {
-		return _nScorePositifsVotes;
-	}
+     * Returns the RatingValue
+     * @return The RatingValue
+     */ 
+     public float getRatingValue()
+     {
+         return _fRatingValue;
+     }
+ 
     /**
-     * 
-     * @param _nScorePositifVotes
-     */
-	public void setScorePositifsVotes( int _nScorePositifVotes ) 
-	{
-		this._nScorePositifsVotes = _nScorePositifVotes;
+     * Sets the RatingValue
+     * @param dRatingValue The RatingValue
+     */ 
+     public void setRatingValue( float fRatingValue )
+     {
+         _fRatingValue = fRatingValue;
+     }
+
+    /**
+     * Returns the RatingType
+     * @return The RatingType
+     */ 
+     public String getRatingType()
+     {
+         return _strRatingType;
+     }
+ 
+    /**
+     * Sets the RatingType
+     * @param strRatingType The RatingType
+     */ 
+     public void setRatingType( String strRatingType )
+     {
+         _strRatingType = strRatingType;
+     }
+	
+	public LuteceUser getUser( ) {
+    	
+		return _user;
 	}
 	/**
-	 * 
-	 * @return
+	 * Set the Lutece User
+	 * @param user the lutece user
 	 */
-	public int getScoreNegativesVotes( ) 
-	{
-		return _nScoreNegativesVotes;
+	public void setUser(LuteceUser user) {		
+		_user= user;
+		this.setUserGuid(user!=null? user.getName( ):null);
 	}
-
-	public void setScoreNegativesVotes( int nScoreNegativeVotes ) 
-	{
-		this._nScoreNegativesVotes = nScoreNegativeVotes;
-	}
-
 	/**
-     * Calculate the score (min : 1 - max : 4).
-     *
-     * @return the average score
-     */
-    public double getAverageScore(  )
-    {
-        double dScore = 0;
-
-        if ( _nVoteCount > 0 )
-        {
-            double averageScore = _dScoreValue / ( double ) _nVoteCount;
-            dScore =  Math.round( averageScore * 10 ) * 0.1;
-        }
-
-        return dScore;
-    }
-    
-    /**
-     *
-     * @return the average score calculated with 0.5 precision
-     */
-    public double getAverageScoreRoundToHalf(  )
-    {
-        double dScore = 0;
-
-        if ( _nVoteCount > 0 )
-        {
-            double averageScore = _dScoreValue / (double) _nVoteCount;
-            dScore =  Math.round( averageScore * 2 ) * 0.5;
-        }
-
-        return dScore;
-    }
+	 * Set History properties
+	 * @param history the history properties
+	 */
+	public void setHistory( ResourceExtenderHistory history) {
+		
+		this.setIdHistory(history.getIdHistory( ));
+		this.setExtendableResourceType(history.getExtendableResourceType( ));
+		this.setIdExtendableResource(history.getIdExtendableResource( ));
+		this.setUserGuid(history.getUserGuid( ));
+		this.setDateCreation(history.getDateCreation( ).isPresent()?history.getDateCreation( ).get():null);
+		
+	}
+	/**
+	 * Get the default template to use for rating resource 
+	 * @return the defautl template
+	 */
+	public static String getTemplateContent(  ){
+			
+		return RatingUtils.TEMPLATE_DEFAULT_RATING_TYPE; 
+	}
 }

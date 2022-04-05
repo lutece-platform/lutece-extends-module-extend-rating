@@ -1,11 +1,13 @@
 <#if rating??>
+<#list rating as rat>
     <@row>
         <@columns>
-            <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rating.voteCount!}</@p>
+            <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rating.ratingtype!}</@p>
             <@p><strong>#i18n{module.extend.rating.rating_info.labelScoreValue} :</strong> ${rating.scoreValue!}</@p>
-            <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rating.averageScore!}</@p>
+            <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rating.ratingCount!}</@p>
         </@columns>
     </@row>
+</#list>
 <#else>
 	<@row>
 		<@columns>
@@ -13,3 +15,4 @@
 		</@columns>
 	</@row>
 </#if>
+

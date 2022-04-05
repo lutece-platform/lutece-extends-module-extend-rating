@@ -33,9 +33,20 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.service;
 
+import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.SimpleRating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.StarRating;
+import fr.paris.lutece.plugins.extend.modules.rating.business.ThumbRating;
+import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
+import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
+import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingType;
+import fr.paris.lutece.plugins.extend.service.extender.facade.ResourceExtenderServiceFacade;
+import fr.paris.lutece.plugins.extend.service.extender.facade.ExtenderType;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.web.l10n.LocaleService;
 
 
 /**
@@ -50,6 +61,8 @@ public class RatingPlugin extends PluginDefaultImplementation
 
     /** The Constant TRANSACTION_MANAGER. */
     public static final String TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
+    
+   
 
     /**
      * Gets the plugin.
@@ -59,5 +72,25 @@ public class RatingPlugin extends PluginDefaultImplementation
     public static Plugin getPlugin(  )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
+    }
+    @Override
+    public void init( )
+    {
+        super.init( );
+        //Create and initialize rating type
+    	RatingType.newBuilder( SimpleRating.class, I18nService.getLocalizedString(SimpleRating.RATING_TITLE, LocaleService.getDefault( ))).build();
+		RatingType.newBuilder( ThumbRating.class, I18nService.getLocalizedString(ThumbRating.RATING_TITLE, LocaleService.getDefault( ))).build();
+		RatingType.newBuilder( StarRating.class, I18nService.getLocalizedString(StarRating.RATING_TITLE, LocaleService.getDefault( ))).build();
+		
+		//Addition of rating for the exploitation of rating information from the extend plugin
+        ResourceExtenderServiceFacade.addExtenderType(
+        		new ExtenderType< >(
+        			Rating.class,
+               		RatingResourceExtender.RESOURCE_EXTENDER,
+               		RatingFacadeFactory::getInfoRating,
+               		RatingFacadeFactory::getInfoRatingByList,
+               		RatingFacadeFactory::getInfoForExport,
+               		RatingFacadeFactory::getInfoForRecap )
+        );
     }
 }

@@ -1,0 +1,83 @@
+<#assign scoreValue=0 />
+
+<#assign ratingCount=0 />
+
+<#if rating??>
+ <#assign scoreValue=rating.scoreValue />
+ <#assign ratingCount=rating.ratingCount /> 
+ <#assign like=rating.scoreLike> 
+ <#assign dislike=rating.scoreDislike>
+ <#assign ratingValue=rating.ratingValue>
+ 
+</#if> 
+<#if show==	"all" || show=="vote">
+	<p>
+	<#if scoreValue &lt; 0 > 
+		<img
+			src="images/local/skin/plugins/extend/modules/rating/vote_against.png"
+			title="#i18n{module.extend.rating.rating.labelVoteAgainst}"
+			alt="#i18n{module.extend.rating.rating.labelVoteAgainst}" />
+		${scoreValue!} 
+	<#else> 
+		<img
+			src="images/local/skin/plugins/extend/modules/rating/vote_for.png"
+			title="#i18n{module.extend.rating.rating.labelScore}"
+			alt="#i18n{module.extend.rating.rating.labelScore}" /> 
+			${scoreValue!}
+		(${ratingCount!})&nbsp;
+	</#if>		
+	</p>
+	<p>#i18n{module.extend.rating.rating.labelLike} : ${like!}</p>
+	<p>#i18n{module.extend.rating.rating.labelDislike} : ${dislike!}</p>
+	<#if ratingValue?? && ratingValue != 0 >
+		<p>
+			#i18n{module.extend.rating.rating.labelLastVote} :
+			<#if ratingValue == 1>
+				 <img
+					src="images/local/skin/plugins/extend/modules/rating/vote_for.png"
+					title="#i18n{module.extend.rating.rating.labelScore}"
+					alt="#i18n{module.extend.rating.rating.labelScore}" />
+			<#elseif ratingValue ==-1 > 
+				<img
+					src="images/local/skin/plugins/extend/modules/rating/vote_against.png"
+					title="#i18n{module.extend.rating.rating.labelVoteAgainst}"
+					alt="#i18n{module.extend.rating.rating.labelVoteAgainst}" /> 
+			</#if>
+		</p>
+	</#if>
+</#if> 
+<#if canDeleteVote>
+	<div class="cancel">
+	<#list ratingList as rat >
+		<a
+			href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${rat.ratingValue!}">
+		</a>
+		</br>
+	</#list>
+	</div>
+</#if> 
+<#if ( show== "all" || show=="actionVote" ) && canVote >
+	<div>
+		<div class="extend-rating-vote-title">
+			<label for="">#i18n{module.extend.rating.rating.labelVote} :</label>
+		</div>
+		<span class="extend-rating-vote-span"> 
+
+			 	<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;ratingValue=-1">
+					<img
+					src="images/local/skin/plugins/extend/modules/rating/vote_against.png"
+					title="#i18n{module.extend.rating.rating.labelVoteAgainst}"
+					alt="#i18n{module.extend.rating.rating.labelVoteAgainst}" />
+				</a> 
+
+
+				<a	href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;ratingValue=1">
+					<img
+					src="images/local/skin/plugins/extend/modules/rating/vote_for.png"
+					title="#i18n{module.extend.rating.rating.labelVoteFor}"
+					alt="#i18n{module.extend.rating.rating.labelVoteFor}" />
+				</a>
+
+		</span>
+	</div> 
+</#if>

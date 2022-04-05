@@ -51,7 +51,7 @@ public class RatingListenerService
      */
     public static final String CONSTANT_EVERY_EXTENDABLE_RESOURCE_TYPE = "*";
 
-    private static Map<String, List<IRatingListener>> _mapListeners = new HashMap<String, List<IRatingListener>>( );
+    private static Map<String, List<IRatingListener>> _mapListeners = new HashMap< >( );
     private static boolean _bHasListeners;
 
     /**
@@ -75,7 +75,7 @@ public class RatingListenerService
         List<IRatingListener> listListeners = _mapListeners.get( strExtendableResourceType );
         if ( listListeners == null )
         {
-            listListeners = new ArrayList<IRatingListener>( );
+            listListeners = new ArrayList< >( );
             _mapListeners.put( strExtendableResourceType, listListeners );
         }
         listListeners.add( listener );
@@ -97,14 +97,14 @@ public class RatingListenerService
      * @param strExtendableResourceType The extendable resource type of the created rating
      * @param strIdExtendableResource The extendable resource id of the rating
      */
-    public static void createRating( String strExtendableResourceType, String strIdExtendableResource )
+    public static void createRating( String strExtendableResourceType, String strIdExtendableResource, LuteceUser user )
     {
         List<IRatingListener> listListeners = _mapListeners.get( strExtendableResourceType );
         if ( listListeners != null )
         {
             for ( IRatingListener listener : listListeners )
             {
-                listener.createVote( strIdExtendableResource );
+                listener.rating( strIdExtendableResource, strExtendableResourceType, user );
             }
         }
         listListeners = _mapListeners.get( CONSTANT_EVERY_EXTENDABLE_RESOURCE_TYPE );
@@ -113,7 +113,7 @@ public class RatingListenerService
         {
             for ( IRatingListener listener : listListeners )
             {
-                listener.createVote ( strIdExtendableResource );
+                listener.cancelRating( strIdExtendableResource, strExtendableResourceType, user );
             }
         }
     }
@@ -139,7 +139,7 @@ public class RatingListenerService
             {
                 for ( IRatingListener listener : listListeners )
                 {
-                    listener.cancelVote( user, strIdExtendableResource, strExtendableResourceType );
+                    listener.cancelRating( strIdExtendableResource, strExtendableResourceType, user );
                 }
             }
             listListeners = _mapListeners.get( CONSTANT_EVERY_EXTENDABLE_RESOURCE_TYPE );
@@ -147,7 +147,7 @@ public class RatingListenerService
             {
                 for ( IRatingListener listener : listListeners )
                 {
-                    listener.cancelVote( user, strIdExtendableResource, strExtendableResourceType );
+                    listener.cancelRating( strIdExtendableResource, strExtendableResourceType, user );
                 }
             }
         }
@@ -156,47 +156,6 @@ public class RatingListenerService
             AppLogService.error( e.getMessage( ), e );
         }
     }
-    /**
-     * Check if user can to vote. Only listeners
-     * @param user
-     * @param strIdExtendableResource
-     * @param strExtendableResourceType
-     * @return
-     */
-    public static boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType ){
-    	
-    	
-    	try
-        {
-            List<IRatingListener> listListeners = _mapListeners.get( strExtendableResourceType );
-            if ( listListeners != null )
-            {
-                for ( IRatingListener listener : listListeners )
-                {
-                    if(!listener.canVote( user, strIdExtendableResource, strExtendableResourceType )){
-                    	return false;
-                    }
-                    
-                }
-            }
-            listListeners = _mapListeners.get( CONSTANT_EVERY_EXTENDABLE_RESOURCE_TYPE );
-            if ( listListeners != null )
-            {
-                for ( IRatingListener listener : listListeners )
-                {
-                	if(!listener.canVote( user, strIdExtendableResource, strExtendableResourceType )){
-                		return false;
-                	}
-                	
-                }
-            }
-        }
-        catch ( Exception e )
-        {
-            AppLogService.error( e.getMessage( ), e );
-        }
-    	return true;
-
-    }
+    
 
 }

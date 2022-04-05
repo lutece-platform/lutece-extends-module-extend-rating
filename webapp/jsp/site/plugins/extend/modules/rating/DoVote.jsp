@@ -7,7 +7,7 @@
 <%
 	try
 	{
-		ratingJspBean.doVote( request, response );
+		ratingJspBean.doRating( request, response );
 	}
 	catch( SiteMessageException lme )
 	{

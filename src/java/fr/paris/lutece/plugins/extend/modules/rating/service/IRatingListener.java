@@ -42,29 +42,19 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 public interface IRatingListener
 {
     /**
-     * Notify the creation of a rating
-     * @param strIdExtendableResource The id of the extendable resource associated with the created rating
-     *            
-     */
-    void createVote( String strIdExtendableResource );
-
+     * Notify if there was a rate
+     * @param strIdExtendableResource The id of the extendable resource
+     * @param strExtendableResourceType The type of the extendable resource
+     * @param user the LuteceUser who rated
+    */
+    public void rating( String strIdExtendableResource,  String strExtendableResourceType, LuteceUser user  );
     
     /**
      * Notify the removal of a rating
-     * @param user the lutece user
-     * @param strIdExtendableResource The id of the extendable resource associated with the removed rating
-     * @param strExtendableResourceType The id of removed rating
+     * @param strIdExtendableResource The id of the extendable resource
+     * @param strExtendableResourceType The type of the extendable resource
+     * @param user the LuteceUser who cancel rated
      */
-    void cancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
-    
-    /**
-     * Check if user can to vote
-     * @param user
-     * @param strIdExtendableResource
-     * @param strExtendableResourceType
-     * @return
-     */
-    boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
-    
+    public void cancelRating( String strIdExtendableResource, String strExtendableResourceType, LuteceUser user );    
     
 }

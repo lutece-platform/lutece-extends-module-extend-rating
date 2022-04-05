@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import org.apache.commons.lang3.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -46,24 +45,29 @@ import javax.servlet.http.HttpServletRequest;
  */
 public final class RatingValidationManagementService
 {
+	
+	private RatingValidationManagementService ()
+	{
+		
+	}
     /**
      * Check if a user is allowed to validate a resource
      * @param request The request
      * @param user The user that wants to rate a resource
      * @param strIdResource the id of the resource
      * @param strResourceTypeKey The resource type key
-     * @param dVoteValue The vote value
+     * @param fRatingValue The rating value
      * @return The URL to redirect the user if he is not allowed to rate the
      *         resource, or null if he is allowed
      */
     public static String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
-        String strResourceTypeKey, double dVoteValue )
+        String strResourceTypeKey, float fRatingValue )
     {
         for ( IRatingValidationService validationService : SpringContextService.getBeansOfType( 
                 IRatingValidationService.class ) )
         {
             String strUrlError = validationService.validateRating( request, user, strIdResource, strResourceTypeKey,
-                    dVoteValue );
+            		fRatingValue );
 
             if ( StringUtils.isNotBlank( strUrlError ) )
             {
@@ -72,5 +76,42 @@ public final class RatingValidationManagementService
         }
 
         return null;
+    }
+    /**
+     * check if the rating can be done
+     * @param strIdResource the id of the resource
+     * @param strResourceTypeKey The resource type key
+     * @param user The user that wants to rate a resource
+     * @return true if the rating can be done
+     */
+    public static boolean canRating( String strIdExtendableResource, String strExtendableResourceType, LuteceUser user )
+    {   	
+    	for ( IRatingValidator validatorService : SpringContextService.getBeansOfType( 
+                    IRatingValidator.class ) )
+        {
+             if(!validatorService.canRating( strIdExtendableResource, strExtendableResourceType, user )){
+               	return false;
+             }                    
+        }            
+    	return true;
+
+    }
+    /**
+     * check if the rating can be done
+     * @param strIdResource the id of the resource
+     * @param strResourceTypeKey The resource type key
+     * @param user The user that wants to rate a resource
+     * @return true if the rating can be done
+     */
+    public static boolean canCancelRating( String strIdExtendableResource, String strExtendableResourceType, LuteceUser user )
+    {   	
+    	for ( IRatingValidator validatorService : SpringContextService.getBeansOfType( 
+                    IRatingValidator.class ) )
+        {
+             if(!validatorService.canCancelRating( strIdExtendableResource, strExtendableResourceType, user )){
+               	return false;
+             }                    
+        }
+    	return true;
     }
 }

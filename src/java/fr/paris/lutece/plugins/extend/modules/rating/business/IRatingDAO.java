@@ -36,84 +36,102 @@ package fr.paris.lutece.plugins.extend.modules.rating.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
- * ICommentDAO.
+ * IRatingDAO.
  */
 public interface IRatingDAO
 {
-    /**
+	 /**
      * Delete.
-     *
-     * @param nIdRating the n id rating
+     * @param nId the n id rating
      * @param plugin the plugin
      */
-    void delete( int nIdRating, Plugin plugin );
+    void delete( int nId, Plugin plugin );
 
     /**
-     * Delete by id hub resource.
-     *
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
+     * Delete By Id extender History.
+     * @param nId the Id extender History
      * @param plugin the plugin
+     */
+    void deleteByIdExtenderHistory( long nIdHistory, Plugin plugin );
+    /**
+     * Delete By list Id extender History.
+     * @param listIdExtenderHistory the list Id extender History
+     * @param plugin the plugin
+     */
+    void deleteByListExtenderHistory( List<Long> listIdExtenderHistory, Plugin plugin );
+    /**
+     * Delete by resource
+     * @param strIdExtendableResource the Extendable resource id
+     * @param strExtendableResourceType the Extendable Resourcer type
+     * @param plugin the plugin 
      */
     void deleteByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin );
 
+
     /**
      * Insert.
-     *
      * @param rating the rating
      * @param plugin the plugin
      */
     void insert( Rating rating, Plugin plugin );
 
     /**
-     * Load.
-     *
-     * @param nIdRating the n id rating
+     * load by primary key
+     * @param nIdRating the rating id
+     * @param plugin the plugin
+     * @return the corresponding {@link Rating}
+     */
+    Optional<Rating> load( int nIdRating, Plugin plugin );
+    /**
+     * load by primary key
+     * @param strIdExtendableResource the str id extendable resource
+     * @param strExtendableResourceType the str extendable resource type
+     * @param ratingType the rating type
+     * @param value the rating value
      * @param plugin the plugin
      * @return the rating
-     */
-    Rating load( int nIdRating, Plugin plugin );
-
+    */
+    Optional<Rating> load( String strIdExtendableResource, String strExtendableResourceType, String ratingType, double value, String userGuid, Plugin plugin ); 
     /**
-     * Store.
-     *
-     * @param rating the rating
-     * @param plugin the plugin
-     */
-    void store( Rating rating, Plugin plugin );
-
-    /**
-     * Select by id hub resource.
+     * Select by resource.
      *
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      * @param plugin the plugin
-     * @return the rating
-     */
-    Rating loadByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin );
-
-    /**
-     * Get the ids of resources ordered by their number of ratings
-     * @param strExtendableResourceType The type of resources to consider
-     * @param nItemsOffset The offset of the items to get, or 0 to get items
-     *            from the first one
-     * @param nMaxItemsNumber The maximum number of items to return, or 0 to get
-     *            every items
-     * @param plugin the plugin
-     * @return The list of ids of resources ordered by the number of associated
-     *         comments
-     */
-    List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset, int nMaxItemsNumber,
-        Plugin plugin );
-    /**
-     * Select by id resource list
-     * @param listIdExtendableResource the list of resources type to consider
-     * @param strExtendableResourceType the str extendable resource type
-     * @param plugin the plugin
      * @return the rating list
      */
-    List<Rating> loadByResourceList( List< String > listIdExtendableResource, String strExtendableResourceType, Plugin plugin );
-}
+    List<Rating> loadByResource( String strIdExtendableResource, String strExtendableResourceType, Plugin plugin );
+
+    /**
+     * Find a {@link Rating}
+     * @param lIdHistoryExtenderId the extender id
+     * @param plugin the plugin
+     * @return the corresponding {@link Rating}
+     */
+    Rating findByHistoryExtenderId( long lIdHistoryExtenderId, Plugin plugin );
+    /**
+     * Find a list {@link Rating}
+     * @param listExtendableResource the list of extender resource id
+     * @param strExtendableResourceType the str extendable resource type
+     * @param ratingType the rating type
+     * @param plugin the plugin
+     * @return the corresponding list {@link Rating}
+     */
+    List<Rating> findByResourceAndRatingType( List<String> listExtendableResource ,String strExtendableResourceType, String ratingType, Plugin plugin );
+   /**
+    * Find a list {@link Rating}
+    * @param lIdHistoryExtenderId the list of extender id
+    * @param plugin the plugin
+    * @return the corresponding list {@link Rating}
+    */
+   List<Rating> findByHistoryExtenderIds( List<Long> lIdHistoryExtenderId , Plugin plugin );
+   
+   float[] selectRatingValue(List<String> listIdResource, String strExtendableResourceType , String strRatingType, Plugin plugin); 
+   
+    List<Rating> selectRatingByFilter( RatingExtenderFilter filter, Plugin plugin );
+
+}   

@@ -55,7 +55,7 @@ $( function() {
 			// 'value' is the value selected
 			// 'element' points to the link element that received the click.
 			// To submit the form automatically:
-			this.form.voteValue.value = value;
+			this.form.ratingValue.value = value;
 			if (value != '') {
 				this.form.submit();
 			}

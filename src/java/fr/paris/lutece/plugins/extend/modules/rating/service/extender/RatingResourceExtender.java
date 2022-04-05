@@ -35,8 +35,6 @@ package fr.paris.lutece.plugins.extend.modules.rating.service.extender;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
-import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingHistoryService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
@@ -60,12 +58,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
     @Inject
     @Named( RatingConstants.BEAN_CONFIG_SERVICE )
     private IResourceExtenderConfigService _configService;
-    @Inject
-    @Named( RatingService.BEAN_SERVICE )
-    private IRatingService _ratingService;
-    @Inject
-    private IRatingHistoryService _ratingHistoryService;
-
+      
     /**
      * {@inheritDoc}
      */
@@ -106,7 +99,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
         if ( defaultConfig != null )
         {
             config.setIdMailingList( defaultConfig.getIdMailingList(  ) );
-            config.setIdVoteType( defaultConfig.getIdVoteType(  ) );
+            config.setRatingType(defaultConfig.getRatingType( ));
             config.setNbDaysToVote( defaultConfig.getNbDaysToVote(  ) );
             config.setUniqueVote( defaultConfig.isUniqueVote(  ) );
         }
@@ -124,9 +117,6 @@ public class RatingResourceExtender extends AbstractResourceExtender
         {
             _configService.remove( extender.getIdExtender(  ) );
         }
-
-        _ratingService.removeByResource( extender.getIdExtendableResource(  ), extender.getExtendableResourceType(  ) );
-        _ratingHistoryService.removeByResource( extender.getIdExtendableResource(  ),
-            extender.getExtendableResourceType(  ) );
+        RatingService.INSTANCE.removeByResource( extender.getIdExtendableResource(  ), extender.getExtendableResourceType(  ) );
     }
 }

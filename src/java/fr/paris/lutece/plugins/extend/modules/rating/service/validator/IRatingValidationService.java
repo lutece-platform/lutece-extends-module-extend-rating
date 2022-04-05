@@ -54,5 +54,5 @@ public interface IRatingValidationService
      *         resource, or null if he is allowed
      */
     String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
-        String strResourceTypeKey, double dVoteValue );
+        String strResourceTypeKey, float dVoteValue );
 }

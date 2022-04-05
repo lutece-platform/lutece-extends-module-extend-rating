@@ -34,9 +34,9 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service.security;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -46,26 +46,56 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IRatingSecurityService
 {
+    public static final String BEAN_SERVICE = "extend-rating.ratingSecurityService";
+
     /**
      * Check if the given user (authenticated or not) can vote or not.
-     *
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * @param user the LuteceUser
+     * @param strIdExtendableResource the id extendable resource
+     * @param strExtendableResourceType the extendable resource type
+     * @return true, if successful 
+     * @throws UserNotSignedException the UserNotSignedException
      */
-    boolean canVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType )
+    boolean canVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
         throws UserNotSignedException;
+    /**
+     * Check if the given user (authenticated or not) can vote or not.
+     * @param config the RatingExtenderConfig
+     * @param user the LuteceUser
+     * @param strIdExtendableResource the id extendable resource
+     * @param strExtendableResourceType the extendable resource type
+     * @return true, if successful 
+     * @throws UserNotSignedException the UserNotSignedException
+     */
+    default boolean canVote( RatingExtenderConfig config, LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
+        throws UserNotSignedException
+    {   	
+       return canVote( user, strIdExtendableResource, strExtendableResourceType );
+    }
 
     /**
      * Check if the given user (authenticated) can delete his vote.
      *
-     * @param request the request
-     * @param strIdExtendableResource the str id extendable resource
-     * @param strExtendableResourceType the str extendable resource type
-     * @return true, if successful
+     * @param user the LuteceUser
+     * @param strIdExtendableResource the id extendable resource
+     * @param strExtendableResourceType the extendable resource type
+     * @return true, if successful 
      */
-    boolean canDeleteVote( HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    boolean canDeleteVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
+    
+    /**
+     * Check if the given user (authenticated) can delete his vote.
+     * 
+     * @param config the RatingExtenderConfig
+     * @param user the LuteceUser
+     * @param strIdExtendableResource the id extendable resource
+     * @param strExtendableResourceType the extendable resource type
+     * @return true, if successful 
+     */
+    default boolean canDeleteVote( RatingExtenderConfig config, LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
+    {
+    	return canDeleteVote( user,  strIdExtendableResource, strExtendableResourceType );
+    }
 
     /**
      * Check if the Votes are closed 
@@ -80,7 +110,7 @@ public interface IRatingSecurityService
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
      */
-    boolean hasAlreadyVoted(HttpServletRequest request, String strIdExtendableResource, String strExtendableResourceType );
+    boolean hasAlreadyVoted(LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
     
     
 }

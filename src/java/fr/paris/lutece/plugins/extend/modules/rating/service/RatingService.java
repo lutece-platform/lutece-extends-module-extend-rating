@@ -33,214 +33,140 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.service;
 
-import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
-import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
-import fr.paris.lutece.plugins.extend.modules.rating.business.IRatingDAO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
-import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistory;
-import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
-import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.transaction.annotation.Transactional;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingExtenderFilter;
+import fr.paris.lutece.plugins.extend.modules.rating.business.RatingHome;
+import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
- 
+import java.util.Optional;
+
 
 /**
  *
  * RatingService
  *
  */
-public class RatingService implements IRatingService
+public enum RatingService 
 {
-    /** The Constant BEAN_SERVICE. */
-    public static final String BEAN_SERVICE = "extend-rating.ratingService";
-    @Inject
-    private IRatingDAO _ratingDAO;
-    @Inject
-    private IResourceExtenderHistoryService _resourceExtenderHistoryService;
-    @Inject
-    private IRatingHistoryService _ratingHistoryService;
-
-    /**
-     * {@inheritDoc}
+	INSTANCE;
+    
+	 /**
+     * Remove rating by resource
+     * @param strIdExtendableResource the Extendable resource id
+     * @param strExtendableResourceType the Extendable Resourcer type
      */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    public void create( Rating rating )
-    {
-        _ratingDAO.insert( rating, RatingPlugin.getPlugin(  ) );
-        
-        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    public void update( Rating rating )
-    {
-        _ratingDAO.store( rating, RatingPlugin.getPlugin(  ) );
-        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-   synchronized public void doVote( String strIdExtendableResource, String strExtendableResourceType, double nVoteValue,
-        HttpServletRequest request )
-    {
-    	Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
-
-        // Create the rating if not exists
-        if ( rating == null )
-        {
-            rating = new Rating(  );
-            rating.setIdExtendableResource( strIdExtendableResource );
-            rating.setExtendableResourceType( strExtendableResourceType );
-            rating.setVoteCount( 1 );
-            rating.setScoreValue( nVoteValue );
-            if ( nVoteValue == 1 )
-            {
-            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
-            }
-            else
-            {
-            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
-            }
-            create( rating );
-        }
-        else
-        {
-            rating.setVoteCount( rating.getVoteCount(  ) + 1 );
-            rating.setScoreValue( rating.getScoreValue(  ) + nVoteValue );
-            if ( nVoteValue == 1 )
-            {
-            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) + 1 );
-            }
-            else
-            {
-            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) + 1 );
-            }
-            update( rating );
-        }
-        
-        ResourceExtenderHistory history = _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER,
-                strIdExtendableResource, strExtendableResourceType, request );
-
-        RatingHistory ratingHistory = new RatingHistory(  );
-        ratingHistory.setIdExtenderHistory( history.getIdHistory(  ) );
-        ratingHistory.setVoteValue( nVoteValue );
-        _ratingHistoryService.create( ratingHistory );
-        
-        RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    synchronized  public void doCancelVote( LuteceUser user, String strIdExtendableResource, String strExtendableResourceType )
-    {
-        ResourceExtenderHistoryFilter resourceExtenderHistoryFilter = new ResourceExtenderHistoryFilter(  );
-        resourceExtenderHistoryFilter.setUserGuid( user.getName(  ) );
-        resourceExtenderHistoryFilter.setIdExtendableResource( strIdExtendableResource );
-        resourceExtenderHistoryFilter.setExtendableResourceType( strExtendableResourceType );
-        resourceExtenderHistoryFilter.setExtenderType( RatingResourceExtender.RESOURCE_EXTENDER );
-        
-        List<ResourceExtenderHistory> histories = _resourceExtenderHistoryService.findByFilter( resourceExtenderHistoryFilter );
-        boolean bDecrementCount = false ;
-        
-        if ( CollectionUtils.isNotEmpty( histories ) )
-        {
-        	for(ResourceExtenderHistory history : histories)
-        	{
-        		RatingHistory ratingHistory = _ratingHistoryService.findByHistoryExtenderId( history.getIdHistory(  ) );
-	            if ( ratingHistory != null )
-	            {
-		            _ratingHistoryService.remove( ratingHistory.getIdRatingHistory(  ) );
-		            
-		            Rating rating = findByResource( strIdExtendableResource, strExtendableResourceType );
-		            rating.setVoteCount( rating.getVoteCount(  ) - 1 );
-		            rating.setScoreValue( rating.getScoreValue(  ) - ratingHistory.getVoteValue(  ) );
-		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) > 0 )
-		            {
-		            	rating.setScorePositifsVotes( rating.getScorePositifsVotes( ) - 1 );
-		            	bDecrementCount = true ; 
-		            }
-		            if ( ! bDecrementCount && ratingHistory.getVoteValue( ) < 0 )
-		            {
-		            	rating.setScoreNegativesVotes( rating.getScoreNegativesVotes( ) - 1 );
-		            	bDecrementCount = true ; 
-		            }
-		            update( rating );
-		            
-		            if ( RatingListenerService.hasListener( ) )
-		            {
-		            	RatingListenerService.deleteRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ),  user );
-		            }
-	            }
-	            _resourceExtenderHistoryService.remove( Integer.valueOf( "" + history.getIdHistory(  ) ) );
-	            	         
-        	}
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
-    public void remove( int nIdRating )
-    {
-    	
-        _ratingDAO.delete( nIdRating, RatingPlugin.getPlugin(  ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( RatingPlugin.TRANSACTION_MANAGER )
     public void removeByResource( String strIdExtendableResource, String strExtendableResourceType )
-    {
-        _ratingDAO.deleteByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin(  ) );
-    }
-
-    // GET
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Rating findByPrimaryKey( int nIdRating )
-    {
-        return _ratingDAO.load( nIdRating, RatingPlugin.getPlugin(  ) );
+    {        
+    	RatingHome.removeByResource(strIdExtendableResource, strExtendableResourceType);
+    	RatingListenerService.deleteRating( strExtendableResourceType, strIdExtendableResource, null );
     }
 
     /**
-     * {@inheritDoc}
+     * Find by primary key
+     *
+     * @param nIdRating the n id rating
+     * @return the rating
      */
-    @Override
-    public Rating findByResource( String strIdExtendableResource, String strExtendableResourceType )
+    public Optional<Rating> findByPrimaryKey( int nIdRating )
     {
-        return _ratingDAO.loadByResource( strIdExtendableResource, strExtendableResourceType, RatingPlugin.getPlugin(  ) );
+    	return  RatingHome.findByPrimaryKey( nIdRating );
+    }
+    /**
+     * find by primary key
+     * @param strIdExtendableResource the str id extendable resource
+     * @param strExtendableResourceType the str extendable resource type
+     * @param ratingType the rating type
+     * @param value the rating value
+     * @return the rating
+    */
+    public Optional<Rating> findRating( String strIdExtendableResource, String strExtendableResourceType, String ratingType, double value, String userGuid )
+    {
+    	return RatingHome.findRating(strIdExtendableResource, strExtendableResourceType, ratingType, value, userGuid);
     }
 
     /**
-     * {@inheritDoc}
+     * Select by resource.
+     *
+     * @param strIdExtendableResource the str id extendable resource
+     * @param strExtendableResourceType the str extendable resource type
+     * @return the rating list
      */
-    @Override
-    public List<Integer> findIdMostRatedResources( String strExtendableResourceType, int nItemsOffset,
-        int nMaxItemsNumber )
-    {
-        return _ratingDAO.findIdMostRatedResources( strExtendableResourceType, nItemsOffset, nMaxItemsNumber,
-            RatingPlugin.getPlugin(  ) );
+    public List<Rating> findByResource( String strIdExtendableResource, String strExtendableResourceType )
+    {    	
+        return RatingHome.findByResource( strIdExtendableResource, strExtendableResourceType );
     }
+    	
+   /**
+    *  load and build Rating Result
+    * @param listIdExtendableResource the list of id resource
+    * @param strExtendableResourceType the resource type
+    * @param ratingType the rating type
+    * @return rating result
+    */
+   public  Optional<Rating> findAndbuildRatingResult( List<String> listIdExtendableResource, String strExtendableResourceType, String  ratingType ) {
+	  
+	   float[] ratinValue= RatingHome.findRatingValue( listIdExtendableResource , strExtendableResourceType, ratingType);
+	   if ( ratinValue != null && ratinValue.length > 0 )
+       {
+		  Rating rating = RatingFacadeFactory.getRatingInstance( ratingType );
+		  rating.setExtendableResourceType(strExtendableResourceType);
+		  rating.setExtenderType(ratingType);
+		  rating.setIdExtendableResource( listIdExtendableResource.get( 0 ) );
+		  rating.setRatingCount( ratinValue.length );
+		  rating.setScoreValue( ratinValue );
+	      	 
+	      return Optional.ofNullable(rating);
+        }
+       return Optional.empty( );
+
+   }
+   /**
+    *  load and build Rating Result
+    * @param listIdExtendableResource the  of id resource
+    * @param strExtendableResourceType the resource type
+    * @param ratingType the rating type
+    * @return rating result
+    */
+   public  Optional<Rating> findAndbuildRatingResult( String strIdExtendableResource, String strExtendableResourceType, String  ratingType) {
+
+       return findAndbuildRatingResult( Arrays.asList( strIdExtendableResource ), strExtendableResourceType, ratingType );      
+   }
+   /**
+    *  load and build Rating Result
+    * @param listIdExtendableResource the list of id resource
+    * @param strExtendableResourceType the resource type
+    * @param ratingType the rating type
+    * @param  strGuid the guid 
+    * @return rating result
+    */
+   public  List<Rating> findAndbuildRatingResult( String strIdExtendableResource, String strExtendableResourceType, String  strRatingType, String strUserGuid) {
+
+	   Optional<Rating> optionalRating=findAndbuildRatingResult( Arrays.asList( strIdExtendableResource ), strExtendableResourceType, strRatingType );
+	   List<Rating> list= new ArrayList<>( );
+	   if( optionalRating.isPresent( )) {
+		   
+		   Rating rat= optionalRating.get();
+		   RatingExtenderFilter filter= new RatingExtenderFilter();
+		   filter.setExtendableResourceType(strExtendableResourceType);
+		   filter.setIdExtendableResource(strIdExtendableResource);
+		   filter.setUserGuid(strUserGuid);
+		   filter.setRatingType(strRatingType);
+		   
+		   List<Rating> listRating= RatingHome.findRatingByFilter(  filter );
+		   listRating.forEach(rating -> 
+			   {
+				   rating.setRatingCount( rat.getRatingCount( ) );
+				   rating.setScoreValue( rat.getScoreValue( ) );
+				   list.add(rating);	   
+			   }
+		   );
+	   
+	   }
+       return list ;     
+   }
+   
+  
 }

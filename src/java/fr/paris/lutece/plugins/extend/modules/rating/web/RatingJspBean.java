@@ -33,22 +33,17 @@
  */
 package fr.paris.lutece.plugins.extend.modules.rating.web;
 
+import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
-import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingHistoryService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.IRatingService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.RatingHistoryService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
-import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSecurityService;
-import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingSecurityService;
+import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
+import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingException;
 import fr.paris.lutece.plugins.extend.modules.rating.service.validator.RatingValidationManagementService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.ExtendPlugin;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
-import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
@@ -63,6 +58,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.bean.BeanUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -90,15 +86,11 @@ public class RatingJspBean
     private static final String CONSTANT_HTTP = "http";
 
     // SERVICES
-    private IRatingService _ratingService = SpringContextService.getBean( RatingService.BEAN_SERVICE );
-    private IResourceExtenderHistoryService _resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
     private IResourceExtenderConfigService _configService = SpringContextService.getBean( RatingConstants.BEAN_CONFIG_SERVICE );
     private IResourceExtenderService _resourceExtenderService = SpringContextService.getBean( ResourceExtenderService.BEAN_SERVICE );
-    private IRatingSecurityService _ratingSecurityService = SpringContextService.getBean( RatingSecurityService.BEAN_SERVICE );
-    private IRatingHistoryService _ratingHistoryService = SpringContextService.getBean( RatingHistoryService.BEAN_SERVICE );
 
     /**
-     * Update the vote value an count.
+     * Update the rating value an count.
      * This method is called in FO by the following JSP :
      * <strong>jsp/site/plugins/extend/modules/rating/DoVote.Jsp</strong>
      *
@@ -108,18 +100,32 @@ public class RatingJspBean
      * @throws SiteMessageException the site message exception
      * @throws UserNotSignedException If the user has not signed in
      */
-    public void doVote( HttpServletRequest request, HttpServletResponse response )
+    public void doRating( HttpServletRequest request, HttpServletResponse response )
         throws IOException, SiteMessageException, UserNotSignedException
-    {
-        String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
-        String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
-        String strVoteValue = request.getParameter( RatingConstants.PARAMETER_VOTE_VALUE );
+    {       
+    	   RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
+    			   request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE ), request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE ) );
+    	   
+    	if( config == null || config.getRatingType( )== null ) {
+              SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
+    	}
+       
+        Rating rating =RatingFacadeFactory.getRatingInstance( config.getRatingType( ));
+        LuteceUser user= SecurityService.getInstance(  ).getRegisteredUser( request );
+        BeanUtil.populate( rating, request, request.getLocale( ) );
+        rating.setUser( user );
+        rating.setUserGuid( user != null ? user.getName(): null );
+        
+        String strIdExtendableResource = rating.getIdExtendableResource( );
+        String strExtendableResourceType = rating.getExtendableResourceType( );
+        float fRatinValue = rating.getRatingValue( );
+
+        
         String strFromUrl = (String) request.getSession(  )
                                             .getAttribute( ExtendPlugin.PLUGIN_NAME +
                 RatingConstants.PARAMETER_FROM_URL );
 
-        if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) ||
-                StringUtils.isBlank( strVoteValue ) )
+        if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType )   )
         {
             SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
@@ -156,38 +162,9 @@ public class RatingJspBean
         {
             request.getSession(  ).removeAttribute( strSessionKeyNextUrl );
         }
-
-        // Check if the user can vote or not
-        try
-        {
-            if ( !_ratingSecurityService.canVote( request, strIdExtendableResource, strExtendableResourceType ) )
-            {
-                SiteMessageService.setMessage( request, RatingConstants.MESSAGE_CANNOT_VOTE, SiteMessage.TYPE_STOP );
-            }
-        }
-        catch ( UserNotSignedException e )
-        {
-            request.getSession(  )
-                   .setAttribute( ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL +
-                strExtendableResourceType + strIdExtendableResource, strNextUrl );
-
-            throw e;
-        }
-
-        double dVoteValue = 0;
-
-        try
-        {
-            dVoteValue = Double.parseDouble( strVoteValue );
-        }
-        catch ( NumberFormatException e )
-        {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
-        }
-
         String strErrorUrl = RatingValidationManagementService.validateRating( request,
-                SecurityService.getInstance(  ).getRemoteUser( request ), strIdExtendableResource,
-                strExtendableResourceType, dVoteValue );
+                SecurityService.getInstance(  ).getRegisteredUser( request ), strIdExtendableResource,
+                strExtendableResourceType, fRatinValue );
 
         if ( StringUtils.isNotEmpty( strErrorUrl ) )
         {
@@ -203,43 +180,71 @@ public class RatingJspBean
             return;
         }
 
-        _ratingService.doVote( strIdExtendableResource, strExtendableResourceType, dVoteValue, request );
+        try {
+        	
+        	RatingFacadeFactory.doRating(config, rating );
+		
+        } catch (UserNotSignedException e) {
+			request.getSession(  )
+            .setAttribute( ExtendPlugin.PLUGIN_NAME + RatingConstants.PARAMETER_FROM_URL +
+            		strExtendableResourceType + strIdExtendableResource, strNextUrl );
 
-        sendNotification( request, strIdExtendableResource, strExtendableResourceType, dVoteValue );
+			throw e;
+		} catch (RatingException e) {
+			
+			SiteMessageService.setCustomMessage( request, e.getMessage( ), SiteMessage.TYPE_STOP );
+		}
+
+        sendNotification( request, strIdExtendableResource, strExtendableResourceType, fRatinValue );
         response.sendRedirect( strNextUrl );
     }
 
     /**
-     * Cancel the vote value
+     * Cancel the rating value
      * This method is called in FO by the following JSP :
      * <strong>jsp/site/plugins/extend/modules/rating/DoCancelVote.Jsp</strong>
      * @param request The HTTP request
      * @param response The HTTP response
      * @throws IOException the io exception
      * @throws SiteMessageException the site message exception
+     * @throws UserNotSignedException 
      */
-    public void doCancelVote( HttpServletRequest request, HttpServletResponse response )
-        throws IOException, SiteMessageException
+    public void doCancelRating( HttpServletRequest request, HttpServletResponse response )
+        throws IOException, SiteMessageException, UserNotSignedException
     {
-        String strIdExtendableResource = request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
-        String strExtendableResourceType = request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
-        String strFromUrl = (String) request.getSession(  )
+           String strFromUrl = (String) request.getSession(  )
                                             .getAttribute( ExtendPlugin.PLUGIN_NAME +
                 RatingConstants.PARAMETER_FROM_URL );
-        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-
+        LuteceUser user= SecurityService.getInstance(  ).getRegisteredUser( request );
+        if( user == null ) {
+        	
+        	 throw new UserNotSignedException( );
+        }
+        RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
+ 			   request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE ), request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE ) );
+ 	   
+ 	    if( config == null || config.getRatingType( )== null ) {
+           SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
+ 	    }
+        Rating rating =RatingFacadeFactory.getRatingInstance(config.getRatingType( ));
+        BeanUtil.populate( rating, request, request.getLocale( ) );
+        rating.setUser( user );
+        rating.setUserGuid(user.getName( ));
+        String strIdExtendableResource = rating.getIdExtendableResource( );
+        String strExtendableResourceType = rating.getExtendableResourceType( );
+       
         if ( StringUtils.isBlank( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType ) )
         {
             SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
         }
-
-        // Check if the user can vote or not
-        if ( !_ratingSecurityService.canDeleteVote( request, strIdExtendableResource, strExtendableResourceType ) )
+       
+        try {
+        	RatingFacadeFactory.cancelRating( config, rating  );
+			
+		} catch (RatingException e) 
         {
-            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_CANNOT_VOTE, SiteMessage.TYPE_STOP );
-        }
-
-        _ratingService.doCancelVote( user, strIdExtendableResource, strExtendableResourceType );
+			SiteMessageService.setCustomMessage( request, e.getMessage( ), SiteMessage.TYPE_STOP );
+		}
 
         String strReferer = request.getHeader( RatingConstants.PARAMETER_HTTP_REFERER );
 
@@ -269,10 +274,10 @@ public class RatingJspBean
      * @param request the request
      * @param strIdExtendableResource the str id extendable resource
      * @param strExtendableResourceType the str extendable resource type
-     * @param nVoteValue the n vote value
+     * @param fRatingValue the n rating value
      */
     private void sendNotification( HttpServletRequest request, String strIdExtendableResource,
-        String strExtendableResourceType, double dVoteValue )
+        String strExtendableResourceType, float fRatingValue )
     {
         RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
                 strIdExtendableResource, strExtendableResourceType );
@@ -281,7 +286,7 @@ public class RatingJspBean
 
         for ( Recipient recipient : listRecipients )
         {
-            Map<String, Object> model = new HashMap<String, Object>(  );
+            Map<String, Object> model = new HashMap< >(  );
 
             String strSenderName = AppPropertiesService.getProperty( RatingConstants.PROPERTY_LUTECE_NAME );
             String strSenderEmail = AppPropertiesService.getProperty( RatingConstants.PROPERTY_WEBMASTER_EMAIL );
@@ -293,7 +298,7 @@ public class RatingJspBean
                     request.getLocale(  ) );
 
             model.put( RatingConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
-            model.put( RatingConstants.MARK_VOTE_VALUE, dVoteValue );
+            model.put( RatingConstants.MARK_VOTE_VALUE, fRatingValue );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_RATING_NOTIFY_MESSAGE,
                     request.getLocale(  ), model );

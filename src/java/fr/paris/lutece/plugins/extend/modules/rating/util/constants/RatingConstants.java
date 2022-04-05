@@ -56,7 +56,8 @@ public final class RatingConstants
     // PARAMETERS
     public static final String PARAMETER_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
     public static final String PARAMETER_EXTENDABLE_RESOURCE_TYPE = "extendableResourceType";
-    public static final String PARAMETER_VOTE_VALUE = "voteValue";
+    public static final String PARAMETER_VOTE_VALUE = "ratingValue";
+    public static final String PARAMETER_RATING_TYPE = "ratingType";
     public static final String PARAMETER_HTTP_REFERER = "referer";
     public static final String PARAMETER_ID_VOTE_TYPE = "idVoteType";
     public static final String PARAMETER_CANCEL = "cancel";
@@ -66,12 +67,13 @@ public final class RatingConstants
 
     // MARKS
     public static final String MARK_RATING = "rating";
+    public static final String MARK_RATING_LIST = "ratingList";
     public static final String MARK_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
     public static final String MARK_EXTENDABLE_RESOURCE_TYPE = "extendableResourceType";
     public static final String MARK_RATING_CONFIG = "ratingConfig";
     public static final String MARK_LIST_IDS_MAILING_LIST = "listIdsMailingList";
     public static final String MARK_RESOURCE_EXTENDER_NAME = "resourceExtenderName";
-    public static final String MARK_VOTE_VALUE = "voteValue";
+    public static final String MARK_VOTE_VALUE = "ratingValue";
     public static final String MARK_LIST_IDS_VOTE_TYPE = "listIdsVoteType";
     public static final String MARK_RATING_HTML_CONTENT = "ratingHtmlContent";
     public static final String MARK_VOTE_TYPE = "voteType";
@@ -89,7 +91,17 @@ public final class RatingConstants
     public static final String SHOW_VOTE = "vote";
     public static final String SHOW_VOTE_ACTION = "voteAction";
     public static final String PARAMETER_FROM_URL = "from_url";
+    
+    public static final String ORDER_BY_DATE_CREATION = " date_creation ";
 
+
+    // RATING TYPES
+    public static final String STAR_RATING = "extend_rating_vote_type_star";
+    public static final String THUMB_RATING = "extend_rating_vote_type_thumb";
+    public static final String SIMPLE_RATING = "extend_rating_vote_type_simple";
+    public static final String MAJORITY_RATING = "extend_rating_vote_type_majority";
+
+    
     /**
      * Instantiates a new comment constants.
      */

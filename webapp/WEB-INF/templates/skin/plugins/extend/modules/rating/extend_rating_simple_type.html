@@ -1,0 +1,24 @@
+<#if ( show == "vote" ||  show== "all") && rating?? >
+	${rating.ratingCount!}
+</#if>
+<#if !voteClosed> 
+<#if ( show=="actionVote" || show== "all" ) && canDeleteVote >
+<div>
+<#list ratingList as rat >
+	<a href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${rat.ratingValue!}">
+		J'annule mon vote
+	</a>
+	</br>
+</#list>
+</div>
+<#elseif ( show== "all" || show=="actionVote") && canVote >
+<div>
+	<div class="extend-rating-vote-title">
+		<label for="">Votez :</label>
+	</div>
+	<span> 
+	<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1">
+		Je vote pour</a></span>
+</div>
+</#if>
+</#if>

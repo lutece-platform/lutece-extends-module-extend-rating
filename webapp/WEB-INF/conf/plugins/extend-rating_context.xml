@@ -16,16 +16,13 @@
 	</bean>
 	<bean id="extend-rating.ratingDAO" class="fr.paris.lutece.plugins.extend.modules.rating.business.RatingDAO" />
 	<bean id="extend-rating.ratingExtenderConfigDAO" class="fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingtExtenderConfigDAO" />
-	<bean id="extend-rating.voteTypeDAO" class="fr.paris.lutece.plugins.extend.modules.rating.business.type.VoteTypeDAO" />
-	<bean id="extend-rating.ratingHistoryDAO" class="fr.paris.lutece.plugins.extend.modules.rating.business.RatingHistoryDAO" />
 
 	<!-- Services -->
 	<bean id="extend-rating.ratingExtenderConfigService" class="fr.paris.lutece.plugins.extend.service.extender.config.ResourceExtenderConfigService" 
 		p:extenderConfigDAO-ref="extend-rating.ratingExtenderConfigDAO" />
-	<bean id="extend-rating.ratingService" class="fr.paris.lutece.plugins.extend.modules.rating.service.RatingService" />
-	<bean id="extend-rating.voteTypeService" class="fr.paris.lutece.plugins.extend.modules.rating.service.type.VoteTypeService" />
 	<bean id="extend-rating.ratingSecurityService" class="fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingSecurityService" />
-	<bean id="extend-rating.ratingHistoryService" class="fr.paris.lutece.plugins.extend.modules.rating.service.RatingHistoryService" />
+	<bean id="extend-rating.ratingValidationService" class="fr.paris.lutece.plugins.extend.modules.rating.service.validator.RatingValidationService" />
+
 
 	<!-- Resource extender -->
 	<bean id="extend-rating.ratingResourceExtender" class="fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender"
@@ -42,6 +39,5 @@
 	
 	<!-- Actions -->
 	<bean id="extend-rating.ratingInstallerAction" class="fr.paris.lutece.plugins.extend.modules.rating.web.action.RatingInstallerPluginAction" />
-	<bean id="extend-rating.ratingAddon" class="fr.paris.lutece.plugins.extend.modules.rating.service.RatingAddOnService" />
 
 </beans>
