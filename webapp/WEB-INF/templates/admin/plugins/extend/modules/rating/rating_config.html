@@ -1,14 +1,11 @@
+<h2>#i18n{module.extend.rating.rating_config.labelPageTitle}</h2>
 <@row>
-	<@columns sm=4>
+	<@columns sm=3>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelVoteType}' labelFor='idVoteType'>
 			<@select name='idVoteType' default_value='${ratingConfig.idVoteType!}' items=listIdsVoteType />
 		</@formGroup>
 		<@row>
-			<@columns>
-				<@columns>
-					<strong>#i18n{module.extend.rating.rating_config.labelActivation}</strong>
-				</@columns>
-			</@columns>
+			<h3>#i18n{module.extend.rating.rating_config.labelActivation}</h3>
 			<@columns sm=6>
 				<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelDateStart}' labelFor='date_start'>
 				<@inputGroup>
@@ -30,20 +27,23 @@
 				</@formGroup>
 			</@columns>
 		</@row>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelMailingList}' labelFor='idMailingList' helpKey='#i18n{module.extend.rating.rating_config.labelMailingListComment}'>
-			<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList />
+		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelMailingList}' labelFor='idMailingList' >
+			<@inputGroup>
+				<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList />
+				<@inputGroupItem type='text'>
+					<@formHelp>#i18n{module.extend.rating.rating_config.labelMailingListComment}</@formHelp>
+				</@inputGroupItem>
+			</@inputGroup>
 		</@formGroup>
 	</@columns>
-	<@columns sm=4>
+	<@columns sm=4 offsetSm=1 >
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelOptions}' helpKey='#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})' >
-			<#assign voteUniqueCheck><#if ratingConfig.uniqueVote>true<#else>false</#if></#assign>
-			<@radioButton id='extend-rating-unique-vote' name='uniqueVote' orientation='' value='true' labelFor='extend-rating-unique-vote' labelKey='#i18n{module.extend.rating.rating_config.labelUniqueVote}' checked=voteUniqueCheck?boolean />
-			<#assign voteTemporalCheck><#if !ratingConfig.uniqueVote>true<#else>false</#if></#assign>
-			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote'  orientation='' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='true' checked=voteTemporalCheck?boolean />
+			<@radioButton id='extend-rating-unique-vote' name='uniqueVote' value='true' labelFor='extend-rating-unique-vote' labelKey='#i18n{module.extend.rating.rating_config.labelUniqueVote}' checked=ratingConfig.uniqueVote />
+			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='true' checked=!ratingConfig.uniqueVote />
 		</@formGroup>
 		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote}' labelFor='nbDaysToVote' helpKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}' mandatory=true>
-			<@inputGroup>
-				<@input type='number' name='nbDaysToVote' value='${ratingConfig.nbDaysToVote!}' maxlength=3 params=' style="width:80px"' />
+			<@inputGroup  class='w-25' >
+				<@input type='number' name='nbDaysToVote'value='${ratingConfig.nbDaysToVote!}' maxlength=3 />
 				<@inputGroupItem> #i18n{module.extend.rating.rating_config.temporalVote.labelDay}</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
@@ -55,7 +55,6 @@
 			<#assign ratingDeleteVote><#if ratingConfig.deleteVote>true<#else>false</#if></#assign>
 			<@checkBox name='deleteVote' labelKey='#i18n{module.extend.rating.rating_config.deleteVoteComment}' checked=ratingDeleteVote?boolean /> 
 		</@formGroup>
-		
 		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.labelVoteLimit}'>
 			<#assign temporalVoteCheck><#if ratingConfig.nbVotePerUser == 0>true<#else>false</#if></#assign>
 			<@radioButton name='limitVote' id='extend-rating-no-limit-vote-user' labelFor='extend-rating-no-limit-vote-user' labelKey='#i18n{portal.util.labelDisabled}' orientation='' value='false' checked=temporalVoteCheck?boolean /> 
@@ -63,7 +62,7 @@
 			<@radioButton id='extend-rating-limit-vote-user' labelFor='extend-rating-limit-vote-user'  name='limitVote' labelKey='#i18n{portal.util.labelEnabled}' orientation='' value='true' checked=nbVotePerUserCheck?boolean /> 
 		</@formGroup>
 		<@formGroup rows=2 id='extend-rating-limit-vote-options' labelFor='nbVotePerUser' labelKey='#i18n{module.extend.rating.rating_config.limitVote.labelLimitVote}' mandatory=true >
-			<@input name='nbVotePerUser' id='nbVotePerUser' value='${ratingConfig.nbVotePerUser!}'  maxlength=3 />
+			<@input type='number' name='nbVotePerUser' id='nbVotePerUser' class='w-25' value='${ratingConfig.nbVotePerUser!}' maxlength=3 min=0 max=100 />
 		</@formGroup>
 	</@columns>
 </@row>
