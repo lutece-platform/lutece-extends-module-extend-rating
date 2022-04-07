@@ -105,14 +105,9 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	        String showParam= RatingUtils.fetchShowParameter( strParameters );
 	        if( !"voteAction".equals( showParam )) 
         	{ 
-        		Optional<Rating> rating= null;
-        		if(user == null ) {
-        			
-        			rating= RatingService.INSTANCE.findAndbuildRatingResult(strIdExtendableResource, strExtendableResourceType, ratingExtenderConfig.getRatingType( ));
-        		}else 
-        		{
-        			List<Rating> listRating= RatingService.INSTANCE.findAndbuildRatingResult(strIdExtendableResource, strExtendableResourceType, ratingExtenderConfig.getRatingType( ), user.getName());
-            		rating= Optional.ofNullable(CollectionUtils.isNotEmpty(listRating)?listRating.get( 0 ):null );
+        		Optional<Rating> rating= RatingService.INSTANCE.findAndbuildRatingResult(strIdExtendableResource, strExtendableResourceType, ratingExtenderConfig.getRatingType( ));;
+        		if(user != null ) {        			       		
+        			List<Rating> listRating= RatingService.INSTANCE.findAndbuildRatingResult(strIdExtendableResource, strExtendableResourceType, ratingExtenderConfig.getRatingType( ), user.getName());            		
         			model.put(RatingConstants.MARK_RATING_LIST, listRating);
 
         		}
@@ -198,6 +193,6 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	public List<Rating> getInfoExtenderByList(List<String> listIdExtendableResource,
 			String strExtendableResourceType) {
 		
-		return RatingService.INSTANCE.findAndbuildRatingResult(listIdExtendableResource, strExtendableResourceType, this.getTypeName( )).map(Collections::singletonList).orElseGet(Collections::emptyList);
+		return RatingService.INSTANCE.findAndbuildRatingResult(listIdExtendableResource, strExtendableResourceType, this.getTypeName( ));
 	}
 }

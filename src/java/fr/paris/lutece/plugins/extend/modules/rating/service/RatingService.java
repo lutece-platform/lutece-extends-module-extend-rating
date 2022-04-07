@@ -41,7 +41,10 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacade
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -106,22 +109,27 @@ public enum RatingService
     * @param ratingType the rating type
     * @return rating result
     */
-   public  Optional<Rating> findAndbuildRatingResult( List<String> listIdExtendableResource, String strExtendableResourceType, String  ratingType ) {
+   public  List<Rating> findAndbuildRatingResult( List<String> listIdExtendableResource, String strExtendableResourceType, String  ratingType ) {
 	  
-	   float[] ratinValue= RatingHome.findRatingValue( listIdExtendableResource , strExtendableResourceType, ratingType);
-	   if ( ratinValue != null && ratinValue.length > 0 )
-       {
-		  Rating rating = RatingFacadeFactory.getRatingInstance( ratingType );
-		  rating.setExtendableResourceType(strExtendableResourceType);
-		  rating.setExtenderType(ratingType);
-		  rating.setIdExtendableResource( listIdExtendableResource.get( 0 ) );
-		  rating.setRatingCount( ratinValue.length );
-		  rating.setScoreValue( ratinValue );
-	      	 
-	      return Optional.ofNullable(rating);
-        }
-       return Optional.empty( );
-
+	   List<Rating> ratings= new ArrayList<>( );
+	   Map<String, List<Rating>> mapRating=RatingHome.findByResourceAndRatingType(listIdExtendableResource, strExtendableResourceType, ratingType).stream().collect(Collectors.groupingBy(Rating::getIdExtendableResource));
+	   	   
+	   for(Entry<String, List<Rating>> entry: mapRating.entrySet())
+	   {  
+		   Rating rating = entry.getValue().get( 0 );
+		   rating.setRatingCount( entry.getValue().size() );
+		   float[] ratinValue= new float[entry.getValue().size()];
+		   int i= 0;
+		   for( Rating rat :entry.getValue())
+		   {
+			   ratinValue[i]=rat.getRatingValue();
+				   i++;
+		   }
+		   rating.setScoreValue( ratinValue );
+		   ratings.add( rating );
+	   }
+	  
+       return ratings;
    }
    /**
     *  load and build Rating Result
@@ -130,10 +138,24 @@ public enum RatingService
     * @param ratingType the rating type
     * @return rating result
     */
-   public  Optional<Rating> findAndbuildRatingResult( String strIdExtendableResource, String strExtendableResourceType, String  ratingType) {
+   public  Optional<Rating> findAndbuildRatingResult( String strIdExtendableResource, String strExtendableResourceType, String  ratingType ) {
+	  
+	   float[] ratinValue= RatingHome.findRatingValue( Arrays.asList(strIdExtendableResource) , strExtendableResourceType, ratingType);
+	   if ( ratinValue != null && ratinValue.length > 0 )
+       {
+		  Rating rating = RatingFacadeFactory.getRatingInstance( ratingType );
+		  rating.setExtendableResourceType(strExtendableResourceType);
+		  rating.setExtenderType(ratingType);
+		  rating.setIdExtendableResource( strIdExtendableResource );
+		  rating.setRatingCount( ratinValue.length );
+		  rating.setScoreValue( ratinValue );
+	      	 
+	      return Optional.ofNullable(rating);
+        }
+       return Optional.empty( );
 
-       return findAndbuildRatingResult( Arrays.asList( strIdExtendableResource ), strExtendableResourceType, ratingType );      
    }
+   
    /**
     *  load and build Rating Result
     * @param listIdExtendableResource the list of id resource
@@ -144,7 +166,7 @@ public enum RatingService
     */
    public  List<Rating> findAndbuildRatingResult( String strIdExtendableResource, String strExtendableResourceType, String  strRatingType, String strUserGuid) {
 
-	   Optional<Rating> optionalRating=findAndbuildRatingResult( Arrays.asList( strIdExtendableResource ), strExtendableResourceType, strRatingType );
+	   Optional<Rating> optionalRating=findAndbuildRatingResult( strIdExtendableResource , strExtendableResourceType, strRatingType );
 	   List<Rating> list= new ArrayList<>( );
 	   if( optionalRating.isPresent( )) {
 		   
