@@ -2,9 +2,9 @@
 <#list rating as rat>
     <@row>
         <@columns>
-            <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rating.ratingtype!}</@p>
-            <@p><strong>#i18n{module.extend.rating.rating_info.labelScoreValue} :</strong> ${rating.scoreValue!}</@p>
-            <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rating.ratingCount!}</@p>
+            <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rat.ratingtype!}</@p>
+            <@p><strong>#i18n{module.extend.rating.rating_info.labelScoreValue} :</strong> ${rat.scoreValue!}</@p>
+            <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rat.ratingCount!}</@p>
         </@columns>
     </@row>
 </#list>
