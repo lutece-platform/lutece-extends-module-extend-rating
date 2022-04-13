@@ -175,12 +175,10 @@ public abstract class Rating  extends ResourceExtenderHistory implements IExtend
 		this.setDateCreation(history.getDateCreation( ).isPresent()?history.getDateCreation( ).get():null);
 		
 	}
+	
 	/**
-	 * Get the default template to use for rating resource 
-	 * @return the defautl template
+	 * Get tilte of the rating type
+	 * @return title
 	 */
-	public static String getTemplateContent(  ){
-			
-		return RatingUtils.TEMPLATE_DEFAULT_RATING_TYPE; 
-	}
+	public abstract String getTitle( );
 }

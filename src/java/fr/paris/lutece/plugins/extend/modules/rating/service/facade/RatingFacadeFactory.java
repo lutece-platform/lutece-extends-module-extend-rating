@@ -162,7 +162,7 @@ public class  RatingFacadeFactory {
 		 	{
 		 		String info= type.getInfoForExport(strIdExtendableResource, strExtendableResourceType);
 		 		if(StringUtils.isNoneEmpty( info )) {
-		 			builder.append( type.getTitle( )).append(" : ").append( info ).append("/n");
+		 			builder.append( type.getTitle( )).append(" ").append( info ).append(System.getProperty("line.separator"));
 		 		}		
 		 	}
 		 );
@@ -185,8 +185,8 @@ public class  RatingFacadeFactory {
 		 _listRatingType.forEach(type ->  
 		 	{
 		 		String info= type.getInfoForRecap(strIdExtendableResource, strExtendableResourceType);
-		 		if(StringUtils.isNoneEmpty( info )) {
-		 			builder.append( type.getTitle( )).append(" : ").append( info ).append("/n");
+		 		if(StringUtils.isNoneEmpty( info )) {		 			
+		 			builder.append( type.getTitle( )).append(" ").append( info ).append(System.getProperty("line.separator"));
 		 		}		
 		 	}
 		 );

@@ -1,5 +1,6 @@
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 public class StarRating extends Rating {
 	
@@ -45,5 +46,9 @@ public class StarRating extends Rating {
 
         return dScore;
     }
+	@Override
+	public String getTitle() {
+		return I18nService.getLocalizedString( RATING_TITLE, I18nService.getDefaultLocale( ) ) ;
+	}
     
 }

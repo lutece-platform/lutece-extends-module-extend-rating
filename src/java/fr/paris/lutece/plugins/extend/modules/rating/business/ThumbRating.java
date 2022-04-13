@@ -2,6 +2,8 @@ package fr.paris.lutece.plugins.extend.modules.rating.business;
 
 import java.util.List;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
+
 public class ThumbRating extends Rating {
 
 	 public static final String RATING_TITLE = "module.extend.rating.thumbRating.title";
@@ -54,4 +56,9 @@ public class ThumbRating extends Rating {
       {
           _nScoreDislike = nScoreDislike;
       }
+	@Override
+	public String getTitle() {
+
+		return I18nService.getLocalizedString( RATING_TITLE, I18nService.getDefaultLocale( ) ) ;
+	}
 }
