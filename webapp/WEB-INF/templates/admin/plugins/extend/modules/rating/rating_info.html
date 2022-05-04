@@ -1,4 +1,4 @@
-<#if rating??>
+<#if rating?? && rating?size != 0>
     <@row>
         <@columns>
             <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rating.voteCount!}</@p>
