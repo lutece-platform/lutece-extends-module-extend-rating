@@ -113,7 +113,7 @@ public class RatingListenerService
         {
             for ( IRatingListener listener : listListeners )
             {
-                listener.cancelRating( strIdExtendableResource, strExtendableResourceType, user );
+                listener.rating( strIdExtendableResource, strExtendableResourceType, user );
             }
         }
     }
