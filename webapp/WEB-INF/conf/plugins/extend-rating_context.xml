@@ -40,4 +40,7 @@
 	<!-- Actions -->
 	<bean id="extend-rating.ratingInstallerAction" class="fr.paris.lutece.plugins.extend.modules.rating.web.action.RatingInstallerPluginAction" />
 
+	<!-- Dashboard -->
+	<bean id="extend-rating.dashboardExtendsRating" class="fr.paris.lutece.plugins.extend.modules.rating.dashboard.PublicDashboardRating" />
+
 </beans>
