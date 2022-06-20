@@ -7,10 +7,10 @@
 					<th>#i18n{module.extend.rating.publicdashboard.title}</th>
 				</thead>
 				<tbody>
-					<#list dashboardrating?keys as key>
+					<#list rating_publicdashboard?keys as key>
 						<tr>
 							<td>${key}</td>
-							<td>${dashboardrating[key]}</td>
+							<td>${rating_publicdashboard[key]}</td>
 						</tr>
 					</#list>
 				</tbody>
