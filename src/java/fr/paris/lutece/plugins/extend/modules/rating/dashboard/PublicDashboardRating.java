@@ -34,10 +34,10 @@
 package fr.paris.lutece.plugins.extend.modules.rating.dashboard;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
-import fr.paris.lutece.plugins.publicdashboard.service.PublicDashboardService;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
@@ -45,45 +45,46 @@ import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderH
 import fr.paris.lutece.portal.service.dashboard.IPublicDashboardComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.html.HtmlTemplate;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MyPublicProjectCounterProfile.
+ * The Class PublicDashboardRating.
  */
 public class PublicDashboardRating implements IPublicDashboardComponent
 {
 
 	public static final String DASHBOARD_PROPERTIES_TITLE = "module.extend.rating.publicdashboard.bean.title";
 	private String strIdComponent = "extend-rating.dashboardExtendsRating";
-	private static final String TEMPLATE_MANAGE_FORMS = "/skin/plugins/publicdashboard/view_ratings.html";
-	private static final String MARK_DASHBOARD_RATING = "dashboardrating";
-	
-	@Override
-	public String getDashboardData( String user_id, Map<String,String> additionalParameters ) {
-
-		Map<String, Object> model = new HashMap<String, Object>( );
-		model.put( MARK_DASHBOARD_RATING, searchExtendCounter( user_id ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, I18nService.getDefaultLocale( ), model );
-
-        return template.getHtml( );
-	}
+	private static final String TEMPLATE_DASHBOARD_RATING = "/skin/plugins/extend/modules/rating/publicdashboard_ratings.html";
+	private static final String MARK_DASHBOARD_RATING = "rating_publicdashboard";
 
 	@Override
-	public String getComponentDescription( ) {
-		return I18nService.getLocalizedString( DASHBOARD_PROPERTIES_TITLE, I18nService.getDefaultLocale( ) );
+	public String getComponentDescription( Locale locale ) {
+		return I18nService.getLocalizedString( DASHBOARD_PROPERTIES_TITLE, locale );
 	}
 
 	@Override
 	public String getComponentId( ) {
 		return strIdComponent;
 	}
+	
+	@Override
+	public String getDashboardTemplate( )
+	{
+		return TEMPLATE_DASHBOARD_RATING;
+	}
+	
+	@Override
+	public Map<String, Object> getDashboardModel( String user_id, Map<String,String[]> additionalParameters )
+	{
+		Map<String, Object> model = new HashMap<String, Object>( );
+		model.put( MARK_DASHBOARD_RATING, searchExtendCounter( user_id ) );
+		return model;
+	}
 
     /**
      * Search project counter.
      *
-     * @param guid the guid
+     * @param user_id the user_id
      * @return the list
      */
     private static Map<String, Integer> searchExtendCounter( String user_id )
@@ -98,11 +99,9 @@ public class PublicDashboardRating implements IPublicDashboardComponent
 
         for ( ResourceExtenderHistory resourceExtenderHistory : _resourceExtenderHistoryService.findByFilter( filter ) )
         {
-            Integer value = mapExtendStatistics.get( resourceExtenderHistory.getExtenderType( ) );
-
-            if ( value != null && value > 0 )
+            if ( mapExtendStatistics.containsKey( resourceExtenderHistory.getExtenderType( ) ) && mapExtendStatistics.get( resourceExtenderHistory.getExtenderType( ) ) > 0 )
             {
-                mapExtendStatistics.put( resourceExtenderHistory.getExtenderType( ), value + 1 );
+                mapExtendStatistics.put( resourceExtenderHistory.getExtenderType( ), mapExtendStatistics.get( resourceExtenderHistory.getExtenderType( ) ) + 1 );
             }
             else
             {
