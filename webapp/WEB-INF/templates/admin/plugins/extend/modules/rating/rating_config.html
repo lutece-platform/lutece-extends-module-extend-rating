@@ -1,6 +1,6 @@
 <h2>#i18n{module.extend.rating.rating_config.labelPageTitle}</h2>
 <@row>
-	<@columns sm=3>
+	<@columns lg=5>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelVoteType}' labelFor='ratingType'>
 			<@select name='ratingType' default_value='${ratingConfig.ratingType!}' items=listIdsVoteType />
 		</@formGroup>
@@ -27,16 +27,11 @@
 				</@formGroup>
 			</@columns>
 		</@row>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelMailingList}' labelFor='idMailingList' >
-			<@inputGroup>
-				<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList />
-				<@inputGroupItem type='text'>
-					<@formHelp>#i18n{module.extend.rating.rating_config.labelMailingListComment}</@formHelp>
-				</@inputGroupItem>
-			</@inputGroup>
+		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelMailingList}' labelFor='idMailingList' helpKey='#i18n{module.extend.rating.rating_config.labelMailingListComment}'>
+			<@select name='idMailingList' default_value='${ratingConfig.idMailingList!}' items=listIdsMailingList />
 		</@formGroup>
 	</@columns>
-	<@columns sm=4 offsetSm=1 >
+	<@columns lg=7>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelOptions}' helpKey='#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})' >
 			<@radioButton id='extend-rating-unique-vote' name='uniqueVote' value='true' labelFor='extend-rating-unique-vote' labelKey='#i18n{module.extend.rating.rating_config.labelUniqueVote}' checked=ratingConfig.uniqueVote />
 			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='true' checked=!ratingConfig.uniqueVote />
@@ -62,7 +57,7 @@
 			<@radioButton id='extend-rating-limit-vote-user' labelFor='extend-rating-limit-vote-user'  name='limitVote' labelKey='#i18n{portal.util.labelEnabled}' orientation='' value='true' checked=nbVotePerUserCheck?boolean /> 
 		</@formGroup>
 		<@formGroup rows=2 id='extend-rating-limit-vote-options' labelFor='nbVotePerUser' labelKey='#i18n{module.extend.rating.rating_config.limitVote.labelLimitVote}' mandatory=true >
-			<@input type='number' name='nbVotePerUser' id='nbVotePerUser' class='w-25' value='${ratingConfig.nbVotePerUser!}' maxlength=3 min=0 max=100 />
+			<@input type='number' name='nbVotePerUser' id='nbVotePerUser' value='${ratingConfig.nbVotePerUser!}' maxlength=3 min=0 max=100 />
 		</@formGroup>
 	</@columns>
 </@row>
