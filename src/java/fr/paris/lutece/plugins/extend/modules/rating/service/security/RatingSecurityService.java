@@ -58,7 +58,9 @@ import org.apache.commons.collections.CollectionUtils;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -73,6 +75,7 @@ public class RatingSecurityService implements IRatingSecurityService
 {
     /** The Constant BEAN_SERVICE. */
     private static final String FILTER_SORT_BY_DATE_VOTE = " date_creation ";
+    private Set<LuteceUser> userRatingVerrous = new HashSet<>( );
     @Inject
     @Named( ResourceExtenderHistoryService.BEAN_SERVICE )
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
@@ -309,5 +312,18 @@ public class RatingSecurityService implements IRatingSecurityService
         }
         
         return true;
+    }
+    
+    public boolean isFreeAccess(LuteceUser user) {
+        if (userRatingVerrous.contains(user)) {
+            return false; 
+        } else {
+            userRatingVerrous.add(user);
+            return true;
+        }
+    }
+    
+    public void freeAccess(LuteceUser user) {
+        userRatingVerrous.remove(user);
     }
 }
