@@ -113,9 +113,9 @@ public interface IRatingSecurityService
     boolean hasAlreadyVoted(LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
     
     /**
-     * true if the user rating is in progress
+     * Check if any user rating process in progress
      * @param Lutece user
-     * @return true if no rating in progress, false if another User rating in progress
+     * @return true if no rating in progress, false if User rating in progress
      */
     boolean isFreeAccess( LuteceUser user );
     
