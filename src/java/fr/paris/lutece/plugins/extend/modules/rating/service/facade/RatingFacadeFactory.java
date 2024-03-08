@@ -65,7 +65,8 @@ public class  RatingFacadeFactory {
             {
                 _listRatingType.stream( ).filter( rat -> rat.getType( ).equals( rating.getClass( ) ) ).findAny( ).orElseThrow( RatingTypeException::new ).doRating( rating );
                 _ratingSecurityService.freeAccess( rating.getUser( ) );
-            } else
+            } 
+            else
             {
                 throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
             }

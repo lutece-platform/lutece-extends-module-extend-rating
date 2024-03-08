@@ -75,7 +75,7 @@ public class RatingSecurityService implements IRatingSecurityService
 {
     /** The Constant BEAN_SERVICE. */
     private static final String FILTER_SORT_BY_DATE_VOTE = " date_creation ";
-    private Set<LuteceUser> userRatingVerrous = new HashSet<>( );
+    private Set<LuteceUser> _userRatingVerrous = new HashSet<>( );
     @Inject
     @Named( ResourceExtenderHistoryService.BEAN_SERVICE )
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
@@ -314,16 +314,21 @@ public class RatingSecurityService implements IRatingSecurityService
         return true;
     }
     
-    public boolean isFreeAccess(LuteceUser user) {
-        if (userRatingVerrous.contains(user)) {
+    public boolean isFreeAccess(LuteceUser user)
+    {
+        if (_userRatingVerrous.contains(user)) 
+        {
             return false; 
-        } else {
-            userRatingVerrous.add(user);
+        } 
+        else 
+        {
+            _userRatingVerrous.add(user);
             return true;
         }
     }
     
-    public void freeAccess(LuteceUser user) {
-        userRatingVerrous.remove(user);
+    public void freeAccess(LuteceUser user)
+    {
+        _userRatingVerrous.remove(user);
     }
 }
