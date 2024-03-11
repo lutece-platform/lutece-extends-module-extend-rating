@@ -41,9 +41,27 @@ public class  RatingFacadeFactory {
 	        {
 	        	throw new RatingException( I18nService.getLocalizedString(RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ));
 	        }
-		   _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
-				.findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
-
+		 
+		 if ( _ratingSecurityService.canAccess( rating.getUser( ) ) )
+         {
+		     try {
+		         _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
+		         .findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
+		     
+		     } catch (Exception e) {
+		     
+		         AppLogService.error(e.getMessage(), e);
+		         _ratingSecurityService.freeAccess( rating.getUser( ) );
+		 
+		         throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
+		     }
+		     
+		     _ratingSecurityService.freeAccess( rating.getUser( ) );
+         }
+		 else
+         {
+             throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
+         }
 	}
 	
 	/**
@@ -61,10 +79,29 @@ public class  RatingFacadeFactory {
 	        {
 	        	throw new RatingException( I18nService.getLocalizedString(RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ));
 	        }
-		   _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
-				.findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
+		 
+		 if ( _ratingSecurityService.canAccess( rating.getUser( ) ) )
+         {
+             try {
+        		   _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
+        				.findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
+             } catch (Exception e) {
+                 
+                 AppLogService.error(e.getMessage(), e);
+                 _ratingSecurityService.freeAccess( rating.getUser( ) );
+         
+                 throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
+             }
+             
+             _ratingSecurityService.freeAccess( rating.getUser( ) );
+         }
+         else
+         {
+             throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
+         }   
 
 	}
+	
 	/**
 	 * Do cancel rating
 	 * @param rating the rating object
