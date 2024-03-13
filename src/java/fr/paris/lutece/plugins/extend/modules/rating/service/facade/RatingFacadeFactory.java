@@ -7,12 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.extend.modules.follow.util.constants.FollowConstants;
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSecurityService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingException;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -44,19 +47,15 @@ public class  RatingFacadeFactory {
 		 
 		 if ( _ratingSecurityService.canAccess( rating.getUser( ) ) )
          {
-		     try {
-		         _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
-		         .findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
-		     
-		     } catch (Exception e) {
-		     
-		         AppLogService.error(e.getMessage(), e);
-		         _ratingSecurityService.freeAccess( rating.getUser( ) );
-		 
-		         throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
-		     }
-		     
-		     _ratingSecurityService.freeAccess( rating.getUser( ) );
+            try
+            {
+                 _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
+                 .findAny().orElseThrow( RatingTypeException::new ).doRating( rating );
+            }
+            finally
+            {
+                _ratingSecurityService.freeAccess( rating.getUser( ) );
+            }
          }
 		 else
          {
@@ -82,18 +81,15 @@ public class  RatingFacadeFactory {
 		 
 		 if ( _ratingSecurityService.canAccess( rating.getUser( ) ) )
          {
-             try {
-        		   _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
-        				.findAny().orElseThrow( RatingTypeException::new ).doRating( rating );		
-             } catch (Exception e) {
-                 
-                 AppLogService.error(e.getMessage(), e);
-                 _ratingSecurityService.freeAccess( rating.getUser( ) );
-         
-                 throw new RatingException( I18nService.getLocalizedString( RatingConstants.MESSAGE_CANNOT_VOTE, LocaleService.getDefault( ) ) );
-             }
-             
-             _ratingSecurityService.freeAccess( rating.getUser( ) );
+            try
+            {
+                 _listRatingType.stream().filter( rat ->  rat.getType( ).equals( rating.getClass( ) ) )
+                 .findAny().orElseThrow( RatingTypeException::new ).doRating( rating );
+            }
+            finally
+            {
+                _ratingSecurityService.freeAccess( rating.getUser( ) );
+            }
          }
          else
          {
