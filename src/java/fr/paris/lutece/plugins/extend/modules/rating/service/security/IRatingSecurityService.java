@@ -112,5 +112,17 @@ public interface IRatingSecurityService
      */
     boolean hasAlreadyVoted(LuteceUser user, String strIdExtendableResource, String strExtendableResourceType );
     
+    /**
+     * Check if any user rating process in progress
+     * @param Lutece user
+     * @return true if no rating in progress, false if User rating in progress
+     */
+    boolean canAccess(LuteceUser user );
+    
+    /**
+     * free the user rating process
+     * @param Lutece user
+     */
+    void freeAccess(LuteceUser user );
     
 }
