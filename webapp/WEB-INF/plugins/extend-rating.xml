@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>extend-rating</name>
     <class>fr.paris.lutece.plugins.extend.modules.rating.service.RatingPlugin</class>
-    <version>3.0.3</version>
+    <version>3.0.4-SNAPSHOT</version>
     <description>module.extend.rating.module.description</description>
     <provider>module.extend.rating.module.provider</provider>
     <documentation/>
