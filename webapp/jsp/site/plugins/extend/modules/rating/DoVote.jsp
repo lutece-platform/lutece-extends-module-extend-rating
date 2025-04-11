@@ -2,19 +2,25 @@
 <%@page import="fr.paris.lutece.portal.service.message.SiteMessageException"%>
 <%@page import="fr.paris.lutece.portal.service.util.AppPathService"%>
 <%@page import="fr.paris.lutece.portal.web.PortalJspBean"%>
-<jsp:useBean id="ratingJspBean" scope="request" class="fr.paris.lutece.plugins.extend.modules.rating.web.RatingJspBean" />
+<%@page import="jakarta.el.ELException"%>
+
 
 <%
 	try
 	{
-		ratingJspBean.doRating( request, response );
+%>
+		${ ratingJspBean.doRating( pageContext.request, pageContext.response ) }
+<%
 	}
-	catch( SiteMessageException lme )
+	catch( ELException el )
 	{
-		response.sendRedirect( AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl(  ) );
-	}
-	catch( UserNotSignedException unse )
-	{
-		response.sendRedirect( PortalJspBean.redirectLogin( request ));
+		if ( SiteMessageException.class.getCanonicalName(  ).equals( el.getCause( ).getClass( ).getCanonicalName( ) ) )
+        {
+	        response.sendRedirect( AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl(  ) );
+        }
+		else if ( UserNotSignedException.class.getCanonicalName(  ).equals( el.getCause( ).getClass( ).getCanonicalName( ) ) )
+		{
+			response.sendRedirect( PortalJspBean.redirectLogin( request ) );
+		}
 	}
 %>

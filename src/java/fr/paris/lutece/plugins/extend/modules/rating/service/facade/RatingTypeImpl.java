@@ -5,13 +5,15 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.Rating;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import static java.util.Objects.requireNonNull;
 
 public class RatingTypeImpl implements RatingType {
+
 
 	/**
 	 *  Rating extender Title

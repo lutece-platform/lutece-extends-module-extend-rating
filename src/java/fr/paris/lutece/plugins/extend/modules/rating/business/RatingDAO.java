@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.business;
 import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -43,12 +44,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * This class provides Data Access methods for Rating objects.
  */
+@ApplicationScoped
 public class RatingDAO implements IRatingDAO
 {
     private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating ( rating_type, id_extender_history, id_resource, resource_type, user_guid, rating_value ) VALUES ( ?, ?, ?, ?, ?, ? ) ";

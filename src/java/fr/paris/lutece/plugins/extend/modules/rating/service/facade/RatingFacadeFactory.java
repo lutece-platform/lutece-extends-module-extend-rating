@@ -3,7 +3,7 @@ package fr.paris.lutece.plugins.extend.modules.rating.service.facade;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,21 +14,26 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.security.RatingExce
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
 
+import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+
+import jakarta.enterprise.inject.spi.CDI;
 
 
+@ApplicationScoped
 public class  RatingFacadeFactory {
 
-    private static  List<RatingType> _listRatingType = new ArrayList< >();
-	private static IRatingSecurityService _ratingSecurityService;
-	
+    private static List<RatingType> _listRatingType = new ArrayList< >();
+
+	private static IRatingSecurityService _ratingSecurityService = CDI.current().select(IRatingSecurityService.class).get();
 	
 	protected RatingFacadeFactory( )
 	{		
 	}
+
 	/**
 	 * Do Rating
 	 * @param rating the rating object
@@ -248,9 +253,6 @@ public class  RatingFacadeFactory {
 	 */
 	public static boolean addRatingType( RatingType ratingType) 
 	{
-		if(_ratingSecurityService == null ) {
-			_ratingSecurityService=  SpringContextService.getBean( IRatingSecurityService.BEAN_SERVICE );
-		}
 		if(_listRatingType.stream().anyMatch(rating -> rating.getType().equals( ratingType.getType( ) ) )){
 			
 			return false;

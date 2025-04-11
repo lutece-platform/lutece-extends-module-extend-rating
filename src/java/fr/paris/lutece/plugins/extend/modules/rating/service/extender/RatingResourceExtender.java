@@ -34,30 +34,66 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service.extender;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
+import fr.paris.lutece.plugins.extend.modules.rating.business.IRatingDAO;
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
+import fr.paris.lutece.plugins.extend.modules.rating.web.component.RatingResourceExtenderComponent;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfigDAO;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.annotation.PostConstruct;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * RatingResourceExtender
  */
+@ApplicationScoped
+@Named( "extend-rating.ratingResourceExtender" )
 public class RatingResourceExtender extends AbstractResourceExtender
 {
     /** The Constant RESOURCE_EXTENDER. */
     public static final String RESOURCE_EXTENDER = "rating";
+
     @Inject
-    @Named( RatingConstants.BEAN_CONFIG_SERVICE )
+    @Named( "extend-rating.ratingExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
+
+    @Inject
+    @ConfigProperty( name = "extend.rating.titleKey", defaultValue = "module.extend.rating.extender.rating.label" )
+    private String titleKey;
+
+    @Inject
+    private RatingResourceExtenderComponent resourceExtenderComponent;
+
+    RatingResourceExtender( )
+    {
+
+    }
+
+    @PostConstruct
+    public void producesRatingResourceExtender( )
+    {
+        setResourceExtenderComponent( resourceExtenderComponent );
+        setKey( RESOURCE_EXTENDER );
+        setI18nTitleKey( I18nService.getLocalizedString( titleKey, Locale.getDefault( ) ) );
+        setConfigRequired( true );
+        setHistoryEnable( false );
+        setStateEnable( true );
+
+    }
       
     /**
      * {@inheritDoc}
