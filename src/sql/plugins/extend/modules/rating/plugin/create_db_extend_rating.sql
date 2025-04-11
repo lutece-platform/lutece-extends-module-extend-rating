@@ -3,7 +3,7 @@
 --
 DROP TABLE IF EXISTS extend_rating;
 CREATE TABLE extend_rating (
-	id_rating int AUTO_INCREMENT,
+	id_rating INT AUTO_INCREMENT,
 	id_extender_history INT DEFAULT 0 NOT NULL,
 	id_resource VARCHAR(100) DEFAULT '' NOT NULL,
 	resource_type VARCHAR(255) DEFAULT '' NOT NULL,

@@ -62,8 +62,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
 
 
 /**
@@ -71,17 +72,20 @@ import javax.inject.Named;
  * RatingSecurityService
  *
  */
+@ApplicationScoped
+@Named ("extend-rating.ratingSecurityService")
 public class RatingSecurityService implements IRatingSecurityService
 {
     /** The Constant BEAN_SERVICE. */
     private static final String FILTER_SORT_BY_DATE_VOTE = " date_creation ";
     private Set<LuteceUser> _userRatingLock = new HashSet<>( );
+    
     @Inject
-    @Named( ResourceExtenderHistoryService.BEAN_SERVICE )
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
+    
     @Inject
-    @Named( RatingConstants.BEAN_CONFIG_SERVICE )
     private IResourceExtenderConfigService _configService;
+    
     @Inject
     private IResourceExtenderService _extenderService;
 

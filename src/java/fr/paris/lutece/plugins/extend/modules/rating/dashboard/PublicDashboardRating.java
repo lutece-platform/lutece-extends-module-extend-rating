@@ -44,14 +44,19 @@ import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtender
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.dashboard.IPublicDashboardComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * The Class PublicDashboardRating.
  */
+@ApplicationScoped
+@Named( "extend-rating.dashboardExtendsRating" )
 public class PublicDashboardRating implements IPublicDashboardComponent
 {
-
+    
 	public static final String DASHBOARD_PROPERTIES_TITLE = "module.extend.rating.publicdashboard.bean.title";
 	private String strIdComponent = "extend-rating.dashboardExtendsRating";
 	private static final String TEMPLATE_DASHBOARD_RATING = "/skin/plugins/extend/modules/rating/publicdashboard_ratings.html";
@@ -89,8 +94,7 @@ public class PublicDashboardRating implements IPublicDashboardComponent
      */
     private static Map<String, Integer> searchExtendCounter( String user_id )
     {
-
-        IResourceExtenderHistoryService _resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+        IResourceExtenderHistoryService _resourceExtenderHistoryService = CDI.current( ).select( IResourceExtenderHistoryService.class ).get( );
 
         ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
         filter.setUserGuid( user_id );

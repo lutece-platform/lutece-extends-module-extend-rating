@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,13 +28,16 @@ import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderH
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.ApplicationScoped;
 
 public final class DefaultRatingTypeImpl implements RatingType {
 
    private IResourceExtenderHistoryService _resourceExtenderHistoryService;
-   private IRatingSecurityService _ratingSecurityService ;
+
+   private IRatingSecurityService _ratingSecurityService;
 
    /**
 	 *  Rating extender Title
@@ -47,29 +50,36 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	/**
 	 * Consumer to rating service 
 	 */   
-   protected DefaultRatingTypeImpl( Class<? extends Rating>  type, String strTitle )
-	{		
+
+    protected DefaultRatingTypeImpl( Class<? extends Rating>  type, String strTitle) {
 		requireNonNull( type );
 		requireNonNull( strTitle );
 		this._type= type;
 		this._strTitle= strTitle;
-       	_resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
-    	_ratingSecurityService = SpringContextService.getBean( IRatingSecurityService.BEAN_SERVICE );
-
+		_ratingSecurityService = CDI.current( ).select( IRatingSecurityService.class ).get( );
+		_resourceExtenderHistoryService = CDI.current( ).select( IResourceExtenderHistoryService.class ).get( );
 	}
+
+
+	private void setRatingSecurityService( IRatingSecurityService ratingSecurityService )
+	{
+		_ratingSecurityService = ratingSecurityService;
+	}
+
+	private void setResourceExtenderHistoryService ( IResourceExtenderHistoryService resourceExtenderHistoryService )
+	{
+		_resourceExtenderHistoryService = resourceExtenderHistoryService;
+	}
+
 	@Override
 	public void doRating(Rating rating) {
 		
-        if ( _resourceExtenderHistoryService == null )
-        {
-    		_resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
-
-        }
-		 ResourceExtenderHistory history = _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER,
+		ResourceExtenderHistory history = _resourceExtenderHistoryService.create( RatingResourceExtender.RESOURCE_EXTENDER,
 	        		rating.getIdExtendableResource( ), rating.getExtendableResourceType( ),  rating.getUserGuid( ) );
-		 rating.setHistory(history);      
-	     RatingHome.create( rating );        
-	     RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ), rating.getUser( ) );		
+
+		rating.setHistory(history);      
+		RatingHome.create( rating );        
+		RatingListenerService.createRating( rating.getExtendableResourceType( ), rating.getIdExtendableResource( ), rating.getUser( ) );		
 	}
 
 	@Override
@@ -78,20 +88,17 @@ public final class DefaultRatingTypeImpl implements RatingType {
 		Optional<Rating> rat= RatingService.INSTANCE.findRating(rating.getIdExtendableResource(), rating.getExtendableResourceType(), this.getTypeName( ), rating.getRatingValue( ), rating.getUserGuid( ));
         if( rat.isPresent( ) )
         {
-        	 if ( _resourceExtenderHistoryService == null )
-             {
-             	_resourceExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
-             }
-             _resourceExtenderHistoryService.remove( rat.get().getIdHistory(  )  );
-             RatingHome.remove( rat.get().getIdRating( ) );
-             if ( RatingListenerService.hasListener( ) )
- 	           {
- 	            	RatingListenerService.deleteRating( rating.getExtendableResourceType() , rating.getIdExtendableResource(),  rating.getUser( ) );
- 	           }
-    	  }else
-    	  {
-    		  throw new NoSuchElementException( "The rating with IdExtendableResource= "+rating.getIdExtendableResource()+" does not exist ");
-    	  }
+			_resourceExtenderHistoryService.remove( rat.get().getIdHistory(  )  );
+			RatingHome.remove( rat.get().getIdRating( ) );
+			if ( RatingListenerService.hasListener( ) )
+			{
+				RatingListenerService.deleteRating( rating.getExtendableResourceType() , rating.getIdExtendableResource(),  rating.getUser( ) );
+			}
+		}
+		else
+		{
+			throw new NoSuchElementException( "The rating with IdExtendableResource= "+rating.getIdExtendableResource()+" does not exist ");
+		}
 	}
 
 	@Override
@@ -99,7 +106,7 @@ public final class DefaultRatingTypeImpl implements RatingType {
 			String strExtendableResourceType, String strParameters, HttpServletRequest request) {
 		if(ratingExtenderConfig != null )
 		{
-	        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
+			LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 	        Map<String, Object> model = new HashMap< >(  );
 	        String showParam= RatingUtils.fetchShowParameter( strParameters );
 	        if( !"voteAction".equals( showParam )) 
@@ -115,9 +122,6 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	        model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
             model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
             model.put( RatingConstants.MARK_SHOW, showParam );                
-	        if(_ratingSecurityService ==  null ) {
-	        	_ratingSecurityService = SpringContextService.getBean( IRatingSecurityService.BEAN_SERVICE );
-	        }
   
 		    if( !_ratingSecurityService.isVoteClosed(ratingExtenderConfig) )
 	        {
@@ -143,7 +147,7 @@ public final class DefaultRatingTypeImpl implements RatingType {
                 	model.put( RatingConstants.MARK_VOTE_CLOSED, true );
              }
                
-             		return AppTemplateService.getTemplate( RatingUtils.getRatingTemplatePaht( ratingExtenderConfig.getRatingType( )), request.getLocale(  ), model ).getHtml( );
+				 return AppTemplateService.getTemplate( RatingUtils.getRatingTemplatePaht( ratingExtenderConfig.getRatingType( )), request.getLocale(  ), model ).getHtml( );
               }     
 	        
 		return StringUtils.EMPTY ;

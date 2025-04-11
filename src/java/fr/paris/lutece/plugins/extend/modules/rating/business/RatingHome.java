@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.modules.rating.service.RatingPlugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class RatingHome {
 	
 	
-	    private static IRatingDAO _ratingDAO = SpringContextService.getBean( "extend-rating.ratingDAO" );
+	    private static IRatingDAO _ratingDAO = CDI.current( ).select( IRatingDAO.class ).get( );
 	    
 	    /** Default constructor **/
 	    private RatingHome ()

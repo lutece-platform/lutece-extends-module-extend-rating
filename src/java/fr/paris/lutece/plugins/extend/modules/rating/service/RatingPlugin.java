@@ -60,7 +60,7 @@ public class RatingPlugin extends PluginDefaultImplementation
     public static final String PLUGIN_NAME = "extend-rating";
 
     /** The Constant TRANSACTION_MANAGER. */
-    public static final String TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
+    //public static final String TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
     
    
 

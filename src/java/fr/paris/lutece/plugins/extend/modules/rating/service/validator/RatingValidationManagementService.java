@@ -34,10 +34,13 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service.validator;
 
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+
 
 
 /**
@@ -63,8 +66,8 @@ public final class RatingValidationManagementService
     public static String validateRating( HttpServletRequest request, LuteceUser user, String strIdResource,
         String strResourceTypeKey, float fRatingValue )
     {
-        for ( IRatingValidationService validationService : SpringContextService.getBeansOfType( 
-                IRatingValidationService.class ) )
+        for ( IRatingValidationService validationService : CDI.current( ).select( IRatingValidationService.class ).stream( )
+                    .collect( Collectors.toList( ) ) )
         {
             String strUrlError = validationService.validateRating( request, user, strIdResource, strResourceTypeKey,
             		fRatingValue );
@@ -86,8 +89,8 @@ public final class RatingValidationManagementService
      */
     public static boolean canRating( String strIdExtendableResource, String strExtendableResourceType, LuteceUser user )
     {   	
-    	for ( IRatingValidator validatorService : SpringContextService.getBeansOfType( 
-                    IRatingValidator.class ) )
+    	for ( IRatingValidator validatorService : CDI.current( ).select( IRatingValidator.class ).stream( )
+                    .collect( Collectors.toList( ) ) )
         {
              if(!validatorService.canRating( strIdExtendableResource, strExtendableResourceType, user )){
                	return false;
@@ -105,8 +108,8 @@ public final class RatingValidationManagementService
      */
     public static boolean canCancelRating( String strIdExtendableResource, String strExtendableResourceType, LuteceUser user )
     {   	
-    	for ( IRatingValidator validatorService : SpringContextService.getBeansOfType( 
-                    IRatingValidator.class ) )
+    	for ( IRatingValidator validatorService : CDI.current( ).select( IRatingValidator.class ).stream( )
+            .collect( Collectors.toList( ) ) )
         {
              if(!validatorService.canCancelRating( strIdExtendableResource, strExtendableResourceType, user )){
                	return false;

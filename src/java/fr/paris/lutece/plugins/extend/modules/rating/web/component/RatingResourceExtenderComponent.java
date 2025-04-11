@@ -41,12 +41,14 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingReso
 import fr.paris.lutece.plugins.extend.modules.rating.service.facade.RatingFacadeFactory;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
+import fr.paris.lutece.plugins.extend.service.extender.IResourceExtender;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -56,10 +58,13 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
 
 /**
@@ -67,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
  * RatingResourceExtenderComponent
  *
  */
+@ApplicationScoped
 public class RatingResourceExtenderComponent extends AbstractResourceExtenderComponent
 {
     // TEMPLATES
@@ -76,10 +82,22 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
 	// CONSTANTS
     
     @Inject
-    @Named( RatingConstants.BEAN_CONFIG_SERVICE )
+    @Named( "extend-rating.ratingExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
 
-    
+    @Inject
+    @Named( "extend-rating.ratingResourceExtender" )
+    private IResourceExtender _resourceExtender;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IResourceExtender getResourceExtender( )
+    {
+        return _resourceExtender;
+    }
+
     /**
      * {@inheritDoc}
      */

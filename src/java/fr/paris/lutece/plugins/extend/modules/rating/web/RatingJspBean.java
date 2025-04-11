@@ -54,7 +54,6 @@ import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -70,13 +69,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
 
 /**
  * RatingJspBean
  */
+@RequestScoped
+@Named
 public class RatingJspBean
 {
     public static final String URL_JSP_DO_VOTE = "jsp/site/plugins/extend/modules/rating/DoVote.jsp";
@@ -86,8 +90,11 @@ public class RatingJspBean
     private static final String CONSTANT_HTTP = "http";
 
     // SERVICES
-    private IResourceExtenderConfigService _configService = SpringContextService.getBean( RatingConstants.BEAN_CONFIG_SERVICE );
-    private IResourceExtenderService _resourceExtenderService = SpringContextService.getBean( ResourceExtenderService.BEAN_SERVICE );
+    @Inject
+    private IResourceExtenderConfigService _configService;
+    
+    @Inject
+    private IResourceExtenderService _resourceExtenderService;
 
     /**
      * Update the rating value an count.
@@ -110,7 +117,7 @@ public class RatingJspBean
               SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_GENERIC_MESSAGE, SiteMessage.TYPE_STOP );
     	}
        
-        Rating rating =RatingFacadeFactory.getRatingInstance( config.getRatingType( ));
+        Rating rating = RatingFacadeFactory.getRatingInstance( config.getRatingType( ));
         LuteceUser user= SecurityService.getInstance(  ).getRegisteredUser( request );
         BeanUtil.populate( rating, request, request.getLocale( ) );
         rating.setUser( user );
@@ -155,7 +162,7 @@ public class RatingJspBean
             }
             else
             {
-                strNextUrl = AppPathService.getPortalUrl(  );
+                strNextUrl = AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl(  );
             }
         }
         else
