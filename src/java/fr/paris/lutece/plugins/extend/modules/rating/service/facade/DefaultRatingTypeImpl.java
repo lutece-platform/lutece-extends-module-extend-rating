@@ -31,7 +31,7 @@ import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.context.ApplicationScoped;
+
 
 public final class DefaultRatingTypeImpl implements RatingType {
 
