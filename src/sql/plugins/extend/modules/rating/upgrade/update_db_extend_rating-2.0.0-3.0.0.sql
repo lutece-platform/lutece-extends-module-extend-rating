@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset extend-rating:update_db_extend_rating-2.0.0-3.0.0.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE extend_rating MODIFY COLUMN id_rating int AUTO_INCREMENT;
 
 ALTER TABLE extend_rating_config MODIFY COLUMN id_vote_type VARCHAR(100) DEFAULT '' NOT NULL;
