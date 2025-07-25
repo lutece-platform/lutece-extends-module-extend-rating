@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset extend-rating:update_db_extend_rating-1.1.4-1.1.5.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE extend_rating ADD COLUMN score_positifs_votes INT default 0 NOT NULL ;
 ALTER TABLE extend_rating ADD COLUMN score_negatives_votes INT default 0 NOT NULL ;
 ALTER TABLE extend_rating MODIFY COLUMN score_value DOUBLE default 0 NOT NULL;
