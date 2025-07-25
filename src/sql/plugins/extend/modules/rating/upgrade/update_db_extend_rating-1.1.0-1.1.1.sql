@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset extend-rating:update_db_extend_rating-1.1.0-1.1.1.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE extend_rating_config ADD COLUMN is_active INT DEFAULT 1 NOT NULL;
 ALTER TABLE extend_rating_config ADD COLUMN is_connected INT DEFAULT 0 NOT NULL;
 ALTER TABLE extend_rating_config ADD COLUMN nb_vote_per_user INT DEFAULT 0 NOT NULL;

@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset extend-rating:init_core_extend_rating.sql
+--preconditions onFail:MARK_RAN onError:WARN
 --
 -- Init  table core_admin_right
 --
