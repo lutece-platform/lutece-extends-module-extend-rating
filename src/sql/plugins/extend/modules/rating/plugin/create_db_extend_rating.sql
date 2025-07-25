@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset extend-rating:create_db_extend_rating.sql
+--preconditions onFail:MARK_RAN onError:WARN
 --
 -- Structure for table extend_rating
 --
