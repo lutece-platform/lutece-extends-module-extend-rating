@@ -27,6 +27,7 @@ import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtender
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -112,9 +113,13 @@ public final class DefaultRatingTypeImpl implements RatingType {
         		}
         		model.put(RatingConstants.MARK_RATING, rating.isPresent()?rating.get( ):null );
         	}
-	        model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
-            model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
-            model.put( RatingConstants.MARK_SHOW, showParam );                
+		        model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
+	            model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
+	            model.put( RatingConstants.MARK_SHOW, showParam );
+	            model.put( RatingConstants.MARK_VOTE_TOKEN,
+	                    SecurityTokenService.getInstance( ).getToken( request, RatingConstants.ACTION_DO_RATING ) );
+	            model.put( RatingConstants.MARK_CANCEL_VOTE_TOKEN,
+	                    SecurityTokenService.getInstance( ).getToken( request, RatingConstants.ACTION_CANCEL_RATING ) );
 	        if(_ratingSecurityService ==  null ) {
 	        	_ratingSecurityService = SpringContextService.getBean( IRatingSecurityService.BEAN_SERVICE );
 	        }
