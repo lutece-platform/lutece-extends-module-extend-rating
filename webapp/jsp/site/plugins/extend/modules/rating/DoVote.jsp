@@ -11,7 +11,7 @@
 	}
 	catch( SiteMessageException lme )
 	{
-		response.sendRedirect( AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl(  ) );
+		response.sendRedirect( AppPathService.getSiteMessageUrl( request ) );
 	}
 	catch( UserNotSignedException unse )
 	{

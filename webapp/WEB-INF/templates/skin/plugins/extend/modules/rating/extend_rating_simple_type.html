@@ -5,9 +5,13 @@
 <#if ( show=="actionVote" || show== "all" ) && canDeleteVote >
 <div>
 <#list ratingList as rat >
-	<a href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${rat.ratingValue!}">
-		J'annule mon vote
-	</a>
+	<form action="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp" method="post">
+		<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+		<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+		<input type="hidden" name="ratingValue" value="${rat.ratingValue!}" />
+		<input type="hidden" name="token" value="${cancelVoteToken!}" />
+		<button type="submit">J'annule mon vote</button>
+	</form>
 	</br>
 </#list>
 </div>
@@ -16,9 +20,13 @@
 	<div class="extend-rating-vote-title">
 		<label for="">Votez :</label>
 	</div>
-	<span> 
-	<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1">
-		Je vote pour</a></span>
+	<form action="jsp/site/plugins/extend/modules/rating/DoVote.jsp" method="post">
+		<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+		<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+		<input type="hidden" name="ratingValue" value="1" />
+		<input type="hidden" name="token" value="${voteToken!}" />
+		<button type="submit">Je vote pour</button>
+	</form>
 </div>
 </#if>
 </#if>
