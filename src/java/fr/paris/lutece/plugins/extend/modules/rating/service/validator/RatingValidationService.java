@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
-import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingUtils.RatingType;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -17,7 +16,6 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
 
 @ApplicationScoped
 @Named ( "extend-rating.ratingValidationService" )
@@ -26,6 +24,7 @@ public class RatingValidationService implements IRatingValidationService {
 	private static final String PROPERTIES_ERROR_URL="rating.errorUrl";
 
 	@Inject
+	@Named( "extend-rating.ratingExtenderConfigService" )
 	private IResourceExtenderConfigService _configService;
 
 

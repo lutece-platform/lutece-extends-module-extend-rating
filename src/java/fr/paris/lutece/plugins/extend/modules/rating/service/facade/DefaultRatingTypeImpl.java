@@ -24,8 +24,8 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSec
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingUtils;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -38,6 +38,8 @@ public final class DefaultRatingTypeImpl implements RatingType {
    private IResourceExtenderHistoryService _resourceExtenderHistoryService;
 
    private IRatingSecurityService _ratingSecurityService;
+
+   private ISecurityTokenService _securityTokenService;
 
    /**
 	 *  Rating extender Title
@@ -57,6 +59,7 @@ public final class DefaultRatingTypeImpl implements RatingType {
 		this._type= type;
 		this._strTitle= strTitle;
 		_ratingSecurityService = CDI.current( ).select( IRatingSecurityService.class ).get( );
+		_securityTokenService = CDI.current( ).select( ISecurityTokenService.class ).get( );
 		_resourceExtenderHistoryService = CDI.current( ).select( IResourceExtenderHistoryService.class ).get( );
 	}
 
@@ -121,7 +124,11 @@ public final class DefaultRatingTypeImpl implements RatingType {
         	}
 	        model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
             model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
-            model.put( RatingConstants.MARK_SHOW, showParam );                
+            model.put( RatingConstants.MARK_SHOW, showParam );
+            model.put( RatingConstants.MARK_VOTE_TOKEN,
+                    _securityTokenService.getToken( request, RatingConstants.ACTION_DO_RATING ) );
+            model.put( RatingConstants.MARK_CANCEL_VOTE_TOKEN,
+                    _securityTokenService.getToken( request, RatingConstants.ACTION_CANCEL_RATING ) );
   
 		    if( !_ratingSecurityService.isVoteClosed(ratingExtenderConfig) )
 	        {

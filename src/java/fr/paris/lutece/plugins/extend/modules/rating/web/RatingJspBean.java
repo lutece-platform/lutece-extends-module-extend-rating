@@ -51,6 +51,7 @@ import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
@@ -88,13 +89,18 @@ public class RatingJspBean
     // TEMPLATES
     private static final String TEMPLATE_RATING_NOTIFY_MESSAGE = "skin/plugins/extend/modules/rating/rating_notify_message.html";
     private static final String CONSTANT_HTTP = "http";
+    private static final String HTTP_METHOD_POST = "POST";
 
     // SERVICES
     @Inject
+    @Named( "extend-rating.ratingExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
     
     @Inject
     private IResourceExtenderService _resourceExtenderService;
+
+    @Inject
+    private ISecurityTokenService _securityTokenService;
 
     /**
      * Update the rating value an count.
@@ -109,8 +115,10 @@ public class RatingJspBean
      */
     public void doRating( HttpServletRequest request, HttpServletResponse response )
         throws IOException, SiteMessageException, UserNotSignedException
-    {       
-    	   RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
+    {
+        validatePostRequestAndToken( request, RatingConstants.ACTION_DO_RATING );
+
+        RatingExtenderConfig config = _configService.find( RatingResourceExtender.RESOURCE_EXTENDER,
     			   request.getParameter( RatingConstants.PARAMETER_ID_EXTENDABLE_RESOURCE ), request.getParameter( RatingConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE ) );
     	   
     	if( config == null || config.getRatingType( )== null ) {
@@ -219,6 +227,8 @@ public class RatingJspBean
     public void doCancelRating( HttpServletRequest request, HttpServletResponse response )
         throws IOException, SiteMessageException, UserNotSignedException
     {
+        validatePostRequestAndToken( request, RatingConstants.ACTION_CANCEL_RATING );
+
            String strFromUrl = (String) request.getSession(  )
                                             .getAttribute( ExtendPlugin.PLUGIN_NAME +
                 RatingConstants.PARAMETER_FROM_URL );
@@ -312,6 +322,21 @@ public class RatingJspBean
             String strBody = template.getHtml(  );
 
             MailService.sendMailHtml( recipient.getEmail(  ), strSenderName, strSenderEmail, strSubject, strBody );
+        }
+    }
+
+    /**
+     * Method to check token from POST request.
+     *
+     * @param request The HTTP request
+     * @param strAction The action associated with the CSRF token
+     * @throws SiteMessageException If the request method or CSRF token is invalid
+     */
+    private void validatePostRequestAndToken( HttpServletRequest request, String strAction ) throws SiteMessageException
+    {
+        if ( !HTTP_METHOD_POST.equals( request.getMethod( ) ) || !_securityTokenService.validate( request, strAction ) )
+        {
+            SiteMessageService.setMessage( request, RatingConstants.MESSAGE_ERROR_INVALID_TOKEN, SiteMessage.TYPE_STOP );
         }
     }
 

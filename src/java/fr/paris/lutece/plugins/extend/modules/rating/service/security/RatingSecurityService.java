@@ -44,11 +44,9 @@ import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExten
 import fr.paris.lutece.plugins.extend.modules.rating.service.RatingService;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.rating.service.validator.RatingValidationManagementService;
-import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
@@ -84,6 +82,7 @@ public class RatingSecurityService implements IRatingSecurityService
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
     
     @Inject
+    @Named( "extend-rating.ratingExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
     
     @Inject
