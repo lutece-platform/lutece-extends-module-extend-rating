@@ -49,9 +49,13 @@
 <#if canDeleteVote>
 	<div class="cancel">
 	<#list ratingList as rat >
-		<a
-			href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${rat.ratingValue!}">
-		</a>
+		<form action="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp" method="post">
+			<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+			<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+			<input type="hidden" name="ratingValue" value="${rat.ratingValue!}" />
+			<input type="hidden" name="token" value="${cancelVoteToken!}" />
+			<button type="submit" aria-label="J'annule mon vote"></button>
+		</form>
 		</br>
 	</#list>
 	</div>
@@ -61,23 +65,20 @@
 		<div class="extend-rating-vote-title">
 			<label for="">#i18n{module.extend.rating.rating.labelVote} :</label>
 		</div>
-		<span class="extend-rating-vote-span"> 
-
-			 	<a href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;ratingValue=-1">
-					<img
-					src="images/local/skin/plugins/extend/modules/rating/vote_against.png"
+		<form action="jsp/site/plugins/extend/modules/rating/DoVote.jsp" method="post" class="extend-rating-vote-span">
+			<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+			<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+			<input type="hidden" name="token" value="${voteToken!}" />
+			<button type="submit" name="ratingValue" value="-1">
+				<img src="images/local/skin/plugins/extend/modules/rating/vote_against.png"
 					title="#i18n{module.extend.rating.rating.labelVoteAgainst}"
 					alt="#i18n{module.extend.rating.rating.labelVoteAgainst}" />
-				</a> 
-
-
-				<a	href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&amp;extendableResourceType=${extendableResourceType!}&amp;ratingValue=1">
-					<img
-					src="images/local/skin/plugins/extend/modules/rating/vote_for.png"
+			</button>
+			<button type="submit" name="ratingValue" value="1">
+				<img src="images/local/skin/plugins/extend/modules/rating/vote_for.png"
 					title="#i18n{module.extend.rating.rating.labelVoteFor}"
 					alt="#i18n{module.extend.rating.rating.labelVoteFor}" />
-				</a>
-
-		</span>
+			</button>
+		</form>
 	</div> 
 </#if>

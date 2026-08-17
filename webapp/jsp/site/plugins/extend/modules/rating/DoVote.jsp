@@ -16,7 +16,7 @@
 	{
 		if ( SiteMessageException.class.getCanonicalName(  ).equals( el.getCause( ).getClass( ).getCanonicalName( ) ) )
         {
-	        response.sendRedirect( AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl(  ) );
+	        response.sendRedirect( AppPathService.getSiteMessageUrl( request ) );
         }
 		else if ( UserNotSignedException.class.getCanonicalName(  ).equals( el.getCause( ).getClass( ).getCanonicalName( ) ) )
 		{

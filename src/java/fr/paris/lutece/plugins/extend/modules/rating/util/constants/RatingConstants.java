@@ -50,6 +50,7 @@ public final class RatingConstants
     // MESSAGES
     public static final String MESSAGE_NOTIFY_SUBJECT = "module.extend.rating.message.notify.subject";
     public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.rating.message.error.genericMessage";
+    public static final String MESSAGE_ERROR_INVALID_TOKEN = "module.extend.rating.message.error.invalidToken";
     public static final String MESSAGE_STOP_GENERIC_MESSAGE = "module.extend.rating.message.stop.genericMessage";
     public static final String MESSAGE_CANNOT_VOTE = "module.extend.rating.message.cannotVote";
 
@@ -57,6 +58,9 @@ public final class RatingConstants
     public static final String PARAMETER_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
     public static final String PARAMETER_EXTENDABLE_RESOURCE_TYPE = "extendableResourceType";
     public static final String PARAMETER_VOTE_VALUE = "ratingValue";
+
+    public static final String ACTION_DO_RATING = "doRating";
+    public static final String ACTION_CANCEL_RATING = "doCancelRating";
     public static final String PARAMETER_RATING_TYPE = "ratingType";
     public static final String PARAMETER_HTTP_REFERER = "referer";
     public static final String PARAMETER_ID_VOTE_TYPE = "idVoteType";
@@ -84,6 +88,8 @@ public final class RatingConstants
     public static final String MARK_CAN_VOTE = "canVote";
     public static final String MARK_CAN_DELETE_VOTE = "canDeleteVote";
     public static final String MARK_VOTE_CLOSED = "voteClosed";
+    public static final String MARK_VOTE_TOKEN = "voteToken";
+    public static final String MARK_CANCEL_VOTE_TOKEN = "cancelVoteToken";
 
     // CONSTANTS
     public static final String JSON_KEY_SHOW = "show";

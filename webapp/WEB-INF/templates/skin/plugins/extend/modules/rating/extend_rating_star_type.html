@@ -22,9 +22,13 @@
 	<div class="cancel">
 	<#list ratingList as rat >
 		<#assign ratingValue=rat.ratingValue /> 	
-	     <a
-			href="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=${ratingValue?replace(',','.')}">
-		</a>
+		<form action="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp" method="post">
+			<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+			<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+			<input type="hidden" name="ratingValue" value="${ratingValue?replace(',','.')}" />
+			<input type="hidden" name="token" value="${cancelVoteToken!}" />
+			<button type="submit" aria-label="J'annule mon vote"></button>
+		</form>
 		</br>
       </#list>
 	</div>
@@ -34,9 +38,12 @@
 	<div>Votez :</div>
 	<div class="resource-vote-star-rating" style="display: none;">
 		<form name="resource_vote_form"
-			action="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType}"
+			action="jsp/site/plugins/extend/modules/rating/DoVote.jsp"
 			method="post">
-			<input type="hidden" name="ratingValue" value="1" /> <input
+			<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+			<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+			<input type="hidden" name="ratingValue" value="1" />
+			<input type="hidden" name="token" value="${voteToken!}" /> <input
 				class="star-rating {split:2}" type="radio"
 				name="ratingValue_${extendableResourceType}_${idExtendableResource!}"
 				value="0.5" /> <input class="star-rating {split:2}" type="radio"
@@ -60,44 +67,17 @@
 		</form>
 	</div>
 	<div class="resource-vote-star-rating-javascript-disable">
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=0.5"></a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1">
-			</a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=1.5">
-			</a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=2">
-			</a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=2.5"></a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=3">
-			</a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=3.5">
-			</a>
-		</div>
-		<div class="star {split:2}">
-			<a
-				href="jsp/site/plugins/extend/modules/rating/DoVote.jsp?idExtendableResource=${idExtendableResource!}&extendableResourceType=${extendableResourceType!}&ratingValue=4">
-			</a>
-		</div>
+		<#list [ 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4 ] as ratingValue>
+			<div class="star {split:2}">
+				<form action="jsp/site/plugins/extend/modules/rating/DoVote.jsp" method="post">
+					<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+					<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+					<input type="hidden" name="ratingValue" value="${ratingValue}" />
+					<input type="hidden" name="token" value="${voteToken!}" />
+					<button type="submit" aria-label="Note : ${ratingValue}"></button>
+				</form>
+			</div>
+		</#list>
 	</div>
 	<br />
   </#if> 
