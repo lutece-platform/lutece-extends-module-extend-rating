@@ -56,9 +56,9 @@ import org.apache.commons.collections.CollectionUtils;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -76,7 +76,8 @@ public class RatingSecurityService implements IRatingSecurityService
 {
     /** The Constant BEAN_SERVICE. */
     private static final String FILTER_SORT_BY_DATE_VOTE = " date_creation ";
-    private Set<LuteceUser> _userRatingLock = new HashSet<>( );
+    // Users with a vote in progress on this instance (concurrent requests of one user)
+    private final Set<LuteceUser> _userRatingLock = ConcurrentHashMap.newKeySet( );
     
     @Inject
     private IResourceExtenderHistoryService _resourceExtenderHistoryService;  
@@ -320,12 +321,7 @@ public class RatingSecurityService implements IRatingSecurityService
     @Override
     public boolean canAccess( LuteceUser user )
     {
-        if (!_userRatingLock.contains(user)) 
-        {
-            _userRatingLock.add(user);
-            return true;
-        } 
-        return false;
+        return _userRatingLock.add( user );
     }
     
     @Override

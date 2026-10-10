@@ -57,7 +57,7 @@ public class RatingExtenderConfigDAO implements IExtenderConfigDAO<RatingExtende
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( RatingExtenderConfig config )
+    public void insert( RatingExtenderConfig config )
     {
         int nIndex = 1;
 
