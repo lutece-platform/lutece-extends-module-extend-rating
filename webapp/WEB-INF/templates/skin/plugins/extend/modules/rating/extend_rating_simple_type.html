@@ -1,32 +1,24 @@
-<#if ( show == "vote" ||  show== "all") && rating?? >
-	${rating.ratingCount!}
+<#if ( show == "vote" || show == "all" ) && rating??>
+	<@cText>#i18n{module.extend.rating.rating_info.labelVoteCount} : ${rating.ratingCount!}</@cText>
 </#if>
-<#if !voteClosed> 
-<#if ( show=="actionVote" || show== "all" ) && canDeleteVote >
-<div>
-<#list ratingList as rat >
-	<form action="jsp/site/plugins/extend/modules/rating/DoCancelVote.jsp" method="post">
-		<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
-		<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
-		<input type="hidden" name="ratingValue" value="${rat.ratingValue!}" />
-		<input type="hidden" name="token" value="${cancelVoteToken!}" />
-		<button type="submit">J'annule mon vote</button>
-	</form>
-	</br>
+<#if !voteClosed>
+<#if ( show == "actionVote" || show == "all" ) && canDeleteVote>
+<#list ratingList![] as rat>
+<@cForm action='jsp/site/Portal.jsp?page=extend-rating&amp;action=doCancelRating' class='extend-rating-cancel mb-m'>
+	<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' class='' />
+	<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' class='' />
+	<@cInput type='hidden' name='ratingValue' value='${rat.ratingValue?c}' class='' />
+	<@cInput type='hidden' name='_csrftoken' value='${cancelVoteToken!}' class='' />
+	<@cBtn label='#i18n{module.extend.rating.rating.labelCancelVote}' class='secondary' />
+</@cForm>
 </#list>
-</div>
-<#elseif ( show== "all" || show=="actionVote") && canVote >
-<div>
-	<div class="extend-rating-vote-title">
-		<label for="">Votez :</label>
-	</div>
-	<form action="jsp/site/plugins/extend/modules/rating/DoVote.jsp" method="post">
-		<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
-		<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
-		<input type="hidden" name="ratingValue" value="1" />
-		<input type="hidden" name="token" value="${voteToken!}" />
-		<button type="submit">Je vote pour</button>
-	</form>
-</div>
+<#elseif ( show == "all" || show == "actionVote" ) && canVote>
+<@cForm action='jsp/site/Portal.jsp?page=extend-rating&amp;action=doRating' class='extend-rating-vote mb-m'>
+	<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' class='' />
+	<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' class='' />
+	<@cInput type='hidden' name='ratingValue' value='1' class='' />
+	<@cInput type='hidden' name='_csrftoken' value='${voteToken!}' class='' />
+	<@cBtn label='#i18n{module.extend.rating.rating.labelVoteFor}' />
+</@cForm>
 </#if>
 </#if>

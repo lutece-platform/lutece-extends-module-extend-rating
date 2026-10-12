@@ -1,4 +1,5 @@
 --liquibase formatted sql
 --changeset extend-rating:init_db_extend_rating.sql
 --preconditions onFail:MARK_RAN onError:WARN
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM extend_rating_config WHERE id_extender = -1
 INSERT INTO extend_rating_config (id_extender,id_mailing_list,id_vote_type,is_unique_vote,nb_days_to_vote) VALUES (-1,-1,'fr.paris.lutece.plugins.extend.modules.rating.business.SimpleRating',1,0); 

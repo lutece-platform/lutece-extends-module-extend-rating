@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>extend-rating</name>
     <class>fr.paris.lutece.plugins.extend.modules.rating.service.RatingPlugin</class>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <description>module.extend.rating.module.description</description>
     <provider>module.extend.rating.module.provider</provider>
     <documentation/>
@@ -26,16 +26,11 @@
       
     </admin-features>
     
-    <!-- Specific plugin CSS stylesheet -->
-    <css-stylesheets>
-        <css-stylesheets-scope>portal</css-stylesheets-scope>
-        <css-stylesheet>../../js/jquery/plugins/star-rating/jquery.rating.css</css-stylesheet>
-    </css-stylesheets>
-    <!-- Specific plugin JAVASCRIPT -->
-    <javascript-files>
-        <javascript-files-scope>portal</javascript-files-scope>
-        <javascript-file>extend/modules/rating/extend-rating.js</javascript-file>
-        <javascript-file>../jquery/plugins/star-rating/jquery.rating.js</javascript-file>
-    </javascript-files>
-    
+    <!-- Front office application receiving the votes -->
+    <applications>
+        <application>
+            <application-id>extend-rating</application-id>
+        </application>
+    </applications>
+
 </plug-in>

@@ -318,15 +318,24 @@ public class RatingSecurityService implements IRatingSecurityService
         return true;
     }
     
+    /**
+     * {@inheritDoc} An anonymous user is never locked.
+     */
     @Override
     public boolean canAccess( LuteceUser user )
     {
-        return _userRatingLock.add( user );
+        return user == null || _userRatingLock.add( user );
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void freeAccess( LuteceUser user )
     {
-        _userRatingLock.remove(user);
+        if ( user != null )
+        {
+            _userRatingLock.remove( user );
+        }
     }
 }

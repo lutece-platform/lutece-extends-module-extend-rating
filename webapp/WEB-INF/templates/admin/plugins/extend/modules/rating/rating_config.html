@@ -34,23 +34,23 @@
 	<@columns lg=7>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelOptions}' helpKey='#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})' >
 			<@radioButton id='extend-rating-unique-vote' name='uniqueVote' value='true' labelFor='extend-rating-unique-vote' labelKey='#i18n{module.extend.rating.rating_config.labelUniqueVote}' checked=ratingConfig.uniqueVote />
-			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='true' checked=!ratingConfig.uniqueVote />
+			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='false' checked=!ratingConfig.uniqueVote />
 		</@formGroup>
 		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote}' labelFor='nbDaysToVote' helpKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}' mandatory=true>
 			<@inputGroup  class='w-25' >
-				<@input type='number' name='nbDaysToVote'value='${ratingConfig.nbDaysToVote!}' maxlength=3 />
+				<@input type='number' name='nbDaysToVote' value='${ratingConfig.nbDaysToVote!}' maxlength=3 />
 				<@inputGroupItem> #i18n{module.extend.rating.rating_config.temporalVote.labelDay}</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
 		<@formGroup rows=2 >
 			<#assign ratingLimitedConnectedUser><#if ratingConfig.limitedConnectedUser>true<#else>false</#if></#assign>
-			<@checkBox name='limitedConnectedUser' labelKey='#i18n{module.extend.rating.rating_config.labelConnectedVoteComment}' id='extend-rating-limited-connected-user-vote' checked=ratingLimitedConnectedUser?boolean /> 
+			<@checkBox name='limitedConnectedUser' labelKey='#i18n{module.extend.rating.rating_config.labelConnectedVoteComment}' id='extend-rating-limited-connected-user-vote' orientation='switch' value='true' checked=ratingLimitedConnectedUser?boolean /> 
 		</@formGroup>
 		<@formGroup rows=2 >
 			<#assign ratingDeleteVote><#if ratingConfig.deleteVote>true<#else>false</#if></#assign>
-			<@checkBox name='deleteVote' labelKey='#i18n{module.extend.rating.rating_config.deleteVoteComment}' checked=ratingDeleteVote?boolean /> 
+			<@checkBox name='deleteVote' id='deleteVote' orientation='switch' value='true' labelKey='#i18n{module.extend.rating.rating_config.deleteVoteComment}' checked=ratingDeleteVote?boolean /> 
 		</@formGroup>
-		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.labelVoteLimit}'>
+		<@formGroup rows=2 id='extend-rating-vote-limit' labelKey='#i18n{module.extend.rating.rating_config.labelVoteLimit}'>
 			<#assign temporalVoteCheck><#if ratingConfig.nbVotePerUser == 0>true<#else>false</#if></#assign>
 			<@radioButton name='limitVote' id='extend-rating-no-limit-vote-user' labelFor='extend-rating-no-limit-vote-user' labelKey='#i18n{portal.util.labelDisabled}' orientation='' value='false' checked=temporalVoteCheck?boolean /> 
 			<#assign nbVotePerUserCheck><#if ratingConfig.nbVotePerUser != 0>true<#else>false</#if></#assign>
@@ -61,39 +61,22 @@
 		</@formGroup>
 	</@columns>
 </@row>
-<@extendScript />
-<script>
-$( function (  ) {
-/* Hide the options if unique vote is selected */
-if ( $( '#extend-rating-unique-vote' ).attr( 'checked' ) != "undefined" && $( '#extend-rating-unique-vote' ).attr( 'checked' ) == "checked" ) {
-	$( '#extend-rating-temporal-vote-options' ).hide(  );
-}
-if ( $( '#extend-rating-no-limit-vote-user' ).attr( 'checked' ) != "undefined" && $( '#extend-rating-no-limit-vote-user' ).attr( 'checked' ) == "checked" ) {
-	$( '#extend-rating-limit-vote-options' ).hide(  );
-}
-if ( $( '#extend-rating-limited-connected-user-vote' ).is(':checked')) {
-	$( '#deleteVote' ).removeAttr( 'disabled' );
-} else {
-	$( '#deleteVote' ).attr("disabled", true);
-}
-$( '#extend-rating-unique-vote' ).click( function (  ) { 
-	$( '#extend-rating-temporal-vote-options' ).hide(  );
-});
-$( '#extend-rating-temporal-vote' ).click( function (  ) { 
-	$( '#extend-rating-temporal-vote-options' ).show(  );
-});
-$( '#extend-rating-no-limit-vote-user' ).click( function (  ) { 
-	$( '#extend-rating-limit-vote-options' ).hide(  );
-});
-$( '#extend-rating-limit-vote-user' ).click( function (  ) { 
-	$( '#extend-rating-limit-vote-options' ).show(  );
-});
-$( '#extend-rating-limited-connected-user-vote' ).click( function( ){ 
-	if( $( '#extend-rating-limited-connected-user-vote' ).is(':checked')) {
-		$( '#deleteVote' ).removeAttr( 'disabled' );
-	} else {
-		$( '#deleteVote' ).attr("disabled", true);
-	}
-});
-});
-</script>
+<@extendScript>
+	const uniqueVote = document.getElementById( 'extend-rating-unique-vote' );
+	const temporalVote = document.getElementById( 'extend-rating-temporal-vote' );
+	const temporalOptions = document.getElementById( 'extend-rating-temporal-vote-options' );
+	const noLimitVote = document.getElementById( 'extend-rating-no-limit-vote-user' );
+	const limitVote = document.getElementById( 'extend-rating-limit-vote-user' );
+	const limitOptions = document.getElementById( 'extend-rating-limit-vote-options' );
+	const connectedUser = document.getElementById( 'extend-rating-limited-connected-user-vote' );
+	const deleteVote = document.getElementById( 'deleteVote' );
+	const toggleOptions = function( ) {
+		temporalOptions.classList.toggle( 'd-none', uniqueVote.checked );
+		limitOptions.classList.toggle( 'd-none', noLimitVote.checked );
+		deleteVote.disabled = !connectedUser.checked;
+	};
+	[ uniqueVote, temporalVote, noLimitVote, limitVote, connectedUser ].forEach( function( input ) {
+		input.addEventListener( 'change', toggleOptions );
+	} );
+	toggleOptions( );
+</@extendScript>

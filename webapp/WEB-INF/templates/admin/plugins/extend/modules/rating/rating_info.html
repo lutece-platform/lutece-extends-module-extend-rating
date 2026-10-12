@@ -3,9 +3,12 @@
         <#list rating as rat>
             <@row>
                 <@columns>
-                    <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong>	${rat.ratingtype!}</@p>
+                    <h3>${rat.title!}</h3>
+                    <@p><strong>#i18n{module.extend.rating.rating_info.labelVoteCount} :</strong> ${rat.ratingCount!}</@p>
                     <@p><strong>#i18n{module.extend.rating.rating_info.labelScoreValue} :</strong> ${rat.scoreValue!}</@p>
-                    <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rat.ratingCount!}</@p>
+                    <#if rat.averageScore??>
+                    <@p><strong>#i18n{module.extend.rating.rating_info.labelAverageScore} :</strong> ${rat.averageScore}</@p>
+                    </#if>
                 </@columns>
             </@row>
         </#list>

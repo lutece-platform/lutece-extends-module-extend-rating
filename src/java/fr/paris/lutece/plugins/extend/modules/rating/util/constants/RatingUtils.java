@@ -1,6 +1,9 @@
 package fr.paris.lutece.plugins.extend.modules.rating.util.constants;
 
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -85,7 +88,7 @@ public class RatingUtils {
 		            }
 		            else 
 		            {
-		                AppLogService.debug( "No " + RatingConstants.JSON_KEY_SHOW + " found in " + jsonParameters );
+		                AppLogService.debug( "No {} found in {}", RatingConstants.JSON_KEY_SHOW, jsonParameters );
 		            }
 		        }
 	        }
@@ -109,5 +112,21 @@ public class RatingUtils {
 	    	}
 	    		
 	    	return TEMPLATE_DEFAULT_RATING_TYPE;
+	    }
+
+	    /**
+	     * Formats a score with at most one decimal, without a trailing zero.
+	     *
+	     * @param dScore the score
+	     * @param locale the locale of the decimal separator
+	     * @return the formatted score
+	     */
+	    public static String formatScore( double dScore, Locale locale )
+	    {
+	        NumberFormat format = NumberFormat.getNumberInstance( locale );
+	        format.setMaximumFractionDigits( 1 );
+	        format.setGroupingUsed( false );
+
+	        return format.format( dScore );
 	    }
 }

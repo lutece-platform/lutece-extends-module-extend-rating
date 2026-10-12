@@ -17,13 +17,10 @@ import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
 
-import jakarta.inject.Inject;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import jakarta.enterprise.inject.spi.CDI;
 
 
-@ApplicationScoped
 public class  RatingFacadeFactory {
 
     private static List<RatingType> _listRatingType = new ArrayList< >();
@@ -220,8 +217,8 @@ public class  RatingFacadeFactory {
 		 _listRatingType.forEach(type ->  
 		 	{
 		 		String info= type.getInfoForRecap(strIdExtendableResource, strExtendableResourceType);
-		 		if(StringUtils.isNoneEmpty( info )) {		 			
-		 			builder.append( type.getTitle( )).append(" ").append( info ).append(System.getProperty("line.separator"));
+		 		if(StringUtils.isNoneEmpty( info )) {
+		 			builder.append( builder.isEmpty( ) ? StringUtils.EMPTY : ", " ).append( info );
 		 		}		
 		 	}
 		 );
@@ -236,9 +233,9 @@ public class  RatingFacadeFactory {
 	public static Rating getRatingInstance( String typeName  ) {
 		try {
 			return   _listRatingType.stream().filter( rat ->  rat.getTypeName().equals( typeName ) )
-					.findAny().orElseThrow( RatingTypeException::new ).getType().newInstance( );
+					.findAny().orElseThrow( RatingTypeException::new ).getType().getDeclaredConstructor( ).newInstance( );
 		
-		} catch (InstantiationException | IllegalAccessException | RatingTypeException e) {
+		} catch (ReflectiveOperationException | RatingTypeException e) {
 			
 			AppLogService.error(e.getMessage(), e);
 			throw new RatingTypeException( );
