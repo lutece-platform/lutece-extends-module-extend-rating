@@ -41,12 +41,10 @@ import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConsta
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.modules.rating.web.component.RatingResourceExtenderComponent;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfigDAO;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Locale;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -88,7 +86,7 @@ public class RatingResourceExtender extends AbstractResourceExtender
     {
         setResourceExtenderComponent( resourceExtenderComponent );
         setKey( RESOURCE_EXTENDER );
-        setI18nTitleKey( I18nService.getLocalizedString( titleKey, Locale.getDefault( ) ) );
+        setI18nTitleKey( titleKey );
         setConfigRequired( true );
         setHistoryEnable( false );
         setStateEnable( true );

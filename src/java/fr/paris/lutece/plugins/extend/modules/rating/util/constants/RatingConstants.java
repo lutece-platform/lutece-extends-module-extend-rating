@@ -43,14 +43,11 @@ public final class RatingConstants
 {
     // PROPERTIES
     public static final String PROPERTY_RATING_CONFIG_LABEL_NO_MAILING_LIST = "module.extend.rating.rating_config.labelNoMailingList";
-    public static final String PROPERTY_WEBMASTER_EMAIL = "email.webmaster";
-    public static final String PROPERTY_LUTECE_NAME = "lutece.name";
     public static final String PROPERTY_MANAGE_VOTE_TYPES_PAGE_TITLE = "module.extend.rating.manage_vote_types.pageTitle";
 
     // MESSAGES
     public static final String MESSAGE_NOTIFY_SUBJECT = "module.extend.rating.message.notify.subject";
-    public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.rating.message.error.genericMessage";
-    public static final String MESSAGE_ERROR_INVALID_TOKEN = "module.extend.rating.message.error.invalidToken";
+    public static final String MESSAGE_ERROR_NOT_RATABLE = "module.extend.rating.message.error.notRatable";
     public static final String MESSAGE_STOP_GENERIC_MESSAGE = "module.extend.rating.message.stop.genericMessage";
     public static final String MESSAGE_CANNOT_VOTE = "module.extend.rating.message.cannotVote";
 

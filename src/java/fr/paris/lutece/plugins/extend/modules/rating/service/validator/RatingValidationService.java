@@ -1,10 +1,13 @@
 package fr.paris.lutece.plugins.extend.modules.rating.service.validator;
 
+import java.util.Optional;
+
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import fr.paris.lutece.plugins.extend.modules.rating.business.config.RatingExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.rating.service.extender.RatingResourceExtender;
@@ -13,7 +16,6 @@ import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderC
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -22,6 +24,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class RatingValidationService implements IRatingValidationService {
 
 	private static final String PROPERTIES_ERROR_URL="rating.errorUrl";
+
+	@Inject
+	@ConfigProperty( name = PROPERTIES_ERROR_URL )
+	private Optional<String> _strErrorUrl;
 
 	@Inject
 	@Named( "extend-rating.ratingExtenderConfigService" )
@@ -68,17 +74,15 @@ public class RatingValidationService implements IRatingValidationService {
 		return null;
 	}
 
+	/**
+	 * Gives the page a refused vote is sent to.
+	 *
+	 * @param request the HTTP request
+	 * @return the absolute URL of the error page, the site home when none is configured
+	 */
 	private String getErrorUrl( HttpServletRequest request ) {
 
-		String strDefaultErrorUrl = AppPathService.getBaseUrl( request ) + AppPropertiesService.getProperty( PROPERTIES_ERROR_URL );
-
-		if ( StringUtils.isEmpty( strDefaultErrorUrl ) )
-		{
-			// Just make sure it's not empty because empty means no errors !
-			strDefaultErrorUrl = "/";
-		}	
-
-		return strDefaultErrorUrl;
+		return AppPathService.getBaseUrl( request ) + _strErrorUrl.orElse( StringUtils.EMPTY );
 	}
 
 }

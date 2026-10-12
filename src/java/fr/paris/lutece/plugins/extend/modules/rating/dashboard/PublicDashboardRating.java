@@ -41,13 +41,11 @@ import java.util.Map;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistoryFilter;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.dashboard.IPublicDashboardComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 import jakarta.inject.Inject;
-import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * The Class PublicDashboardRating.
@@ -61,6 +59,9 @@ public class PublicDashboardRating implements IPublicDashboardComponent
 	private String strIdComponent = "extend-rating.dashboardExtendsRating";
 	private static final String TEMPLATE_DASHBOARD_RATING = "/skin/plugins/extend/modules/rating/publicdashboard_ratings.html";
 	private static final String MARK_DASHBOARD_RATING = "rating_publicdashboard";
+
+	@Inject
+	private IResourceExtenderHistoryService _resourceExtenderHistoryService;
 
 	@Override
 	public String getComponentDescription( Locale locale ) {
@@ -92,10 +93,8 @@ public class PublicDashboardRating implements IPublicDashboardComponent
      * @param user_id the user_id
      * @return the list
      */
-    private static Map<String, Integer> searchExtendCounter( String user_id )
+    private Map<String, Integer> searchExtendCounter( String user_id )
     {
-        IResourceExtenderHistoryService _resourceExtenderHistoryService = CDI.current( ).select( IResourceExtenderHistoryService.class ).get( );
-
         ResourceExtenderHistoryFilter filter = new ResourceExtenderHistoryFilter( );
         filter.setUserGuid( user_id );
 

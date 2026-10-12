@@ -1,7 +1,5 @@
 package fr.paris.lutece.plugins.extend.modules.rating.business;
 
-import java.util.List;
-
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 public class ThumbRating extends Rating {
@@ -12,14 +10,25 @@ public class ThumbRating extends Rating {
 	 
 	 
 	 /**
-	  * @param dScoreValue the dScoreValue to set
+	  * Sums the votes and counts the positive and the negative ones.
+	  *
+	  * @param ratingValue the values of the votes
 	  */
-	 public void setScoreValue( List<Rating> listRating )
+	 @Override
+	 public void setScoreValue( float[] ratingValue )
 	 {
-	    _dScoreValue= listRating.stream().mapToDouble( Rating::getScoreValue ).sum( );
-	    _nScoreLike= listRating.stream().filter(rh-> rh.getRatingValue() < 0 ).count( ) ;
-	    _nScoreDislike= listRating.stream().filter(rh-> rh.getRatingValue() > 0 ).count( );
-	    	
+	    super.setScoreValue( ratingValue );
+	    for ( float fValue : ratingValue )
+	    {
+	        if ( fValue > 0 )
+	        {
+	            _nScoreLike++;
+	        }
+	        else if ( fValue < 0 )
+	        {
+	            _nScoreDislike++;
+	        }
+	    }
 	 }
 	 /**
       * Returns the ScoreLike

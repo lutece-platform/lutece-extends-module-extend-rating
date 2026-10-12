@@ -24,6 +24,7 @@ import fr.paris.lutece.plugins.extend.modules.rating.service.security.IRatingSec
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingConstants;
 import fr.paris.lutece.plugins.extend.modules.rating.util.constants.RatingUtils;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.security.SecurityService;
@@ -64,14 +65,22 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	}
 
 
-	private void setRatingSecurityService( IRatingSecurityService ratingSecurityService )
+	/**
+	 * Puts the CSRF token of each vote form the fragment shows.
+	 *
+	 * @param model the model of the fragment
+	 * @param request the HTTP request
+	 */
+	private void putTokens( Map<String, Object> model, HttpServletRequest request )
 	{
-		_ratingSecurityService = ratingSecurityService;
-	}
-
-	private void setResourceExtenderHistoryService ( IResourceExtenderHistoryService resourceExtenderHistoryService )
-	{
-		_resourceExtenderHistoryService = resourceExtenderHistoryService;
+		if ( Boolean.TRUE.equals( model.get( RatingConstants.MARK_CAN_VOTE ) ) )
+		{
+			model.put( RatingConstants.MARK_VOTE_TOKEN, _securityTokenService.getToken( request, RatingConstants.ACTION_DO_RATING ) );
+		}
+		if ( Boolean.TRUE.equals( model.get( RatingConstants.MARK_CAN_DELETE_VOTE ) ) )
+		{
+			model.put( RatingConstants.MARK_CANCEL_VOTE_TOKEN, _securityTokenService.getToken( request, RatingConstants.ACTION_CANCEL_RATING ) );
+		}
 	}
 
 	@Override
@@ -125,10 +134,6 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	        model.put( RatingConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
             model.put( RatingConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
             model.put( RatingConstants.MARK_SHOW, showParam );
-            model.put( RatingConstants.MARK_VOTE_TOKEN,
-                    _securityTokenService.getToken( request, RatingConstants.ACTION_DO_RATING ) );
-            model.put( RatingConstants.MARK_CANCEL_VOTE_TOKEN,
-                    _securityTokenService.getToken( request, RatingConstants.ACTION_CANCEL_RATING ) );
   
 		    if( !_ratingSecurityService.isVoteClosed(ratingExtenderConfig) )
 	        {
@@ -148,6 +153,7 @@ public final class DefaultRatingTypeImpl implements RatingType {
 	                    _ratingSecurityService.canDeleteVote( ratingExtenderConfig, user, strIdExtendableResource, strExtendableResourceType ) );
 	                
 	                model.put( RatingConstants.MARK_VOTE_CLOSED, false );
+	                putTokens( model, request );
 	         }
              else
              {
@@ -187,10 +193,19 @@ public final class DefaultRatingTypeImpl implements RatingType {
 		return StringUtils.EMPTY;
 	}
 
+	/**
+	 * Returns the score of the resource, formatted in the default locale.
+	 *
+	 * @param strIdExtendableResource the id of the resource
+	 * @param strExtendableResourceType the type of the resource
+	 * @return the formatted score, empty when the resource has no vote
+	 */
 	@Override
 	public String getInfoForRecap(String strIdExtendableResource, String strExtendableResourceType) {
 		
-		return getInfoForExport( strIdExtendableResource,  strExtendableResourceType);
+		return RatingService.INSTANCE.findAndbuildRatingResult( strIdExtendableResource, strExtendableResourceType, this.getTypeName( ) )
+				.map( rating -> RatingUtils.formatScore( rating.getScoreValue( ), I18nService.getDefaultLocale( ) ) )
+				.orElse( StringUtils.EMPTY );
 	}
 
 	@Override

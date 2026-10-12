@@ -1,20 +1,25 @@
-<div class="row">
-	<div class="offset-lg-2 col-lg-8">
-		<h2>#i18n{module.extend.mydashboard.dashboardextend.pageTitle}</h2>
-		<div class="table-responsive">
-			<table class="table table-striped">
-				<thead>
-					<th>#i18n{module.extend.rating.publicdashboard.title}</th>
-				</thead>
-				<tbody>
-					<#list rating_publicdashboard?keys as key>
-						<tr>
-							<td>${key}</td>
-							<td>${rating_publicdashboard[key]}</td>
-						</tr>
-					</#list>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>
+<@cRow>
+	<@cCol cols='lg-8' class='offset-lg-2'>
+		<@cTitle level=2>#i18n{module.extend.rating.publicdashboard.title}</@cTitle>
+		<#if rating_publicdashboard?has_content>
+		<@cTable id='extend-rating-publicdashboard' caption='#i18n{module.extend.rating.publicdashboard.title}'>
+			<@cThead>
+				<@cTr>
+					<@cTh>#i18n{module.extend.rating.publicdashboard.column.title}</@cTh>
+					<@cTh>#i18n{module.extend.rating.publicdashboard.column.description}</@cTh>
+				</@cTr>
+			</@cThead>
+			<@cTbody>
+				<#list rating_publicdashboard?keys as key>
+				<@cTr>
+					<@cTd>${key}</@cTd>
+					<@cTd>${rating_publicdashboard[key]}</@cTd>
+				</@cTr>
+				</#list>
+			</@cTbody>
+		</@cTable>
+		<#else>
+		<@cAlert type='info' title='#i18n{module.extend.rating.rating_info.labelNoVote}' />
+		</#if>
+	</@cCol>
+</@cRow>
