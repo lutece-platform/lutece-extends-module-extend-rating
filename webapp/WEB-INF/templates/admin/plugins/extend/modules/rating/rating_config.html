@@ -32,13 +32,14 @@
 		</@formGroup>
 	</@columns>
 	<@columns lg=7>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelOptions}' helpKey='#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})' >
+		<@fieldSet legend='#i18n{module.extend.rating.rating_config.labelOptions}' legendClass='form-label' fieldsetParams={ 'aria-describedby': 'extend-rating-unique-vote-help' }>
 			<@radioButton id='extend-rating-unique-vote' name='uniqueVote' value='true' labelFor='extend-rating-unique-vote' labelKey='#i18n{module.extend.rating.rating_config.labelUniqueVote}' checked=ratingConfig.uniqueVote />
 			<@radioButton name='uniqueVote' id='extend-rating-temporal-vote' labelFor='extend-rating-temporal-vote' labelKey='#i18n{module.extend.rating.rating_config.labelTemporalVote}' value='false' checked=!ratingConfig.uniqueVote />
-		</@formGroup>
+			<div class="form-text" id="extend-rating-unique-vote-help">#i18n{module.extend.rating.rating_config.labelUniqueVote} (#i18n{module.extend.rating.rating_config.labelUniqueVoteComment})</div>
+		</@fieldSet>
 		<@formGroup rows=2 id='extend-rating-temporal-vote-options' labelKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVote}' labelFor='nbDaysToVote' helpKey='#i18n{module.extend.rating.rating_config.temporalVote.labelNbDaysToVoteComment}' mandatory=true>
 			<@inputGroup  class='w-25' >
-				<@input type='number' name='nbDaysToVote' value=ratingConfig.nbDaysToVote?c maxlength=3 />
+				<@input type='number' name='nbDaysToVote' id='nbDaysToVote' value=ratingConfig.nbDaysToVote?c maxlength=3 />
 				<@inputGroupItem> #i18n{module.extend.rating.rating_config.temporalVote.labelDay}</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
@@ -48,10 +49,10 @@
 		<@formGroup rows=2 >
 			<@checkBox name='deleteVote' id='deleteVote' orientation='switch' value='true' labelKey='#i18n{module.extend.rating.rating_config.deleteVoteComment}' checked=ratingConfig.deleteVote /> 
 		</@formGroup>
-		<@formGroup rows=2 id='extend-rating-vote-limit' labelKey='#i18n{module.extend.rating.rating_config.labelVoteLimit}'>
+		<@fieldSet fieldsetId='extend-rating-vote-limit' legend='#i18n{module.extend.rating.rating_config.labelVoteLimit}' legendClass='form-label'>
 			<@radioButton name='limitVote' id='extend-rating-no-limit-vote-user' labelFor='extend-rating-no-limit-vote-user' labelKey='#i18n{portal.util.labelDisabled}' orientation='' value='false' checked=( ratingConfig.nbVotePerUser == 0 ) /> 
 			<@radioButton id='extend-rating-limit-vote-user' labelFor='extend-rating-limit-vote-user'  name='limitVote' labelKey='#i18n{portal.util.labelEnabled}' orientation='' value='true' checked=( ratingConfig.nbVotePerUser != 0 ) /> 
-		</@formGroup>
+		</@fieldSet>
 		<@formGroup rows=2 id='extend-rating-limit-vote-options' labelFor='nbVotePerUser' labelKey='#i18n{module.extend.rating.rating_config.limitVote.labelLimitVote}' mandatory=true >
 			<@input type='number' name='nbVotePerUser' id='nbVotePerUser' value=ratingConfig.nbVotePerUser?c maxlength=3 min=0 max=100 />
 		</@formGroup>
