@@ -84,7 +84,9 @@ public class RatingTemplatesRenderTest
             + "<#macro input name='' value='' rest...><input name=\"${name}\" value=\"${value}\"></#macro>"
             + "<#macro radioButton id='' value='' checked=false rest...><input type=\"radio\" id=\"${id}\" value=\"${value}\"<#if checked> checked</#if>></#macro>"
             + "<#macro checkBox id='' checked=false rest...><input type=\"checkbox\" id=\"${id}\"<#if checked> checked</#if>></#macro>"
-            + "<#macro extendScript><script><#nested></script></#macro>";
+            + "<#macro extendScript><script><#nested></script></#macro>"
+            + "<#macro cFieldset legend='' rest...><fieldset><legend>${legend}</legend><#nested></fieldset></#macro>"
+            + "<#macro fieldSet legend='' fieldsetId='' fieldsetParams={} rest...><fieldset id=\"${fieldsetId}\"<@attrs fieldsetParams />><legend>${legend}</legend><#nested></fieldset></#macro>";
 
     private static final String HOSTILE_ID = "42\"><script>";
     private static final String HOSTILE_ID_ESCAPED = "42&quot;&gt;&lt;script&gt;";
@@ -147,7 +149,7 @@ public class RatingTemplatesRenderTest
 
     /**
      * The star vote form posts to the action URL escaped once, writes each vote value through the params map of its
-     * button, and escapes the resource id.
+     * button, groups the vote buttons under a legend, and escapes the resource id.
      *
      * @throws Exception
      *             if the rendering fails
@@ -166,11 +168,13 @@ public class RatingTemplatesRenderTest
         assertTrue( strHtml.contains( "src=\"images/local/skin/plugins/extend/modules/rating/stars_2,5.png\"" ), strHtml );
         assertTrue( strHtml.contains( "<input name=\"ratingValue\" value=\"2.5\">" ), strHtml );
         assertTrue( strHtml.contains( "value=\"" + HOSTILE_ID_ESCAPED + "\"" ), strHtml );
+        assertTrue( strHtml.contains( "<fieldset><legend>#i18n{module.extend.rating.rating.labelVote}</legend>" ), strHtml );
         assertFalse( strHtml.contains( "<script>" ), strHtml );
     }
 
     /**
-     * The thumb vote form writes the vote values through the params map of its buttons and escapes the resource id.
+     * The thumb vote form writes the vote values through the params map of its buttons, groups them under a legend, and
+     * escapes the resource id.
      *
      * @throws Exception
      *             if the rendering fails
@@ -186,6 +190,7 @@ public class RatingTemplatesRenderTest
                 strHtml );
         assertTrue( strHtml.contains( "<button name=\"ratingValue\" value=\"1\" title=\"#i18n{module.extend.rating.rating.labelVoteFor}\">" ), strHtml );
         assertTrue( strHtml.contains( "id=\"extend-rating-score-" + HOSTILE_ID_ESCAPED + "\"" ), strHtml );
+        assertTrue( strHtml.contains( "<fieldset><legend>#i18n{module.extend.rating.rating.labelVote}</legend>" ), strHtml );
         assertFalse( strHtml.contains( "<script>" ), strHtml );
     }
 
@@ -238,7 +243,8 @@ public class RatingTemplatesRenderTest
     }
 
     /**
-     * The configuration form checks its options from the configuration and writes its numbers with ?c.
+     * The configuration form checks its options from the configuration, writes its numbers with ?c, and groups its radio
+     * buttons under a legend.
      *
      * @throws Exception
      *             if the rendering fails
@@ -257,6 +263,11 @@ public class RatingTemplatesRenderTest
         assertTrue( strHtml.contains( "id=\"deleteVote\" checked>" ), strHtml );
         assertTrue( strHtml.contains( "id=\"extend-rating-no-limit-vote-user\" value=\"false\" checked>" ), strHtml );
         assertTrue( strHtml.contains( "id=\"extend-rating-limit-vote-user\" value=\"true\">" ), strHtml );
+        assertTrue( strHtml.contains( "<fieldset id=\"\" aria-describedby=\"extend-rating-unique-vote-help\"><legend>#i18n{module.extend.rating.rating_config.labelOptions}</legend>" ),
+                strHtml );
+        assertTrue( strHtml.contains( "id=\"extend-rating-unique-vote-help\"" ), strHtml );
+        assertTrue( strHtml.contains( "<fieldset id=\"extend-rating-vote-limit\"><legend>#i18n{module.extend.rating.rating_config.labelVoteLimit}</legend>" ),
+                strHtml );
 
         strHtml = render( TEMPLATE_CONFIG, configModel( 12, false ) );
 

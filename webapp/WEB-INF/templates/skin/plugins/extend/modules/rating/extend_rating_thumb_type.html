@@ -12,7 +12,7 @@
 <#if show == "all" || show == "vote">
 	<@cText>
 	<#if scoreValue lt 0>
-		<@cImg src='images/local/skin/plugins/extend/modules/rating/vote_against.png' alt='#i18n{module.extend.rating.rating.labelVoteAgainst}' id='extend-rating-score-${idExtendableResource!}' class='' params={"title": "#i18n{module.extend.rating.rating.labelVoteAgainst}"} />
+		<@cImg src='images/local/skin/plugins/extend/modules/rating/vote_against.png' alt='#i18n{module.extend.rating.rating.labelScore}' id='extend-rating-score-${idExtendableResource!}' class='' params={"title": "#i18n{module.extend.rating.rating.labelScore}"} />
 		${scoreValue}
 	<#else>
 		<@cImg src='images/local/skin/plugins/extend/modules/rating/vote_for.png' alt='#i18n{module.extend.rating.rating.labelScore}' id='extend-rating-score-${idExtendableResource!}' class='' params={"title": "#i18n{module.extend.rating.rating.labelScore}"} />
@@ -48,12 +48,13 @@
 	<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' class='' />
 	<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' class='' />
 	<@cInput type='hidden' name='_csrftoken' value='${voteToken!}' class='' />
-	<@cText>#i18n{module.extend.rating.rating.labelVote} :</@cText>
+	<@cFieldset legend='#i18n{module.extend.rating.rating.labelVote}'>
 	<@cBtn label='' class='link' params={"name": "ratingValue", "value": "-1", "title": "#i18n{module.extend.rating.rating.labelVoteAgainst}"}>
 		<@cImg src='images/local/skin/plugins/extend/modules/rating/vote_against.png' alt='#i18n{module.extend.rating.rating.labelVoteAgainst}' id='extend-rating-vote-against-${idExtendableResource!}' class='' />
 	</@cBtn>
 	<@cBtn label='' class='link' params={"name": "ratingValue", "value": "1", "title": "#i18n{module.extend.rating.rating.labelVoteFor}"}>
 		<@cImg src='images/local/skin/plugins/extend/modules/rating/vote_for.png' alt='#i18n{module.extend.rating.rating.labelVoteFor}' id='extend-rating-vote-for-${idExtendableResource!}' class='' />
 	</@cBtn>
+	</@cFieldset>
 </@cForm>
 </#if>

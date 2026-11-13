@@ -29,11 +29,12 @@
 	<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' class='' />
 	<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' class='' />
 	<@cInput type='hidden' name='_csrftoken' value='${voteToken!}' class='' />
-	<@cText>#i18n{module.extend.rating.rating.labelVote} :</@cText>
+	<@cFieldset legend='#i18n{module.extend.rating.rating.labelVote}'>
 	<#list [ '0.5', '1', '1.5', '2', '2.5', '3', '3.5', '4' ] as ratingValue>
 	<@cBtn label='' class='link' params={"name": "ratingValue", "value": ratingValue, "title": "#i18n{module.extend.rating.rating.labelScore} : ${ratingValue}"}>
 		<@cImg src='images/local/skin/plugins/extend/modules/rating/stars_${ratingValue?replace(".", ",")}.png' alt='#i18n{module.extend.rating.rating.labelScore} : ${ratingValue}' id='extend-rating-vote-${idExtendableResource!}-${ratingValue?replace(".", "-")}' class='' />
 	</@cBtn>
 	</#list>
+	</@cFieldset>
 </@cForm>
 </#if>
