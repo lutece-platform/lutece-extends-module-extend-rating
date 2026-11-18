@@ -48,7 +48,7 @@ import jakarta.inject.Named;
 @Named ( "extend-rating.ratingExtenderConfigDAO" )
 public class RatingExtenderConfigDAO implements IExtenderConfigDAO<RatingExtenderConfig>
 {
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating_config ( id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_rating_config ( id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote, nb_vote_per_user, is_connected, delete_vote, date_start, date_end ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_UPDATE = " UPDATE extend_rating_config SET id_mailing_list = ?, id_vote_type = ?, is_unique_vote = ?, nb_days_to_vote = ?, nb_vote_per_user = ?, is_connected = ?, delete_vote = ?, date_start = ?, date_end = ? WHERE id_extender = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_rating_config WHERE id_extender = ? ";
     private static final String SQL_QUERY_SELECT = " SELECT id_extender, id_mailing_list, id_vote_type, is_unique_vote, nb_days_to_vote, nb_vote_per_user, is_connected, delete_vote, date_start, date_end FROM extend_rating_config WHERE id_extender = ? ";
@@ -67,7 +67,12 @@ public class RatingExtenderConfigDAO implements IExtenderConfigDAO<RatingExtende
 	        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
 	        daoUtil.setString( nIndex++, config.getRatingType(  ) );
 	        daoUtil.setBoolean( nIndex++, config.isUniqueVote(  ) );
-	        daoUtil.setInt( nIndex, config.getNbDaysToVote(  ) );
+	        daoUtil.setInt( nIndex++, config.getNbDaysToVote(  ) );
+	        daoUtil.setInt( nIndex++, config.isLimitVote(  ) ? config.getNbVotePerUser(  ) : 0 );
+	        daoUtil.setBoolean( nIndex++, config.isLimitedConnectedUser(  ) );
+	        daoUtil.setBoolean( nIndex++, config.isDeleteVote(  ) );
+	        daoUtil.setTimestamp( nIndex++, config.getDateStart(  ) );
+	        daoUtil.setTimestamp( nIndex, config.getDateEnd(  ) );
 	
 	        daoUtil.executeUpdate(  );
         }

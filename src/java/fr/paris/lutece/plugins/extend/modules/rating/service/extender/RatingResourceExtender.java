@@ -136,6 +136,12 @@ public class RatingResourceExtender extends AbstractResourceExtender
             config.setRatingType(defaultConfig.getRatingType( ));
             config.setNbDaysToVote( defaultConfig.getNbDaysToVote(  ) );
             config.setUniqueVote( defaultConfig.isUniqueVote(  ) );
+            config.setNbVotePerUser( defaultConfig.getNbVotePerUser(  ) );
+            config.setLimitVote( defaultConfig.isLimitVote(  ) );
+            config.setLimitedConnectedUser( defaultConfig.isLimitedConnectedUser(  ) );
+            config.setDeleteVote( defaultConfig.isDeleteVote(  ) );
+            config.setDateStart( defaultConfig.getDateStart(  ) );
+            config.setDateEnd( defaultConfig.getDateEnd(  ) );
         }
 
         _configService.create( config );
