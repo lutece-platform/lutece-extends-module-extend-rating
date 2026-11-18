@@ -194,8 +194,12 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
 
         if ( StringUtils.isNotBlank( request.getParameter( "date_start" ) ) )
         {
-            ( (RatingExtenderConfig) config ).setDateStart( new Timestamp( DateUtil.parseIsoDate( request.getParameter( 
-                        "date_start" ) ).getTime( ) ));
+            // A value that is not an ISO date keeps the stored date
+            java.util.Date dateStart = DateUtil.parseIsoDate( request.getParameter( "date_start" ) );
+            if ( dateStart != null )
+            {
+                ( (RatingExtenderConfig) config ).setDateStart( new Timestamp( dateStart.getTime( ) ) );
+            }
         }
         else
         {
@@ -204,7 +208,11 @@ public class RatingResourceExtenderComponent extends AbstractResourceExtenderCom
 
         if ( StringUtils.isNotBlank( request.getParameter( "date_end" ) ) )
         {
-            ( (RatingExtenderConfig) config ).setDateEnd( new Timestamp( DateUtil.parseIsoDate( request.getParameter( "date_end" ) ).getTime( )));
+            java.util.Date dateEnd = DateUtil.parseIsoDate( request.getParameter( "date_end" ) );
+            if ( dateEnd != null )
+            {
+                ( (RatingExtenderConfig) config ).setDateEnd( new Timestamp( dateEnd.getTime( ) ) );
+            }
         }
         else
         {

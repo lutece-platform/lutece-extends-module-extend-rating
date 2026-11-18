@@ -9,7 +9,7 @@
 			<@columns sm=6>
 				<@formGroup rows=2 labelKey='#i18n{module.extend.rating.rating_config.labelDateStart}' labelFor='date_start'>
 				<@inputGroup>
-					<@input type='date' name='date_start' id='date_start' maxlength=10 value=ratingConfig.dateStartString! /> 
+					<@input type='date' name='date_start' id='date_start' maxlength=10 value=( ratingConfig.dateStart?date )! /> 
 					<@inputGroupItem>
 						<@icon style='calendar' />
 					</@inputGroupItem>
@@ -19,7 +19,7 @@
 			<@columns sm=6>
 				<@formGroup rows=2 labelKey=' #i18n{module.extend.rating.rating_config.labelDateEnd}' labelFor='date_end' >
 					<@inputGroup>
-						<@input type='date' name='date_end' id='date_end' maxlength=10 value=ratingConfig.dateEndString! />
+						<@input type='date' name='date_end' id='date_end' maxlength=10 value=( ratingConfig.dateEnd?date )! />
 						<@inputGroupItem>
 							<@icon style='calendar' />
 						</@inputGroupItem>

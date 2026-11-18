@@ -226,8 +226,7 @@ public class RatingTemplatesRenderTest
         Map<String, Object> config = new HashMap<>( );
         config.put( "ratingType", "fr.paris.lutece.plugins.extend.modules.rating.business.StarRating" );
         config.put( "idMailingList", 1500 );
-        config.put( "dateStartString", "2026-11-13" );
-        config.put( "dateEndString", "" );
+        config.put( "dateStart", java.sql.Timestamp.valueOf( "2026-11-13 00:00:00" ) );
         config.put( "uniqueVote", false );
         config.put( "nbDaysToVote", 1000 );
         config.put( "limitedConnectedUser", bConnectedOnly );
