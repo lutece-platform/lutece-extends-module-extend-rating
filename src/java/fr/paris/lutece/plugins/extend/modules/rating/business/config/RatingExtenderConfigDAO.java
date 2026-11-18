@@ -146,6 +146,8 @@ public class RatingExtenderConfigDAO implements IExtenderConfigDAO<RatingExtende
 	            config.setUniqueVote( daoUtil.getBoolean( nIndex++ ) );
 	            config.setNbDaysToVote( daoUtil.getInt( nIndex++ ) );
 	            config.setNbVotePerUser( daoUtil.getInt( nIndex++ ) );
+	            // The limit is stored as its number of votes only (0: no limit)
+	            config.setLimitVote( config.getNbVotePerUser(  ) > 0 );
 	            config.setLimitedConnectedUser( daoUtil.getBoolean( nIndex++ ) );
 	            config.setDeleteVote( daoUtil.getBoolean( nIndex++ ) );
 	            config.setDateStart( daoUtil.getTimestamp( nIndex++ ) );

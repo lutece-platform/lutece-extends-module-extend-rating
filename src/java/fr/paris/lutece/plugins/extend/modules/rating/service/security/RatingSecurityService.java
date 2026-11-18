@@ -126,7 +126,8 @@ public class RatingSecurityService implements IRatingSecurityService
          }
          
          // If it is set as unlimited vote, then the user can vote anytime
-         if ( config.isUnlimitedVote(  ) || RatingService.INSTANCE.findByResource( strIdExtendableResource, strExtendableResourceType)  == null )
+         // A limit of votes per user applies to the temporal vote too
+         if ( ( config.isUnlimitedVote(  ) && config.getNbVotePerUser(  ) <= 0 ) || RatingService.INSTANCE.findByResource( strIdExtendableResource, strExtendableResourceType)  == null )
          {
              return true;
          }
@@ -280,7 +281,7 @@ public class RatingSecurityService implements IRatingSecurityService
         {
           // If unique vote, then the user is prohibited to vote
           if ( (config.isUniqueVote(  ) && listRating.stream().anyMatch(rating -> rating.getIdExtendableResource().equals(strIdExtendableResource)))
-          		|| (config.isLimitVote() && listRating.size(  ) >= config.getNbVotePerUser(  )) )
+          		|| (config.getNbVotePerUser(  ) > 0 && listRating.size(  ) >= config.getNbVotePerUser(  )) )
           {
               return false;
           }                 
